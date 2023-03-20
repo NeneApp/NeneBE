@@ -63,6 +63,10 @@ const VendorSchema = new mongoose.Schema(
       type: String,
       default: 'Vendor',
     },
+    activated: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
