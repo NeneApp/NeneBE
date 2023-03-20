@@ -1,9 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
-
 export interface IBuyerLogin extends Document {
     username: string;
     email: string;
     password: string;
+    token: string; 
 }
 
 const userSchema: Schema = new mongoose.Schema<IBuyerLogin>({
@@ -34,6 +34,10 @@ const userSchema: Schema = new mongoose.Schema<IBuyerLogin>({
     trim: true,
     match: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]+$/,
     select: false
+  },
+  token: {
+    type: String, // add token property with type String
+    required: true
   }
 });
 

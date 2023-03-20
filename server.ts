@@ -1,5 +1,6 @@
 import express from 'express';
 import log from './utility/logger';
+import "dotenv/config";
 import ExpressApp from './utility/ExpressApp';
 import connectDB from './config/db';
 import cors from 'cors';
@@ -9,10 +10,11 @@ import helmet from 'helmet';
 
 import hpp from 'hpp';
 import { errorHandler, notFound } from './middlewares';
+import routeHandler from './routes';
 
 const StartServer = async () => {
+  
   const app = express();
-
   await ExpressApp(app);
 
   app.use(express.json());
@@ -29,6 +31,12 @@ const StartServer = async () => {
   // Prevent http para
   app.use(hpp());
 
+  app.get('/', (req,res) => {
+    res.send('It works')
+  })
+  // path to routes
+  app.use('/api/v1', routeHandler)
+  
   // Error handler
   app.use(notFound);
   app.use(errorHandler);
