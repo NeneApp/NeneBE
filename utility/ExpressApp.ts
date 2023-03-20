@@ -1,23 +1,34 @@
 import express, { Application, Request, Response } from 'express';
+import VendorRoutes from '../routes/Vendor.route';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import mongoSanitize from 'express-mongo-sanitize';
+import helmet from 'helmet';
+import { errorHandler, notFound } from '../middlewares';
+import hpp from 'hpp';
 
 export default async (app: Application) => {
-  // Routes
-  /**
-   * @openapi
-   * /healthcheck:
-   *  get:
-   *     tags:
-   *     - Healthcheck
-   *     description: Responds if the app is up and running
-   *     responses:
-   *       200:
-   *         description: App is up and running
-   */
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cors());
+
+  // Sanitize data
+  app.use(mongoSanitize());
+
+  // Set security headers
+  app.use(helmet());
+
+  // Prevent http para
+  app.use(hpp());
+
   app.get('/healthcheck', (req: Request, res: Response) => {
     res.sendStatus(200);
   });
+
+  app.use('/api/vendors', VendorRoutes);
+
+  // Error handler
+  app.use(notFound);
+  app.use(errorHandler);
 
   return app;
 };
