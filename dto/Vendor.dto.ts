@@ -5,7 +5,15 @@ export interface IVendorRegisterInput {
   email: string;
   businessName: string;
   image: string;
+  phone: string;
   address: string;
 }
 
-
+export interface IVendorUpdateInput {
+  firstName?: string;
+  lastName?: string;
+  businessName?: string;
+  image?: string;
+  phone?: string;
+  address?: string;
+}

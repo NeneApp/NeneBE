@@ -1,10 +1,16 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import VendorModel from '../models/Vendor.model';
-import { IVendorRegisterInput } from '../dto/Vendor.dto';
+import { IVendorRegisterInput, IVendorUpdateInput } from '../dto/Vendor.dto';
 import { GenCode, GenSlug } from '../utility/VendorUtility';
 import { sendConfirmationEmail } from '../utility/MailerUtility';
 
+/**
+ * @description Vendor registration
+ * @method POST
+ * @route /api/vendors=
+ * @access public
+ */
 export const RegisterVendor = async (req: Request, res: Response) => {
   try {
     const {
@@ -14,6 +20,7 @@ export const RegisterVendor = async (req: Request, res: Response) => {
       email,
       businessName,
       image,
+      phone,
       address,
     } = <IVendorRegisterInput>req.body;
 
@@ -27,6 +34,7 @@ export const RegisterVendor = async (req: Request, res: Response) => {
       firstName,
       lastName,
       password,
+      phone,
       email,
       businessName,
       slug: GenSlug(businessName),
@@ -57,7 +65,7 @@ export const RegisterVendor = async (req: Request, res: Response) => {
 };
 
 /**
- * @description Verify User
+ * @description Verify Vendor account
  * @method GET
  * @route /api/vendors/confirm/:confirmationCode
  * @access public
@@ -81,5 +89,43 @@ export const verifyVendor = asyncHandler(
     res.status(200).json({
       msg: 'Verification Successful.You can now login in',
     });
+  }
+);
+
+/**
+ * @description Update Vendor Profile
+ * @method GET
+ * @route /api/vendors/confirm/:confirmationCode
+ * @access private/vendors
+ */
+export const UpdateVendorProfile = asyncHandler(
+  async (req: Request, res: Response) => {
+    const vendor = await VendorModel.findById(req.user._id);
+    const { firstName, lastName, businessName, image, phone, address } = <
+      IVendorUpdateInput
+    >req.body;
+
+    if (vendor) {
+      vendor.firstName = firstName || vendor.firstName;
+      vendor.lastName = lastName || vendor.lastName;
+      vendor.businessName = businessName || vendor.businessName;
+      vendor.image = image || vendor.image;
+      vendor.address = address || vendor.address;
+      vendor.phone = phone || vendor.phone;
+
+      if (businessName) {
+        vendor.slug = GenSlug(businessName);
+      }
+
+      const updatedVendor = await vendor.save();
+
+      res.status(200).send({
+        msg: 'Profile updated successfully',
+        updatedVendor,
+      });
+    } else {
+      res.status(404);
+      throw new Error('Vendor not found');
+    }
   }
 );
