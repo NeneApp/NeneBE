@@ -34,6 +34,12 @@ const StartServer = async () => {
   app.get('/', (req,res) => {
     res.send('It works')
   })
+
+  app.set('view engine', 'ejs');
+  app.get('/public/views/login', (req, res) => {
+      res.render('login')
+  })
+
   // path to routes
   app.use('/api/v1', routeHandler)
   

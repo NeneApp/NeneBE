@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { BuyerModel, IBuyerLogin } from "../models";
+import { BuyerModel } from "../models";
 import jwt from "jsonwebtoken"
 import * as bcrypt from "bcryptjs"
+
 
 export async function login(req: Request, res: Response) {
 
@@ -50,5 +51,3 @@ export async function login(req: Request, res: Response) {
     });
   }
 }
-
-// Google Authenticatication

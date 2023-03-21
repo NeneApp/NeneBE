@@ -4,6 +4,8 @@ export interface IBuyerLogin extends Document {
     email: string;
     password: string;
     token: string; 
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const userSchema: Schema = new mongoose.Schema<IBuyerLogin>({
