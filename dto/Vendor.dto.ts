@@ -17,3 +17,7 @@ export interface IVendorUpdateInput {
   phone?: string;
   address?: string;
 }
+
+export interface IVendorPayload {
+  _id: string;
+}
