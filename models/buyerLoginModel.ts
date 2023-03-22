@@ -38,7 +38,7 @@ const userSchema: Schema = new mongoose.Schema<IBuyerLogin>({
     select: false
   },
   token: {
-    type: String, // add token property with type String
+    type: String, 
     required: true
   }
 });

@@ -4,3 +4,4 @@ export {
     BuyerModel,
     IBuyerLogin
 }
+export * from './Vendor.model';
