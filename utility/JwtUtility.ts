@@ -17,3 +17,27 @@ export const ValidateJwt = async (req: Request) => {
 
   return false;
 };
+
+
+const genToken = async (data: any) => {
+  let token;
+  // generate new jwt token for registeration
+  token = jwt.sign(
+    {
+      ...data,
+    },
+    (process.env.JWT_SECRET as string),
+    {
+      expiresIn: "7d",
+    }
+  );
+  return token;
+};
+
+export const signToken = async (data: any) => {
+  const token = await genToken({
+    ...data,
+  });
+
+  return token;
+};
