@@ -2,7 +2,6 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
 interface BuyerDoc extends Document {
-  username: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -10,22 +9,13 @@ interface BuyerDoc extends Document {
   phone: string;
   image: string;
   address: string;
+  gender: string;
   confirmationCode: string;
-  activated: Boolean;
+  status: string;
 }
 
 const BuyerSchema: Schema = new mongoose.Schema<BuyerDoc>(
   {
-    username: {
-      type: String,
-      required: true,
-      minlength: 6,
-      maxlength: 20,
-      unique: true,
-      lowercase: true,
-      trim: true,
-      match: /^[a-zA-Z0-9_-]+$/,
-    },
     firstName: {
       type: String,
       required: [true, "Please enter your first name"],
@@ -58,14 +48,19 @@ const BuyerSchema: Schema = new mongoose.Schema<BuyerDoc>(
     image: {
       type: String,
     },
-    address: { type: String, required: true },
+    address: { type: String },
+    gender: {
+      type: String,
+      enums: ["m", "f", "others"],
+    },
     confirmationCode: {
       type: String,
       unique: true,
     },
-    activated: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String,
+      enum: ["Pending", "Active"],
+      default: "Pending",
     },
   },
   {
@@ -74,14 +69,18 @@ const BuyerSchema: Schema = new mongoose.Schema<BuyerDoc>(
 );
 
 // Encrypt password with bcrypt
-BuyerSchema.pre('save', async function (next) {
-    try {
-      if (!this.isModified('password')) return next();
-      this.password = await bcrypt.hash(this.password, 12);
-    } catch (error: any) {
-      throw new Error(error);
-    }
-  });
+BuyerSchema.pre("save", async function (next) {
+  try {
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 12);
+    // this.confirmationCode = await bcrypt.hash(
+    //   this.password,
+    //   process.env.HASH_SALT || 10
+    // );
+  } catch (error: any) {
+    throw new Error(error);
+  }
+});
 
 const BuyerModel = mongoose.model<BuyerDoc>("Buyer", BuyerSchema);
 
