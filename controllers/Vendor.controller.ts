@@ -44,10 +44,12 @@ export const RegisterVendor = async (req: Request, res: Response) => {
     });
 
     const name = `${vendor.firstName} ${vendor.lastName}`;
+    const userType = 'vendors';
     let ress = await sendConfirmationEmail(
       name,
       vendor?.email,
-      vendor?.confirmationCode
+      vendor?.confirmationCode,
+      userType,
     );
 
     if (ress !== null) {
