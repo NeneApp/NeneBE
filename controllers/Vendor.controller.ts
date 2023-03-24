@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import VendorModel from '../models/Vendor.model';
-import { IVendorRegisterInput, IVendorUpdateInput } from '../dto/Vendor.dto';
+import { IVendorRegisterInput, IVendorUpdateInput, IVendorLogin } from '../dto/Vendor.dto';
 import { GenCode, GenSlug } from '../utility/VendorUtility';
 import { sendConfirmationEmail } from '../utility/MailerUtility';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 /**
  * @description Vendor registration
@@ -131,3 +133,50 @@ export const UpdateVendorProfile = asyncHandler(
     }
   }
 );
+
+
+/**
+ * @description Vendor Login
+ * @method POST
+ * @route /api/vendors/login
+ * @access public
+ */
+export const vendorLogin = async (req: Request, res: Response) => {
+    try{
+      const { email, password } = <IVendorLogin> req.body;
+      if(email === "" || password === ""){
+        return res.status(400).json({
+          message: "Email And Password Is Required"
+        })
+      }
+      const vendor = await VendorModel.findOne({email: email});
+        if(vendor){
+        const verifyPass = await bcrypt.compare(password, vendor.password);
+        if(verifyPass){
+          const secret: any = process.env.JWT_SECRET;
+          const genToken = jwt.sign({vendor: vendor}, secret , {expiresIn: '1h'});
+          const fakePass: any = undefined
+          vendor.password = fakePass;
+          return res.status(200).json({
+            message: "User Found",
+            result: vendor,
+            token: genToken
+          });
+        }else{
+          return res.status(400).json({
+            message: "Incorrect Username Or Password"
+          });
+        }
+      }else{
+        return res.status(400).json({
+          message: "No Such User"
+        })
+      }
+    }catch(error){
+      res.status(400).json({
+        message: "Error Logging In",
+        Error: error
+      })
+    }
+  };
+

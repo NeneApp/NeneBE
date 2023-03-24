@@ -21,3 +21,8 @@ export interface IVendorUpdateInput {
 export interface IVendorPayload {
   _id: string;
 }
+
+export interface IVendorLogin{
+  email: string;
+  password: string;
+}

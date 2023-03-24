@@ -73,6 +73,6 @@ export const verifyBuyer = asyncHandler(async (req: Request, res: Response) => {
   await confimBuyer.save();
 
   res.status(200).json({
-    msg: "Verification Successful.You can now login in",
+    msg: "Verification Successful.You can now login",
   });
 });
