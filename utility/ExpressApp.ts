@@ -5,7 +5,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import { errorHandler, notFound } from '../middlewares';
 import hpp from 'hpp';
-import buyerRoute from '../routes/buyerLoginRoute';
+import router from '../routes/buyerLoginRoute';
 
 
 export default async (app: Application) => {
@@ -27,7 +27,7 @@ export default async (app: Application) => {
   });
 
   app.use('/api/vendors', VendorRoutes);
-  app.use('/api/buyers', buyerRoute)
+  app.use('/api/buyers', router)
 
   // Error handler
   app.use(notFound);

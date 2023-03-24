@@ -1,17 +1,19 @@
 import { Request, Response } from "express";
+import asyncHandler from 'express-async-handler';
 import { BuyerModel } from "../models";
 import { validationResult } from 'express-validator';
 import randomstring from "randomstring";
 import * as bcrypt from "bcryptjs"
 import { signToken } from "../utility";
 import axios from "axios";
+import { IBuyerUpdateInput } from "../dto/Buyer.dto";
 
   /*
    *@description Login into Buyer account
    *@static
    *@param  {Object} req - request
    *@param  {object} res - response
-   *@returns {object} - status code, message and data
+   *@returns {object} token, details
    */
 
 export async function buyerLogin(req: Request, res: Response) {
@@ -52,11 +54,14 @@ export async function buyerLogin(req: Request, res: Response) {
     const TokenData = {
       id: user?._id,
       email: user?.email,
-      username: user?.username
+      firstname: user?.firstName,
+      lastname: user?.lastName,
     };
 
     const responseObject: Object = {
-      username: user?.username,
+      firstname: user?.firstName,
+      lastname: user?.lastName,
+      gender: user?.gender,
       email: user?.email,
       _id: user?._id
     };
@@ -133,7 +138,7 @@ export async function googleAuth(req: Request, res: Response) {
         full_name: google.data.name != null ? google.data.name : "",
         phone: google.data.phone != null ? google.data.phone : "",
         avartar: google.data.picture != null ? google.data.picture : "",
-        status: 'active',
+        status: 'Active',
         password: code,
       };
 
@@ -170,3 +175,29 @@ export async function googleAuth(req: Request, res: Response) {
  * @route /api/buyers/confirm/:confirmationCode
  * @access private/vendors
  */
+export const updateBuyerProfile = asyncHandler(
+  async (req: Request, res: Response) => {
+    const buyer = await BuyerModel.findById(req.user._id);
+    const { firstName, lastName, phone, image, address } = <
+      IBuyerUpdateInput
+    >req.body;
+
+    if (buyer) {
+      buyer.firstName = firstName || buyer.firstName;
+      buyer.lastName = lastName || buyer.lastName;
+      buyer.image = image || buyer.image;
+      buyer.address = address || buyer.address;
+      buyer.phone = phone || buyer.phone;
+
+      const updatedBuyer = await buyer.save();
+
+      res.status(200).send({
+        msg: 'Profile updated successfully',
+        updatedBuyer,
+      });
+    } else {
+      res.status(404);
+      throw new Error('Buyer not found');
+    }
+  }
+);

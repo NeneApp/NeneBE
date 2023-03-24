@@ -1,8 +1,7 @@
-import BuyerModel, {IBuyerLogin} from "./buyer.model";
+import BuyerModel from "./buyer.model";
 
 export {
-    BuyerModel,
-    IBuyerLogin
+    BuyerModel
 }
 
 export * from './Vendor.model';
