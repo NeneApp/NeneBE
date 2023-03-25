@@ -5,4 +5,11 @@ export interface IBuyerRegisterInput {
   email: string;
 }
 
+export interface IBuyerUpdateInput {
+  firstName?: string;
+  lastName?: string;
+  // image?: string;
+  phone?: string;
+  address?: string;
+}
 

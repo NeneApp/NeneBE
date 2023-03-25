@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import BuyerModel from "../models/Buyer.model";
+import { BuyerModel } from "../models";
 import { IBuyerRegisterInput } from "../dto/Buyer.dto";
 import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
