@@ -3,6 +3,7 @@ import {
   RegisterVendor,
   UpdateVendorProfile,
   verifyVendor,
+  vendorLogin
 } from '../controllers/Vendor.controller';
 import { Authenticate } from '../middlewares';
 
@@ -12,5 +13,6 @@ router.post('/register', RegisterVendor);
 router.get('/confirm/:confirmationCode', verifyVendor);
 
 router.put('/profile', Authenticate, UpdateVendorProfile);
+router.post('/login', vendorLogin)
 
 export default router;
