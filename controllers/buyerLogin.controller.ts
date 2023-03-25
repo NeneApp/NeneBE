@@ -177,19 +177,23 @@ export async function googleAuth(req: Request, res: Response) {
  */
 export const updateBuyerProfile = asyncHandler(
   async (req: Request, res: Response) => {
+    console.log(req.user.id);        
     const buyer = await BuyerModel.findById(req.user._id);
-    const { firstName, lastName, phone, image, address } = <
+    console.log(buyer);
+    
+    const { firstName, lastName, phone, address } = <
       IBuyerUpdateInput
     >req.body;
 
     if (buyer) {
       buyer.firstName = firstName || buyer.firstName;
       buyer.lastName = lastName || buyer.lastName;
-      buyer.image = image || buyer.image;
+      // buyer.image = image || buyer.image;
       buyer.address = address || buyer.address;
       buyer.phone = phone || buyer.phone;
 
       const updatedBuyer = await buyer.save();
+      console.log(updatedBuyer);  
 
       res.status(200).send({
         msg: 'Profile updated successfully',

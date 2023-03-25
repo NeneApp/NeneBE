@@ -8,7 +8,8 @@ export interface IBuyerRegisterInput {
 export interface IBuyerUpdateInput {
   firstName?: string;
   lastName?: string;
-  image?: string;
+  // image?: string;
   phone?: string;
   address?: string;
 }
+

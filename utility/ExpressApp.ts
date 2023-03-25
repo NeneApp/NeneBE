@@ -1,12 +1,11 @@
 import express, { Application, Request, Response } from 'express';
 import VendorRoutes from '../routes/Vendor.route';
+import BuyerRoutes from '../routes/Buyer.route';
 import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import { errorHandler, notFound } from '../middlewares';
 import hpp from 'hpp';
-import router from '../routes/buyerLoginRoute';
-
 
 export default async (app: Application) => {
   app.use(express.json());
@@ -27,7 +26,7 @@ export default async (app: Application) => {
   });
 
   app.use('/api/vendors', VendorRoutes);
-  app.use('/api/buyers', router)
+  app.use('/api/buyers', BuyerRoutes);
 
   // Error handler
   app.use(notFound);
