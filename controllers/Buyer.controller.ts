@@ -19,7 +19,7 @@ export const RegisterBuyer = async (req: Request, res: Response) => {
     );
 
     // check if buyer already exists in the database
-    const existUser = await BuyerModel.findOne({ email });
+    const existUser = await BuyerModel.findOne({ email: email.toLowerCase() });
     if (existUser) {
       return res.status(400).json({ msg: "User already exists" });
     }
@@ -29,18 +29,18 @@ export const RegisterBuyer = async (req: Request, res: Response) => {
       firstName,
       lastName,
       password,
-      email,
+      email: email.toLowerCase(),
       confirmationCode: await GenCode(),
     });
 
     //send confirmation code to buyer's email
     const name = `${buyer.firstName} ${buyer.lastName}`;
-    const userType = 'buyers'
+    const userType = "buyers";
     let ress = await sendConfirmationEmail(
       name,
       buyer?.email,
       buyer?.confirmationCode,
-      userType,
+      userType
     );
 
     if (ress !== null) {
@@ -57,6 +57,12 @@ export const RegisterBuyer = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @description Verify Buyer account
+ * @method GET
+ * @route /api/buyers/confirm/:confirmationCode
+ * @access public
+ */
 export const verifyBuyer = asyncHandler(async (req: Request, res: Response) => {
   const { confirmationCode } = req.params;
 
