@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
 import dotenv from 'dotenv';
+import { Buffer } from 'node:buffer';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const transport = nodemailer.createTransport({
@@ -31,6 +32,27 @@ export const sendConfirmationEmail = async (
           <a href=${process.env.BASE_URL}/api/${userType}/confirm/${confirmationCode}> Click here</a>`,
     });
   } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+
+export const sendRestPasswordEmail = async (
+  name: string,
+  email: string
+) => {
+  try{
+    const encodeEmail = Buffer.from(email, 'base64').toString();
+    return transport.sendMail({
+      from: process.env.AUTH_EMAIL,
+      to: email,
+      subject: 'Reset Password',
+      html: `<h1> Password Reset</h1>
+          <h2>Hello ${name}</h2>
+          <p>Kindly click on the link below to restet your password if forgotten</p>
+          <a href=${process.env.BASE_URL}/api/${encodeEmail}> Reset Password </a>`
+    });
+  }catch(error: any){
     throw new Error(error.message);
   }
 };

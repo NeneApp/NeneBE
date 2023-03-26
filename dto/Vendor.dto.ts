@@ -26,3 +26,7 @@ export interface IVendorLogin{
   email: string;
   password: string;
 }
+
+export interface IVendorResetPassword{
+  email: string;
+}
