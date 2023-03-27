@@ -1,11 +1,15 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import VendorModel from '../models/Vendor.model';
-import { IVendorRegisterInput, IVendorUpdateInput, IVendorLogin } from '../dto/Vendor.dto';
+import {
+  IVendorRegisterInput,
+  IVendorUpdateInput,
+  IVendorLogin,
+} from '../dto/Vendor.dto';
 import { GenCode, GenSlug } from '../utility/VendorUtility';
 import { sendConfirmationEmail } from '../utility/MailerUtility';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { signToken } from '../utility';
 
 /**
  * @description Vendor registration
@@ -13,7 +17,10 @@ import jwt from 'jsonwebtoken';
  * @route /api/vendors=
  * @access public
  */
-export const RegisterVendor = async (req: Request, res: Response) => {
+export const RegisterVendor = async (
+  req: Request<{}, {}, IVendorRegisterInput['body']>,
+  res: Response
+) => {
   try {
     const {
       firstName,
@@ -21,10 +28,9 @@ export const RegisterVendor = async (req: Request, res: Response) => {
       password,
       email,
       businessName,
-      image,
       phone,
       address,
-    } = <IVendorRegisterInput>req.body;
+    } = req.body;
 
     const existUser = await VendorModel.findOne({ email });
 
@@ -40,7 +46,6 @@ export const RegisterVendor = async (req: Request, res: Response) => {
       email,
       businessName,
       slug: GenSlug(businessName),
-      image,
       address,
       confirmationCode: await GenCode(),
     });
@@ -51,7 +56,7 @@ export const RegisterVendor = async (req: Request, res: Response) => {
       name,
       vendor?.email,
       vendor?.confirmationCode,
-      userType,
+      userType
     );
 
     if (ress !== null) {
@@ -63,8 +68,7 @@ export const RegisterVendor = async (req: Request, res: Response) => {
       throw new Error('Something went wrong! Please try again');
     }
   } catch (error: any) {
-    res.status(400);
-    throw new Error(error);
+    res.status(409).json({ errMsg: error.message });
   }
 };
 
@@ -95,6 +99,56 @@ export const verifyVendor = asyncHandler(
     });
   }
 );
+
+/**
+ * @description Vendor Login
+ * @method POST
+ * @route /api/vendors/login
+ * @access public
+ */
+export const VendorLogin = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = <IVendorLogin>req.body;
+
+    const vendor = await VendorModel.findOne({ email });
+
+    if (!vendor) {
+      res.status(400);
+      throw new Error('Vendor not found');
+    }
+
+    const isMatch = await bcrypt.compare(password, vendor.password);
+
+    if (!isMatch) {
+      // res.status(400);
+      // throw new Error('Invalid credentials');
+      return res.status(400).json({message:'Invalid credentials'});
+    }
+
+    if (vendor.status !== 'Active') {
+      return res
+        .status(400)
+        .json({message:'Please activate your account by confriming your email address'});
+    }
+  
+    res.status(200).json({
+      _id: vendor._id,
+      firstName: vendor.firstName,
+      lastName: vendor.lastName,git 
+      businessName: vendor.businessName,
+      email: vendor.email,
+      address: vendor.address,
+      slug: vendor.slug,
+      role: vendor.role,
+      image: vendor.image,
+      phone: vendor.phone,
+      token: await signToken({ id: vendor._id, role: vendor.role }),
+    });
+  } catch (error: any) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+};
 
 /**
  * @description Update Vendor Profile
@@ -134,49 +188,42 @@ export const UpdateVendorProfile = asyncHandler(
   }
 );
 
+// export const vendorLogin = async (req: Request, res: Response) => {
+//     try{
+//       const { email, password } = <IVendorLogin> req.body;
+//       if(email === "" || password === ""){
+//         return res.status(400).json({
+//           message: "Email And Password Is Required"
+//         })
+//       }
+//       const vendor = await VendorModel.findOne({email: email});
+//         if(vendor){
+//         const verifyPass = await bcrypt.compare(password, vendor.password);
+//         if(verifyPass){
+//           const secret: any = process.env.JWT_SECRET;
+//           const genToken = jwt.sign({vendor: vendor}, secret , {expiresIn: '1h'});
+//           const fakePass: any = undefined
+//           vendor.password = fakePass;
 
-/**
- * @description Vendor Login
- * @method POST
- * @route /api/vendors/login
- * @access public
- */
-export const vendorLogin = async (req: Request, res: Response) => {
-    try{
-      const { email, password } = <IVendorLogin> req.body;
-      if(email === "" || password === ""){
-        return res.status(400).json({
-          message: "Email And Password Is Required"
-        })
-      }
-      const vendor = await VendorModel.findOne({email: email});
-        if(vendor){
-        const verifyPass = await bcrypt.compare(password, vendor.password);
-        if(verifyPass){
-          const secret: any = process.env.JWT_SECRET;
-          const genToken = jwt.sign({vendor: vendor}, secret , {expiresIn: '1h'});
-          const fakePass: any = undefined
-          vendor.password = fakePass;
-          return res.status(200).json({
-            message: "User Found",
-            result: vendor,
-            token: genToken
-          });
-        }else{
-          return res.status(400).json({
-            message: "Incorrect Username Or Password"
-          });
-        }
-      }else{
-        return res.status(400).json({
-          message: "No Such User"
-        })
-      }
-    }catch(error){
-      res.status(400).json({
-        message: "Error Logging In",
-        Error: error
-      })
-    }
-  };
-
+//           return res.status(200).json({
+//             message: "User Found",
+//             result: vendor,
+//             token: genToken
+//           });
+//         }else{
+//           return res.status(400).json({
+//             message: "Incorrect Username Or Password"
+//           });
+//         }
+//       }else{
+//         return res.status(400).json({
+//           message: "No Such User"
+//         })
+//       }
+//     }catch(error){
+//       res.status(400).json({
+//         message: "Error Logging In",
+//         Error: error
+//       })
+//     }
+//   };

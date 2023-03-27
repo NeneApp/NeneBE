@@ -1,7 +1,4 @@
-import BuyerModel from "./buyer.model";
-
-export {
-    BuyerModel
-}
-
+import BuyerModel from './buyer.model';
 export * from './Vendor.model';
+
+export { BuyerModel };

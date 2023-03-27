@@ -1,12 +1,11 @@
 import express from 'express';
 import log from './utility/logger';
-import "dotenv/config";
+import 'dotenv/config';
 import ExpressApp from './utility/ExpressApp';
 import connectDB from './config/db';
 import dotenv from 'dotenv';
 
 const StartServer = async () => {
-  
   const app = express();
   dotenv.config();
 

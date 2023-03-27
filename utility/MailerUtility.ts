@@ -9,8 +9,8 @@ const transport = nodemailer.createTransport({
   port: 587,
   secure: true,
   auth: {
-    user: process.env.AUTH_EMAIL,
-    pass: process.env.AUTH_PASS,
+    user: 'adeoyin2828@gmail.com',
+    pass: 'ahbzhfozwlwvhfqd',
   },
 });
 
@@ -18,7 +18,7 @@ export const sendConfirmationEmail = async (
   name: string,
   email: string,
   confirmationCode: string,
-  userType: string,
+  userType: string
 ) => {
   try {
     return await transport.sendMail({

@@ -88,6 +88,8 @@ VendorSchema.pre('save', async function (next) {
   }
 });
 
+
+
 const VendorModel = mongoose.model<VendorDoc>('Vendor', VendorSchema);
 
 export default VendorModel;

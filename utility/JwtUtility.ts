@@ -19,7 +19,8 @@ export const ValidateJwt = async (req: Request) => {
 };
 
 
-const genToken = async (data: any) => {
+
+ const genToken = async (data: any) => {
   let token;
   // generate new jwt token for registeration
   token = jwt.sign(
@@ -34,7 +35,7 @@ const genToken = async (data: any) => {
   return token;
 };
 
-export const signToken = async (data: any) => {
+ export const signToken = async (data: any) => {
   const token = await genToken({
     ...data,
   });
