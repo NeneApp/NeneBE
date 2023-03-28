@@ -52,11 +52,17 @@ export const RegisterVendor = async (
 
     const name = `${vendor.firstName} ${vendor.lastName}`;
     const userType = 'vendors';
+    const message = `<h1>Email Confirmation</h1>
+    <h2>Hello ${name}</h2>
+    <p>Verify your email address to complete the signup and login to your account</p>
+    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
+    const subject = 'Please confirm your account';
+
     let ress = await sendConfirmationEmail(
       name,
       vendor?.email,
-      vendor?.confirmationCode,
-      userType
+      subject,
+      message
     );
 
     if (ress !== null) {
