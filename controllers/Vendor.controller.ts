@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import VendorModel from '../models/Vendor.model';
-import { IVendorRegisterInput, IVendorUpdateInput, IVendorLogin, IVendorResetPassword } from '../dto/Vendor.dto';
+import { IVendorRegisterInput, IVendorUpdateInput, IVendorLogin } from '../dto/Vendor.dto';
 import { GenCode, GenSlug } from '../utility/VendorUtility';
 import { sendConfirmationEmail, sendRestPasswordEmail } from '../utility/MailerUtility';
 import bcrypt from 'bcrypt';
@@ -14,7 +14,10 @@ import { signToken } from '../utility/JwtUtility';
  * @route /api/vendors=
  * @access public
  */
-export const RegisterVendor = async (req: Request, res: Response) => {
+export const RegisterVendor = async (
+  req: Request<{}, {}, IVendorRegisterInput['body']>,
+  res: Response
+) => {
   try {
     const {
       firstName,
@@ -22,10 +25,9 @@ export const RegisterVendor = async (req: Request, res: Response) => {
       password,
       email,
       businessName,
-      image,
       phone,
       address,
-    } = <IVendorRegisterInput>req.body;
+    } = req.body;
 
     const existUser = await VendorModel.findOne({ email });
 
@@ -41,18 +43,23 @@ export const RegisterVendor = async (req: Request, res: Response) => {
       email,
       businessName,
       slug: GenSlug(businessName),
-      image,
       address,
       confirmationCode: await GenCode(),
     });
 
     const name = `${vendor.firstName} ${vendor.lastName}`;
     const userType = 'vendors';
+    const message = `<h1>Email Confirmation</h1>
+    <h2>Hello ${name}</h2>
+    <p>Verify your email address to complete the signup and login to your account</p>
+    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
+    const subject = 'Please confirm your account';
+
     let ress = await sendConfirmationEmail(
       name,
       vendor?.email,
-      vendor?.confirmationCode,
-      userType,
+      subject,
+      message
     );
 
     if (ress !== null) {
@@ -60,12 +67,12 @@ export const RegisterVendor = async (req: Request, res: Response) => {
         msg: 'User created successfully! Please check your mail',
       });
     } else {
-      res.status(400);
-      throw new Error('Something went wrong! Please try again');
+      return res
+        .status(400)
+        .json({ message: 'Something went wrong! Please try again' });
     }
   } catch (error: any) {
-    res.status(400);
-    throw new Error(error);
+    return res.status(400).json({ message: error.message });
   }
 };
 
@@ -135,7 +142,6 @@ export const UpdateVendorProfile = asyncHandler(
   }
 );
 
-
 /**
  * @description Vendor Login
  * @method POST
@@ -143,30 +149,30 @@ export const UpdateVendorProfile = asyncHandler(
  * @access public
  */
 export const vendorLogin = async (req: Request, res: Response) => {
-  try{
-    const { email, password } = <IVendorLogin> req.body;
+    try{
+      const { email, password } = <IVendorLogin> req.body;
 
-    const vendor: any = await VendorModel.findOne({ email });
+      const vendor: any = await VendorModel.findOne({email: email});
 
-    if(!vendor){
-      res.status(400).json({
-        message: "Vendor Not Found"
-      });
-    }
+      if(!vendor) {
+        res.status(400).json({
+          message: "Vendor Not Found"
+        });
+      }
 
-    const verifyPass = await bcrypt.compare(password, vendor.password);
+      const verifyPass = await bcrypt.compare(password, vendor.password);
 
-    if(!verifyPass){
-      res.status(400).json({
-        message: "Invalid Credentials"
-      });
-    }
-     
-    if(vendor.status !== 'Active' && vendor.confirmationCode === ''){
-      res.status(400).json({
-        message: "Please Activate Your Account By Confirming Your Email Address"
-      });
-    }else{
+      if(!verifyPass) {
+        res.status(400).json({
+          message: "Invalid Credentials"
+        });
+      }
+      if(vendor.status !== 'Active'){
+        return res.status(400).json({
+          message: "Please Activate Your Account By Confirming Your Email Address"
+        })
+      }
+      
       res.status(200).json({
         _id: vendor.id,
         firstName: vendor.firstName,
@@ -178,86 +184,14 @@ export const vendorLogin = async (req: Request, res: Response) => {
         role: vendor.role,
         image: vendor.image,
         phone: vendor.phone,
-        token: await signToken({id: vendor._id, role: vendor.role})//, vendor.role
+        token: await signToken({vendor: vendor._id, role: vendor.role})
       });
-    }
 
-  }catch(error){
-    res.status(400).json({
-      message: "Error Logging In",
-      Error: error
-    })
-  }
-};
-
-/**
- * @description Vendor Forgot Password
- * @method POST
- * @route /api/vendors/forgotpassword
- * @access public
- */
-
-export const forgotPassword = async (req: Request, res: Response) => {
-  try{
-    const email = req.body.email
-    const Vendor: any = await VendorModel.findOne({email});
-    const name = `${Vendor.firstName} ${Vendor.lastName}`
-    if(Vendor){
-      let sendMail = await sendRestPasswordEmail(
-        name, 
-        Vendor.email
-      );
-      if(sendMail !== null){
-        return res.status(200).json({
-            message: "Reset Password Mail Sent Successfully"
-        });
-      }else{
-        return res.status(400).json({
-            message: "Something Went Wrong. Please, Try Again."
-        });
-      }
-    }else{
-        return res.status(400).json({
-            message: "Email Does Not Exist."
-        });
-    }
-  }catch(error){
-    console.log(error)
-    return res.status(400).json({
-      message: "Error Sending Mail"
-    });
-  }
-};
-
-/**
- * @description Vendor Reset Password
- * @method POST
- * @route /api/vendors/resetpassword
- * @access public
- */
-
-export const resetPassword = async (req: Request, res: Response) => {
-  try{
-    const { email } = req.params;
-    const { password, confirmPassword } = <IVendorResetPassword> req.body;
-    const decodeEmail = Buffer.from(email, "base64").toString("utf-8");
-    const checkEmail : any = await VendorModel.findOne({ decodeEmail });
-    if(password !== confirmPassword){
+    }catch(error){
       res.status(400).json({
-        message: "Passwords Do Not Match"
-      });
-    }else{
-      const newPass = bcrypt.hash(password, 12)
-      checkEmail.password = newPass;
-      const updatedPass = checkEmail.save();
-      res.status(200).json({
-        message: "Password Reset Successful",
-        user: checkEmail
-      });
+        message: "Error Logging In",
+        Error: error
+      })
     }
-  }catch(error){
-    res.status(400).json({
-      message: "Error Resting Password"
-    })
-  }
-}
+  };
+
