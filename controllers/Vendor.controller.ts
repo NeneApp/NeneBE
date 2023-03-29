@@ -5,7 +5,8 @@ import { IVendorRegisterInput, IVendorUpdateInput, IVendorLogin, IVendorResetPas
 import { GenCode, GenSlug } from '../utility/VendorUtility';
 import { sendConfirmationEmail, sendRestPasswordEmail } from '../utility/MailerUtility';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { Buffer } from 'node:buffer';
+import { signToken } from '../utility/JwtUtility';
 
 /**
  * @description Vendor registration
@@ -144,34 +145,43 @@ export const UpdateVendorProfile = asyncHandler(
 export const vendorLogin = async (req: Request, res: Response) => {
   try{
     const { email, password } = <IVendorLogin> req.body;
-    if(email === "" || password === ""){
-      return res.status(400).json({
-        message: "Email And Password Is Required"
-      })
+
+    const vendor: any = await VendorModel.findOne({ email });
+
+    if(!vendor){
+      res.status(400).json({
+        message: "Vendor Not Found"
+      });
     }
-    const vendor = await VendorModel.findOne({ email });
-      if(vendor){
-      const verifyPass = await bcrypt.compare(password, vendor.password);
-      if(verifyPass){
-        const secret: any = process.env.JWT_SECRET;
-        const genToken = jwt.sign({vendor: vendor}, secret , {expiresIn: '1h'});
-        const fakePass: any = undefined
-        vendor.password = fakePass;
-        return res.status(200).json({
-          message: "User Found",
-          result: vendor,
-          token: genToken
-        });
-      }else{
-        return res.status(400).json({
-          message: "Incorrect Username Or Password"
-        });
-      }
+
+    const verifyPass = await bcrypt.compare(password, vendor.password);
+
+    if(!verifyPass){
+      res.status(400).json({
+        message: "Invalid Credentials"
+      });
+    }
+     
+    if(vendor.status !== 'Active' && vendor.confirmationCode === ''){
+      res.status(400).json({
+        message: "Please Activate Your Account By Confirming Your Email Address"
+      });
     }else{
-      return res.status(400).json({
-        message: "No Such User"
-      })
+      res.status(200).json({
+        _id: vendor.id,
+        firstName: vendor.firstName,
+        lastName: vendor.lastName,
+        businessName: vendor.businessName,
+        email: vendor.email,
+        address: vendor.address,
+        slug: vendor.slug,
+        role: vendor.role,
+        image: vendor.image,
+        phone: vendor.phone,
+        token: await signToken({id: vendor._id, role: vendor.role})//, vendor.role
+      });
     }
+
   }catch(error){
     res.status(400).json({
       message: "Error Logging In",
@@ -187,35 +197,67 @@ export const vendorLogin = async (req: Request, res: Response) => {
  * @access public
  */
 
-// export const forgotPassword = async (req: Request, res: Response) => {
-//   try{
-//     const email = <IVendorResetPassword> req.body;
-//     console.log("1st here")
-//     const Vendor: string = await VendorModel.findOne({email});
-//     console.log("im here")
-//     const name = `${Vendor.firstName} ${Vendor.lastName}`
-//     if(Vendor){
-//       let sendMail = await sendRestPasswordEmail(
-//         name, 
-//         Vendor.email
-//       );
-//       if(sendMail !== null){
-//         return res.status(200).json({
-//             message: "Reset Password Mail Sent Successfully"
-//         });
-//       }else{
-//         return res.status(400).json({
-//             message: "Something Went Wrong, Please, Try Again"
-//         });
-//       }
-//     }else{
-//         return res.status(400).json({
-//             message: "Email Does Not Exist"
-//         });
-//     }
-//   }catch(error){
-//     return res.status(400).json({
-//         message: "Error Sending Mail"
-//     });
-//   }
-// };
+export const forgotPassword = async (req: Request, res: Response) => {
+  try{
+    const email = req.body.email
+    const Vendor: any = await VendorModel.findOne({email});
+    const name = `${Vendor.firstName} ${Vendor.lastName}`
+    if(Vendor){
+      let sendMail = await sendRestPasswordEmail(
+        name, 
+        Vendor.email
+      );
+      if(sendMail !== null){
+        return res.status(200).json({
+            message: "Reset Password Mail Sent Successfully"
+        });
+      }else{
+        return res.status(400).json({
+            message: "Something Went Wrong. Please, Try Again."
+        });
+      }
+    }else{
+        return res.status(400).json({
+            message: "Email Does Not Exist."
+        });
+    }
+  }catch(error){
+    console.log(error)
+    return res.status(400).json({
+      message: "Error Sending Mail"
+    });
+  }
+};
+
+/**
+ * @description Vendor Reset Password
+ * @method POST
+ * @route /api/vendors/resetpassword
+ * @access public
+ */
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try{
+    const { email } = req.params;
+    const { password, confirmPassword } = <IVendorResetPassword> req.body;
+    const decodeEmail = Buffer.from(email, "base64").toString("utf-8");
+    const checkEmail : any = await VendorModel.findOne({ decodeEmail });
+    if(password !== confirmPassword){
+      res.status(400).json({
+        message: "Passwords Do Not Match"
+      });
+    }else{
+      const newPass = bcrypt.hash(password, 12)
+      checkEmail.password = newPass;
+      const updatedPass = checkEmail.save();
+      res.status(200).json({
+        message: "Password Reset Successful",
+        user: checkEmail
+      });
+    }
+  }catch(error){
+    res.status(400).json({
+      message: "Error Resting Password"
+    })
+  }
+}

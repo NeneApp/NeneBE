@@ -8,7 +8,7 @@ import {
   googleAuth,
   updateBuyerProfile
 } from "../controllers/buyerLogin.controller"
-import {check} from 'express-validator'
+import {check} from 'express-validator';
 import { Authenticate } from '../middlewares';
 
 const router = express.Router();

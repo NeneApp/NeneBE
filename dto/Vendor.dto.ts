@@ -28,5 +28,6 @@ export interface IVendorLogin{
 }
 
 export interface IVendorResetPassword{
-  email: string;
+  password: string;
+  confirmPassword: string;
 }
