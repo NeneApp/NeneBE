@@ -3,10 +3,12 @@ import asyncHandler from 'express-async-handler';
 import VendorModel from '../models/Vendor.model';
 import { IVendorRegisterInput, IVendorUpdateInput, IVendorLogin } from '../dto/Vendor.dto';
 import { GenCode, GenSlug } from '../utility/VendorUtility';
-import { sendConfirmationEmail, sendRestPasswordEmail } from '../utility/MailerUtility';
+import { sendConfirmationEmail} from '../utility/MailerUtility';
 import bcrypt from 'bcrypt';
 import { Buffer } from 'node:buffer';
 import { signToken } from '../utility/JwtUtility';
+import axios from "axios";
+import randomstring from "randomstring";
 
 /**
  * @description Vendor registration
@@ -195,3 +197,77 @@ export const vendorLogin = async (req: Request, res: Response) => {
     }
   };
 
+
+  /**
+ * @description Vendor Google Login
+ * @method POST
+ * @route /api/vendors/google
+ * @access public
+ */
+
+export async function googleAuth(req: Request, res: Response) {
+  const { token } = req.body;
+  let user;
+
+  try {
+    const google = await axios.get(
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
+    );
+
+    user = await VendorModel.findOne({ email: google.data.email });
+
+    if (user) {
+      const TokenData = {
+        id: user._id,
+        email: user.email,
+      };
+
+      //  Generate Token
+      const token = await signToken(TokenData);
+
+      const userData = {
+        user,
+        token,
+      };
+
+      res.status(200).json({ message: "Login successfully", userData });
+    } else {
+      const code = randomstring.generate({
+        length: 15,
+        charset: "numeric",
+      });
+
+      const userObject = {
+        email: google.data.email != null ? google.data.email : "",
+        full_name: google.data.name != null ? google.data.name : "",
+        phone: google.data.phone != null ? google.data.phone : "",
+        avartar: google.data.picture != null ? google.data.picture : "",
+        status: 'Active',
+        password: code,
+      };
+
+      user = await VendorModel.create(userObject);
+      const TokenData = {
+        id: user._id,
+        email: user.email,
+      };
+
+      //  Generate Token
+      const token = await signToken(TokenData);
+
+      const userData = {
+        user,
+        token,
+      };
+
+      if (user) {
+        res.status(201).json({ 
+          message: "Account created, kindly proceed", userData 
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error", error });
+  }
+}

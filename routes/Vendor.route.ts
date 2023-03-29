@@ -3,7 +3,8 @@ import {
   RegisterVendor,
   UpdateVendorProfile,
   verifyVendor,
-  vendorLogin
+  vendorLogin,
+  googleAuth
 } from '../controllers/Vendor.controller';
 import { Authenticate } from '../middlewares';
 
@@ -13,6 +14,7 @@ router.post('/register', validate(VendorRegisterInputSchema), RegisterVendor);
 router.get('/confirm/:confirmationCode', verifyVendor);
 
 router.put('/profile', Authenticate, UpdateVendorProfile);
-router.post('/login', vendorLogin)
+router.post('/login', vendorLogin);
+router.post('/google', googleAuth);
 
 export default router;
