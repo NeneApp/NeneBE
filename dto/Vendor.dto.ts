@@ -46,3 +46,7 @@ export interface IVendorLogin{
 }
 
 export type IVendorRegisterInput = TypeOf<typeof VendorRegisterInputSchema>;
+
+export interface IVendorResendConfirm{
+  email: string;
+}
