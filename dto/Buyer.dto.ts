@@ -15,6 +15,10 @@ export interface IBuyerUpdateInput {
   address?: string;
 }
 
+export interface IBuyerResetPassword{
+  password: string;
+  confirmPassword: string;
+}
 export const buyerLoginInputSchema = object({
   body: object({
     email: string({

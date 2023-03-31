@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
 import dotenv from 'dotenv';
-import { Buffer } from 'node:buffer';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const transport = nodemailer.createTransport({
@@ -31,5 +30,4 @@ export const sendConfirmationEmail = async (
   } catch (error: any) {
     console.log(error.message);
   }
-
 
