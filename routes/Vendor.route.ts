@@ -12,7 +12,7 @@ import { Authenticate } from '../middlewares';
 
 const router = express.Router();
 
-router.post('/register', RegisterVendor); //, validate(VendorRegisterInputSchema)
+router.post('/register', validate(VendorRegisterInputSchema), RegisterVendor); 
 router.get('/confirm/:confirmationCode', verifyVendor);
 
 router.put('/profile', Authenticate, UpdateVendorProfile);

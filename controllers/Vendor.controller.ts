@@ -358,8 +358,7 @@ export const resetPassword = async(req: Request, res: Response) => {
     user.password = newpassword;
     await user.save();
     return res.status(200).json({
-      message: "Password Reset Successfully!",
-      result: user
+      message: "Password Reset Successfully!"
     })
   }catch(error){
     console.log(error);
