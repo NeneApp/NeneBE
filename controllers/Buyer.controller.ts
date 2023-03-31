@@ -105,7 +105,7 @@ export const verifyBuyer = asyncHandler(async (req: Request, res: Response) => {
     if (!email || !password) {
       res.status(401).send({ message: "Kindly fill all required information" });
     }
-    // find the email or username and check if they exist. 
+    // find the email and check if they exist. 
     const user = await BuyerModel.findOne({ email }).select("+password").exec();
   
     if (!user) {
@@ -141,11 +141,10 @@ export const verifyBuyer = asyncHandler(async (req: Request, res: Response) => {
   }
 
   catch(error: any) {
-    console.log(error);
-    
+    console.log(error)
     return res.status(500).json({
       message: "An Error Occured",
-      error: error
+      error: error.error
     });
   }
 }
@@ -232,7 +231,7 @@ export async function googleAuth(req: Request, res: Response) {
  * @description Update Buyer Profile
  * @method GET
  * @route /api/buyers/confirm/:confirmationCode
- * @access private/vendors
+ * @access private/buyers
  */
 export const updateBuyerProfile = asyncHandler(
   async (req: Request, res: Response) => {
@@ -256,8 +255,7 @@ export const updateBuyerProfile = asyncHandler(
         updatedBuyer,
       });
     } else {
-      res.status(404);
-      throw new Error('Buyer not found');
+      res.status(404).send('Buyer not found')
     }
   }
 );

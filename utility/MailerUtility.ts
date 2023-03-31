@@ -31,24 +31,5 @@ export const sendConfirmationEmail = async (
   } catch (error: any) {
     console.log(error.message);
   }
-};
 
-
-export const sendResetPasswordEmail = async (
-  name: string,
-  email: string,
-  subject: string,
-  message: string
-) => {
-  try {
-    return await transport.sendMail({
-      from: process.env.AUTH_EMAIL,
-      to: email,
-      subject,
-      html: message,
-    });
-  } catch (error: any) {
-    console.log(error.message);
-  }
-};
 

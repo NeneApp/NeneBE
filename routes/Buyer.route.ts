@@ -6,15 +6,15 @@ import {
   googleAuth,
   updateBuyerProfile
 } from '../controllers/Buyer.controller';
-import {check} from 'express-validator'
+import validate from '../middlewares/validateResource';
 import { Authenticate } from '../middlewares';
+import { buyerLoginInputSchema } from '../dto';
 
 const router = express.Router();
 
-
 router.post('/register', RegisterBuyer);
 router.get('/confirm/:confirmationCode', verifyBuyer);
-router.post('/login', buyerLogin);
+router.post('/login', validate(buyerLoginInputSchema), buyerLogin);
 router.post('/google', googleAuth);
 router.put('/update', Authenticate, updateBuyerProfile)
 
