@@ -4,10 +4,9 @@ import {
   UpdateVendorProfile,
   verifyVendor,
   vendorLogin,
+  googleAuth
 } from '../controllers/Vendor.controller';
 import { Authenticate } from '../middlewares';
-import validate from '../middlewares/validateResource';
-import { VendorRegisterInputSchema } from '../dto';
 
 const router = express.Router();
 
@@ -16,5 +15,6 @@ router.get('/confirm/:confirmationCode', verifyVendor);
 
 router.put('/profile', Authenticate, UpdateVendorProfile);
 router.post('/login', vendorLogin);
+router.post('/google', googleAuth);
 
 export default router;
