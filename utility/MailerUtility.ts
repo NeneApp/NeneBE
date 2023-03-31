@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
-import config from 'config';
 
 const transport = nodemailer.createTransport({
   service: 'gmail',
@@ -31,4 +30,4 @@ export const sendConfirmationEmail = async (
   } catch (error: any) {
     console.log(error.message);
   }
-};
+
