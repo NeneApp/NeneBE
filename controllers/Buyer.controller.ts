@@ -6,9 +6,10 @@ import * as bcrypt from "bcryptjs"
 import { signToken } from "../utility";
 import axios from "axios";
 import { IBuyerUpdateInput } from "../dto/Buyer.dto";
-import { IBuyerRegisterInput } from "../dto/Buyer.dto";
+import { IBuyerRegisterInput, IBuyerResetPassword } from "../dto/Buyer.dto";
 import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
+import jwt from 'jsonwebtoken';
 
 /**
  * @description Buyer registration
@@ -261,3 +262,100 @@ export const updateBuyerProfile = asyncHandler(
     }
   }
 );
+
+
+/**
+ * @description Buyer Forgot Password
+ * @method POST
+ * @route /api/buyers/forgotpassword
+ * @access public
+ */
+
+export const forgotPassword = async(req: Request, res: Response) => {
+  try{
+    const { email } = req.body
+    const checkEmail: any = await BuyerModel.findOne({ email })
+    if(!checkEmail){
+      return res.status(400).json({
+        message: "No User With This Email"
+      });
+    }
+
+    const secret = process.env.JWT_SECRET + checkEmail.password;
+    const payload = {
+      email: checkEmail.email,
+      id: checkEmail.id
+    }
+    const name = `${checkEmail.firstName} ${checkEmail.lastName}`;
+    const token = jwt.sign(payload, secret, {expiresIn: '5m'});
+    const link = `${process.env.BASE_URL}/reset-password/${checkEmail.id}/${token}`;
+    const message = `<h1>Reset Password</h1>
+    <h2>Hello ${name}</h2>
+    <p>Please Reset Your Password</p>
+    <a href=${process.env.BASE_URL}/reset-password/${checkEmail.id}/${token}> Click here</a>`;
+    const subject = 'Please Reset Your Password';
+
+    let ress = await sendConfirmationEmail(
+      name,
+      checkEmail.email,
+      subject,
+      message
+    );
+    if (ress !== null) {
+      return res.status(200).json({
+        message: 'Rest Password Link Sent successfully! Please check your mail',
+        reset_link: link
+      });
+    } else {
+      return res.status(400).json({ 
+        message: 'Something went wrong! Please try again' 
+      });
+    }
+  }catch(error){
+    console.log(error);
+    res.status(400).json({
+      message: "Error Sending Reset Password Email"
+    })
+  }
+}
+
+
+/**
+ * @description Buyer Reset Password
+ * @method POST
+ * @route /api/buyers/restpassword
+ * @access public
+ */
+
+export const resetPassword = async(req: Request, res: Response) => {
+  try{
+    const { id, token } = req.params;
+    const { password, confirmPassword } = <IBuyerResetPassword> req.body;
+    const user: any = await BuyerModel.findById(id).exec();
+    if(user === null){
+      return res.status(400).json({
+        message: "No User With This Id"
+      });
+    }
+    const secret = process.env.JWT_SECRET + user.password;
+    const payload = jwt.verify(token, secret);
+    if(confirmPassword !== password){
+      return res.status(400).json({
+        message: "Passwords Do Not Match"
+      });
+    }
+    const newpassword = await bcrypt.hash(password, 10);
+    console.log(newpassword)
+    user.password = newpassword;
+    await user.save();
+    return res.status(200).json({
+      message: "Password Reset Successfully!",
+      result: user
+    })
+  }catch(error){
+    console.log(error);
+    res.status(400).json({
+      message: "Error Reseting Password"
+    });
+  }
+}

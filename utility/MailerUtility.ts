@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
 import dotenv from 'dotenv';
-import { Buffer } from 'node:buffer';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const transport = nodemailer.createTransport({
@@ -32,23 +31,3 @@ export const sendConfirmationEmail = async (
     console.log(error.message);
   }
 };
-
-
-export const sendResetPasswordEmail = async (
-  name: string,
-  email: string,
-  subject: string,
-  message: string
-) => {
-  try {
-    return await transport.sendMail({
-      from: process.env.AUTH_EMAIL,
-      to: email,
-      subject,
-      html: message,
-    });
-  } catch (error: any) {
-    console.log(error.message);
-  }
-};
-

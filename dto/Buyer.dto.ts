@@ -13,3 +13,7 @@ export interface IBuyerUpdateInput {
   address?: string;
 }
 
+export interface IBuyerResetPassword{
+  password: string;
+  confirmPassword: string;
+}

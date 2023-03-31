@@ -4,9 +4,10 @@ import {
   verifyBuyer,
   buyerLogin,
   googleAuth,
-  updateBuyerProfile
+  updateBuyerProfile,
+  forgotPassword,
+  resetPassword
 } from '../controllers/Buyer.controller';
-import {check} from 'express-validator'
 import { Authenticate } from '../middlewares';
 
 const router = express.Router();
@@ -17,5 +18,7 @@ router.get('/confirm/:confirmationCode', verifyBuyer);
 router.post('/login', buyerLogin);
 router.post('/google', googleAuth);
 router.put('/update', Authenticate, updateBuyerProfile)
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password/:id/:token', resetPassword);
 
 export default router;
