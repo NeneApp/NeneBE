@@ -17,6 +17,7 @@ export const BuyerRegisterInputSchema = object({
   }),
 });
 
+
 export interface IBuyerUpdateInput {
   firstName?: string;
   lastName?: string;
@@ -24,9 +25,19 @@ export interface IBuyerUpdateInput {
   address?: string;
 }
 
-export type IBuyerRegisterInput = TypeOf<typeof BuyerRegisterInputSchema>;
-
 export interface IBuyerResendConfirm{
   email: string;
 }
 
+export const buyerLoginInputSchema = object({
+  body: object({
+    email: string({
+      required_error: 'Email is required',
+    }).email('Not a valid email address'),
+    password: string({
+      required_error: 'Password is required',
+    }).min(6, 'Password too short - should be atleast 8 characters'),
+  }),
+});
+
+export type IbuyerLoginInputSchema = TypeOf<typeof buyerLoginInputSchema>;

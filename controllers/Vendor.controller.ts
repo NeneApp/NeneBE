@@ -187,8 +187,7 @@ export const UpdateVendorProfile = asyncHandler(
         updatedVendor,
       });
     } else {
-      res.status(404);
-      throw new Error('Vendor not found');
+      res.status(404).send('Vendor not found');
     }
   }
 );

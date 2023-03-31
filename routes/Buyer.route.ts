@@ -7,10 +7,10 @@ import {
   updateBuyerProfile,
   resendBuyerVerificionLink
 } from '../controllers/Buyer.controller';
-import {check} from 'express-validator'
+import validate from '../middlewares/validateResource';
 import { Authenticate } from '../middlewares';
 import { BuyerRegisterInputSchema } from '../dto/Buyer.dto';
-import validate from '../middlewares/validateResource';
+import { buyerLoginInputSchema } from '../dto';
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ const router = express.Router();
 router.post('/register', validate(BuyerRegisterInputSchema), RegisterBuyer);
 router.get('/confirm/:confirmationCode', verifyBuyer);
 router.post('/resend-confirm', resendBuyerVerificionLink);
-router.post('/login', buyerLogin);
+router.post('/login', validate(buyerLoginInputSchema), buyerLogin);
 router.post('/google', googleAuth);
 router.put('/update', Authenticate, updateBuyerProfile)
 
