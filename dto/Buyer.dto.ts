@@ -17,7 +17,6 @@ export const BuyerRegisterInputSchema = object({
   }),
 });
 
-
 export interface IBuyerUpdateInput {
   firstName?: string;
   lastName?: string;
@@ -40,4 +39,5 @@ export const buyerLoginInputSchema = object({
   }),
 });
 
+export type IBuyerRegisterInput = TypeOf<typeof BuyerRegisterInputSchema>
 export type IbuyerLoginInputSchema = TypeOf<typeof buyerLoginInputSchema>;
