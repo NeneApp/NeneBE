@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import VendorModel from '../models/Vendor.model';
-import { IVendorRegisterInput, IVendorUpdateInput, IVendorLogin, IVendorResetPassword } from '../dto/Vendor.dto';
+import {
+  IVendorRegisterInput,
+  IVendorUpdateInput,
+  IVendorLogin,
+  IVendorResendConfirm,
+  IVendorResetPassword
+} from '../dto/Vendor.dto';
+
 import { GenCode, GenSlug } from '../utility/VendorUtility';
 import { sendConfirmationEmail} from '../utility/MailerUtility';
 import bcrypt from 'bcrypt';
@@ -106,6 +113,53 @@ export const verifyVendor = asyncHandler(
     });
   }
 );
+
+
+/**
+ * @description Resend verification link to Vendor's email
+ * @method POST
+ * @route /api/vendors/resend-confirm
+ * @access public
+ */
+export const resendVendorVerificionLink = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const { email } = <IVendorResendConfirm>req.body
+
+    const vendor = await VendorModel.findOne({ email: email.toLowerCase() });
+    if (!vendor) {
+      res.status(400);
+      throw new Error("user does not exist");
+    }
+
+    //send confirmation code to buyer's email
+    const name = `${vendor.firstName} ${vendor.lastName}`;
+    const userType = "vendors";
+    const message = `<h1>Email Confirmation</h1>
+    <h2>Hello ${name}</h2>
+    <p>Verify your email address to complete the signup and login to your account</p>
+    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
+    const subject = 'Please confirm your account';
+    let ress = await sendConfirmationEmail(
+      name,
+      vendor?.email,
+      subject,
+      message
+    );
+  
+    if (ress !== null) {
+      res.status(200).json({
+        msg: "Verification link sent, kindly check your mail",
+      });
+    } else {
+      res.status(400);
+      throw new Error("Something went wrong! Please try again");
+    }
+    } catch (error: any) {
+      console.log(error);
+      res.status(500).send({ message: "Error", error });
+    }
+});
+
 
 /**
  * @description Update Vendor Profile

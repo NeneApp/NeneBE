@@ -5,8 +5,7 @@ import randomstring from "randomstring";
 import * as bcrypt from "bcryptjs"
 import { signToken } from "../utility";
 import axios from "axios";
-import { IBuyerUpdateInput } from "../dto/Buyer.dto";
-import { IBuyerRegisterInput, IBuyerResetPassword } from "../dto/Buyer.dto";
+import { IBuyerResendConfirm, IBuyerUpdateInput, IBuyerRegisterInput, IBuyerResetPassword } from "../dto/Buyer.dto";
 import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
 import jwt from 'jsonwebtoken';
@@ -18,11 +17,12 @@ import jwt from 'jsonwebtoken';
  * @access public
  */
 
-export const RegisterBuyer = async (req: Request, res: Response) => {
+export const RegisterBuyer = async (
+  req: Request<{}, {}, IBuyerRegisterInput['body']>, 
+  res: Response) => {
   try {
-    const { firstName, lastName, password, email } = <IBuyerRegisterInput>(
-      req.body
-    );
+    const { firstName, lastName, password, email } = 
+      req.body;
 
     // check if buyer already exists in the database
     const existUser = await BuyerModel.findOne({ email: email.toLowerCase() });
@@ -42,11 +42,16 @@ export const RegisterBuyer = async (req: Request, res: Response) => {
     //send confirmation code to buyer's email
     const name = `${buyer.firstName} ${buyer.lastName}`;
     const userType = "buyers";
+    const message = `<h1>Email Confirmation</h1>
+    <h2>Hello ${name}</h2>
+    <p>Verify your email address to complete the signup and login to your account</p>
+    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${buyer?.confirmationCode}> Click here</a>`;
+    const subject = 'Please confirm your account';
     let ress = await sendConfirmationEmail(
       name,
       buyer?.email,
-      buyer?.confirmationCode,
-      userType
+      subject,
+      message
     );
 
     if (ress !== null) {
@@ -87,6 +92,51 @@ export const verifyBuyer = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({
     msg: "Verification Successful.You can now login",
   });
+});
+
+/**
+ * @description Resend verification link to Buyer's email
+ * @method POST
+ * @route /api/buyers/resend-confirm
+ * @access public
+ */
+export const resendBuyerVerificionLink = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const { email } = <IBuyerResendConfirm>req.body
+
+    const buyer = await BuyerModel.findOne({ email: email.toLowerCase() });
+    if (!buyer) {
+      res.status(400)
+      throw new Error("user does not exist");
+    }
+
+    //send confirmation code to buyer's email
+    const name = `${buyer.firstName} ${buyer.lastName}`;
+    const userType = "buyers";
+    const message = `<h1>Email Confirmation</h1>
+    <h2>Hello ${name}</h2>
+    <p>Verify your email address to complete the signup and login to your account</p>
+    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${buyer?.confirmationCode}> Click here</a>`;
+    const subject = 'Please confirm your account';
+    let ress = await sendConfirmationEmail(
+      name,
+      buyer?.email,
+      subject,
+      message
+    );
+  
+    if (ress !== null) {
+      res.status(200).json({
+        msg: "Verification link sent, kindly check your mail",
+      });
+    } else {
+      res.status(400);
+      throw new Error("Something went wrong! Please try again");
+    }
+    } catch (error: any) {
+      console.log(error);
+      res.status(500).send({ message: "Error", error });
+    }
 });
 
 

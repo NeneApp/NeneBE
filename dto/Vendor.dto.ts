@@ -55,9 +55,14 @@ export interface IVendorLogin{
   password: string;
 }
 
-export type IVendorRegisterInput = TypeOf<typeof VendorRegisterInputSchema>;
+export interface IVendorResendConfirm{
+  email: string;
+}
 
 export interface IVendorResetPassword{
   password: string;
   confirmPassword: string;
 }
+
+export type IVendorRegisterInput = TypeOf<typeof VendorRegisterInputSchema>;
+

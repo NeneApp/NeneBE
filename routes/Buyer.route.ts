@@ -5,6 +5,7 @@ import {
   buyerLogin,
   googleAuth,
   updateBuyerProfile,
+  resendBuyerVerificionLink
   forgotPassword,
   resetPassword
 } from '../controllers/Buyer.controller';
@@ -12,12 +13,15 @@ import {
 import validate from '../middlewares/validateResource';
 
 import { Authenticate } from '../middlewares';
+import { BuyerRegisterInputSchema } from '../dto/Buyer.dto';
 import { buyerLoginInputSchema } from '../dto';
 
 const router = express.Router();
 
-router.post('/register', RegisterBuyer);
+
+router.post('/register', validate(BuyerRegisterInputSchema), RegisterBuyer);
 router.get('/confirm/:confirmationCode', verifyBuyer);
+router.post('/resend-confirm', resendBuyerVerificionLink);
 router.post('/login', validate(buyerLoginInputSchema), buyerLogin);
 router.post('/google', googleAuth);
 router.put('/update', Authenticate, updateBuyerProfile)
