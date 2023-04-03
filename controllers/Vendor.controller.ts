@@ -11,6 +11,7 @@ import { GenCode, GenSlug } from '../utility/VendorUtility';
 import { sendConfirmationEmail } from '../utility/MailerUtility';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import config from '../config/environment';
 
 /**
  * @description Vendor registration
@@ -56,7 +57,7 @@ export const RegisterVendor = async (
     const message = `<h1>Email Confirmation</h1>
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
-    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
+    <a href=${config.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
     const subject = 'Please confirm your account';
 
     let ress = await sendConfirmationEmail(
@@ -131,7 +132,7 @@ export const resendVendorVerificionLink = asyncHandler(async (req: Request, res:
     const message = `<h1>Email Confirmation</h1>
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
-    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
+    <a href=${config.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
     const subject = 'Please confirm your account';
     let ress = await sendConfirmationEmail(
       name,

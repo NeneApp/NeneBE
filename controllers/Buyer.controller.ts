@@ -9,6 +9,7 @@ import { IBuyerResendConfirm, IBuyerUpdateInput } from "../dto/Buyer.dto";
 import { IBuyerRegisterInput } from "../dto/Buyer.dto";
 import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
+import config from '../config/environment';
 
 /**
  * @description Buyer registration
@@ -45,7 +46,7 @@ export const RegisterBuyer = async (
     const message = `<h1>Email Confirmation</h1>
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
-    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${buyer?.confirmationCode}> Click here</a>`;
+    <a href=${config.BASE_URL}/api/${userType}/confirm/${buyer?.confirmationCode}> Click here</a>`;
     const subject = 'Please confirm your account';
     let ress = await sendConfirmationEmail(
       name,
@@ -116,7 +117,7 @@ export const resendBuyerVerificionLink = asyncHandler(async (req: Request, res: 
     const message = `<h1>Email Confirmation</h1>
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
-    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${buyer?.confirmationCode}> Click here</a>`;
+    <a href=${config.BASE_URL}/api/${userType}/confirm/${buyer?.confirmationCode}> Click here</a>`;
     const subject = 'Please confirm your account';
     let ress = await sendConfirmationEmail(
       name,
