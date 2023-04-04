@@ -7,7 +7,8 @@ const express_1 = __importDefault(require("express"));
 const Vendor_controller_1 = require("../controllers/Vendor.controller");
 const middlewares_1 = require("../middlewares");
 const router = express_1.default.Router();
-router.post('/register', validate(VendorRegisterInputSchema), Vendor_controller_1.RegisterVendor);
+// , validate(VendorRegisterInputSchema)
+router.post('/register', Vendor_controller_1.RegisterVendor);
 router.get('/confirm/:confirmationCode', Vendor_controller_1.verifyVendor);
 router.post('/resend-confirm', Vendor_controller_1.resendVendorVerificionLink);
 router.put('/profile', middlewares_1.Authenticate, Vendor_controller_1.UpdateVendorProfile);
