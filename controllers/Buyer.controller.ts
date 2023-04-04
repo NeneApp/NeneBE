@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import asyncHandler from 'express-async-handler';
+import asyncHandler from "express-async-handler";
 import { BuyerModel } from "../models";
 import randomstring from "randomstring";
-import * as bcrypt from "bcryptjs"
+import * as bcrypt from "bcryptjs";
 import { signToken } from "../utility";
 import axios from "axios";
 import { IBuyerResendConfirm, IBuyerUpdateInput } from "../dto/Buyer.dto";
 import { IBuyerRegisterInput } from "../dto/Buyer.dto";
 import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
-import config from '../config/environment';
+import config from "../config/environment";
 
 /**
  * @description Buyer registration
@@ -19,11 +19,11 @@ import config from '../config/environment';
  */
 
 export const RegisterBuyer = async (
-  req: Request<{}, {}, IBuyerRegisterInput['body']>, 
-  res: Response) => {
+  req: Request<{}, {}, IBuyerRegisterInput["body"]>,
+  res: Response
+) => {
   try {
-    const { firstName, lastName, password, email } = 
-      req.body;
+    const { firstName, lastName, password, email } = req.body;
 
     // check if buyer already exists in the database
     const existUser = await BuyerModel.findOne({ email: email.toLowerCase() });
@@ -47,7 +47,7 @@ export const RegisterBuyer = async (
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
     <a href=${config.BASE_URL}/api/${userType}/confirm/${buyer?.confirmationCode}> Click here</a>`;
-    const subject = 'Please confirm your account';
+    const subject = "Please confirm your account";
     let ress = await sendConfirmationEmail(
       name,
       buyer?.email,
@@ -56,7 +56,7 @@ export const RegisterBuyer = async (
     );
 
     if (ress !== null) {
-      res.status(200).json({
+      res.status(201).json({
         msg: "User created successfully! Please check your mail",
       });
     } else {
@@ -64,8 +64,7 @@ export const RegisterBuyer = async (
       throw new Error("Something went wrong! Please try again");
     }
   } catch (error: any) {
-    res.status(400);
-    throw new Error(error);
+    res.status(500).send({ msg: "Something went wrong! Please try again" });
   }
 };
 
@@ -76,23 +75,26 @@ export const RegisterBuyer = async (
  * @access public
  */
 export const verifyBuyer = asyncHandler(async (req: Request, res: Response) => {
-  const { confirmationCode } = req.params;
+  try {
+    const { confirmationCode } = req.params;
+    const confirmBuyer = await BuyerModel.findOne({ confirmationCode });
+    if (confirmBuyer === null) {
+      res.status(400).send({ msg: "Invalid Verification Code" });
+      return;
+    }
+    confirmBuyer.status = "Active";
+    confirmBuyer.confirmationCode = "";
 
-  const confimBuyer = await BuyerModel.findOne({ confirmationCode });
+    await confirmBuyer.save();
 
-  if (!confimBuyer) {
-    res.status(404);
-    throw new Error("Invalid Verification Code");
+    res.status(200).json({
+      msg: "Verification Successful.You can now login",
+    });
+  } catch (error) {
+    res.status(500).json({
+      msg: "Something went wrong",
+    });
   }
-
-  confimBuyer.status = "Active";
-  confimBuyer.confirmationCode = "";
-
-  await confimBuyer.save();
-
-  res.status(200).json({
-    msg: "Verification Successful.You can now login",
-  });
 });
 
 /**
@@ -101,65 +103,68 @@ export const verifyBuyer = asyncHandler(async (req: Request, res: Response) => {
  * @route /api/buyers/resend-confirm
  * @access public
  */
-export const resendBuyerVerificionLink = asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const { email } = <IBuyerResendConfirm>req.body
+export const resendBuyerVerificionLink = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email } = <IBuyerResendConfirm>req.body;
 
-    const buyer = await BuyerModel.findOne({ email: email.toLowerCase() });
-    if (!buyer) {
-      res.status(400)
-      throw new Error("user does not exist");
-    }
+    try {
+      const buyer = await BuyerModel.findOne({ email: email.toLowerCase() });
+      if (!buyer) {
+        res.status(400).send({ msg: "User does not exist" });
+        return;
+      }
 
-    //send confirmation code to buyer's email
-    const name = `${buyer.firstName} ${buyer.lastName}`;
-    const userType = "buyers";
-    const message = `<h1>Email Confirmation</h1>
+      //send confirmation code to buyer's email
+      const name = `${buyer.firstName} ${buyer.lastName}`;
+      const userType = "buyers";
+      const message = `<h1>Email Confirmation</h1>
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
     <a href=${config.BASE_URL}/api/${userType}/confirm/${buyer?.confirmationCode}> Click here</a>`;
-    const subject = 'Please confirm your account';
-    let ress = await sendConfirmationEmail(
-      name,
-      buyer?.email,
-      subject,
-      message
-    );
-  
-    if (ress !== null) {
-      res.status(200).json({
-        msg: "Verification link sent, kindly check your mail",
-      });
-    } else {
-      res.status(400);
-      throw new Error("Something went wrong! Please try again");
-    }
+      const subject = "Please confirm your account";
+      let ress = await sendConfirmationEmail(
+        name,
+        buyer?.email,
+        subject,
+        message
+      );
+
+      if (ress !== null) {
+        res.status(200).json({
+          msg: "Verification link sent, kindly check your mail",
+        });
+      } else {
+        res.status(400);
+        throw new Error("Something went wrong! Please try again");
+      }
     } catch (error: any) {
       console.log(error);
-      res.status(500).send({ message: "Error", error });
+      res
+        .status(500)
+        .send({ message: "Something went wrong! Please try again", error });
     }
-});
+  }
+);
 
+/*
+ *@description Login into Buyer account
+ *@static
+ *@param  {Object} req - request
+ *@param  {object} res - response
+ *@returns {object} token, details
+ */
 
-  /*
-   *@description Login into Buyer account
-   *@static
-   *@param  {Object} req - request
-   *@param  {object} res - response
-   *@returns {object} token, details
-   */
+export async function buyerLogin(req: Request, res: Response) {
+  // retrieve the email and password from the request body
+  const { email, password } = req.body;
 
-   export async function buyerLogin(req: Request, res: Response) {
-     // retrieve the email and password from the request body
-     const { email, password } = req.body;
-
-  try {   
+  try {
     if (!email || !password) {
       res.status(401).send({ message: "Kindly fill all required information" });
     }
-    // find the email and check if they exist. 
+    // find the email and check if they exist.
     const user = await BuyerModel.findOne({ email }).select("+password").exec();
-  
+
     if (!user) {
       return res
         .status(401)
@@ -168,48 +173,48 @@ export const resendBuyerVerificionLink = asyncHandler(async (req: Request, res: 
 
     // Check if the user's email is set to active.
     if (user.status !== "Active") {
-      return res.status(400).json({ message: "your email is yet to be verified" })
+      return res
+        .status(400)
+        .json({ message: "your email is yet to be verified" });
     }
-    
+
     // compare the password
-    const correctPassword = await bcrypt.compare(password, user.password as string);
+    const correctPassword = await bcrypt.compare(
+      password,
+      user.password as string
+    );
     if (!correctPassword) {
       return res
         .status(401)
-        .json({ message: "Unable to login, Invalid email or  password"})
+        .json({ message: "Unable to login, Invalid email or  password" });
     }
 
-    return res
-      .status(200)
-      .json({
-        message: "User login successfully",
-          id: user?._id,  
-          firstname: user?.firstName,
-          lastname: user?.lastName,
-          gender: user?.gender,
-          email: user?.email,
-          token: await signToken(user.id)
-      })
-  }
-
-  catch(error: any) {
-    console.log(error)
+    return res.status(200).json({
+      message: "User login successfully",
+      id: user?._id,
+      firstname: user?.firstName,
+      lastname: user?.lastName,
+      gender: user?.gender,
+      email: user?.email,
+      token: await signToken(user.id),
+    });
+  } catch (error: any) {
+    console.log(error);
     return res.status(500).json({
       message: "An Error Occured",
-      error: error.error
+      error: error.error,
     });
   }
 }
 
-
 /**
-   *@description Register into user account with google
-   *@static
-   *@param  {Object} req - request
-   *@param  {object} res - response
-   *@returns {object} - status code, message and data
-   *@memberof userController
-*/
+ *@description Register into user account with google
+ *@static
+ *@param  {Object} req - request
+ *@param  {object} res - response
+ *@returns {object} - status code, message and data
+ *@memberof userController
+ */
 
 export async function googleAuth(req: Request, res: Response) {
   const { token } = req.body;
@@ -248,7 +253,7 @@ export async function googleAuth(req: Request, res: Response) {
         full_name: google.data.name != null ? google.data.name : "",
         phone: google.data.phone != null ? google.data.phone : "",
         avartar: google.data.picture != null ? google.data.picture : "",
-        status: 'Active',
+        status: "Active",
         password: code,
       };
 
@@ -278,7 +283,6 @@ export async function googleAuth(req: Request, res: Response) {
   }
 }
 
-
 /**
  * @description Update Buyer Profile
  * @method GET
@@ -288,10 +292,8 @@ export async function googleAuth(req: Request, res: Response) {
 export const updateBuyerProfile = asyncHandler(
   async (req: Request, res: Response) => {
     const buyer = await BuyerModel.findById(req.user.id);
-    
-    const { firstName, lastName, phone, address } = <
-      IBuyerUpdateInput
-    >req.body;
+
+    const { firstName, lastName, phone, address } = <IBuyerUpdateInput>req.body;
 
     if (buyer) {
       buyer.firstName = firstName || buyer.firstName;
@@ -303,11 +305,11 @@ export const updateBuyerProfile = asyncHandler(
       const updatedBuyer = await buyer.save();
 
       res.status(200).send({
-        msg: 'Profile updated successfully',
+        msg: "Profile updated successfully",
         updatedBuyer,
       });
     } else {
-      res.status(404).send('Buyer not found')
+      res.status(404).send("Buyer not found");
     }
   }
 );
