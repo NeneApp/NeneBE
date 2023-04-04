@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const buyerLoginRoute_1 = __importDefault(require("./buyerLoginRoute"));
+// import auth from "./buyerLoginRoute";
 const routeHandler = express_1.default.Router();
 // Auth route
-routeHandler.use("/auth", buyerLoginRoute_1.default);
+// routeHandler.use("/auth", auth);
 exports.default = routeHandler;
