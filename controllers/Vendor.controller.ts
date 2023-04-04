@@ -6,10 +6,16 @@ import {
   IVendorUpdateInput,
   IVendorLogin,
   IVendorResendConfirm,
+  IVendorResetPassword
 } from '../dto/Vendor.dto';
+
 import { GenCode, GenSlug } from '../utility/VendorUtility';
-import { sendConfirmationEmail } from '../utility/MailerUtility';
+import { sendConfirmationEmail} from '../utility/MailerUtility';
 import bcrypt from 'bcrypt';
+import { signToken } from '../utility/JwtUtility';
+import axios from "axios";
+import randomstring from "randomstring";
+
 import jwt from 'jsonwebtoken';
 import config from '../config/environment';
 
@@ -200,42 +206,218 @@ export const UpdateVendorProfile = asyncHandler(
  * @access public
  */
 export const vendorLogin = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = <IVendorLogin>req.body;
-    if (email === '' || password === '') {
-      return res.status(400).json({
-        message: 'Email And Password Is Required',
-      });
-    }
-    const vendor = await VendorModel.findOne({ email: email });
-    if (vendor) {
-      const verifyPass = await bcrypt.compare(password, vendor.password);
-      if (verifyPass) {
-        const secret: any = process.env.JWT_SECRET;
-        const genToken = jwt.sign({ vendor: vendor }, secret, {
-          expiresIn: '1h',
-        });
-        const fakePass: any = undefined;
-        vendor.password = fakePass;
-        return res.status(200).json({
-          message: 'User Found',
-          result: vendor,
-          token: genToken,
-        });
-      } else {
-        return res.status(400).json({
-          message: 'Incorrect Username Or Password',
+    try{
+      const { email, password } = <IVendorLogin> req.body;
+
+      const vendor: any = await VendorModel.findOne({email: email});
+
+      if(!vendor) {
+        res.status(400).json({
+          message: "Vendor Not Found"
         });
       }
-    } else {
-      return res.status(400).json({
-        message: 'No Such User',
+
+      const verifyPass = await bcrypt.compare(password, vendor.password);
+
+      if(!verifyPass) {
+        res.status(400).json({
+          message: "Invalid Credentials"
+        });
+      }
+      if(vendor.status !== 'Active'){
+        return res.status(400).json({
+          message: "Please Activate Your Account By Confirming Your Email Address"
+        })
+      }
+      
+      res.status(200).json({
+        _id: vendor.id,
+        firstName: vendor.firstName,
+        lastName: vendor.lastName,
+        businessName: vendor.businessName,
+        email: vendor.email,
+        address: vendor.address,
+        slug: vendor.slug,
+        role: vendor.role,
+        image: vendor.image,
+        phone: vendor.phone,
+        token: await signToken({vendor: vendor._id, role: vendor.role})
       });
+
+    }catch(error){
+      res.status(400).json({
+        message: "Error Logging In",
+        Error: error
+      })
+    }
+  };
+
+
+  /**
+ * @description Vendor Google Login
+ * @method POST
+ * @route /api/vendors/google
+ * @access public
+ */
+
+export async function googleAuth(req: Request, res: Response) {
+  const { token } = req.body;
+  let user;
+
+  try {
+    const google = await axios.get(
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
+    );
+
+    user = await VendorModel.findOne({ email: google.data.email });
+
+    if (user) {
+      const TokenData = {
+        id: user._id,
+        email: user.email,
+      };
+
+      //  Generate Token
+      const token = await signToken(TokenData);
+
+      const userData = {
+        user,
+        token,
+      };
+
+      res.status(200).json({ message: "Login successfully", userData });
+    } else {
+      const code = randomstring.generate({
+        length: 15,
+        charset: "numeric",
+      });
+
+      const userObject = {
+        email: google.data.email != null ? google.data.email : "",
+        full_name: google.data.name != null ? google.data.name : "",
+        phone: google.data.phone != null ? google.data.phone : "",
+        avartar: google.data.picture != null ? google.data.picture : "",
+        status: 'Active',
+        password: code,
+      };
+
+      user = await VendorModel.create(userObject);
+      const TokenData = {
+        id: user._id,
+        email: user.email,
+      };
+
+      //  Generate Token
+      const token = await signToken(TokenData);
+
+      const userData = {
+        user,
+        token,
+      };
+
+      if (user) {
+        res.status(201).json({ 
+          message: "Account created, kindly proceed", userData 
+        });
+      }
     }
   } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error", error });
+  }
+}
+
+/**
+ * @description Vendor Forgot Password
+ * @method POST
+ * @route /api/vendors/forgotpassword
+ * @access public
+ */
+
+export const forgotPassword = async(req: Request, res: Response) => {
+  try{
+    const { email } = req.body
+    const checkEmail: any = await VendorModel.findOne({ email })
+    if(!checkEmail){
+      return res.status(400).json({
+        message: "No User With This Email"
+      });
+    }
+
+    const secret = process.env.JWT_SECRET + checkEmail.password;
+    const payload = {
+      email: checkEmail.email,
+      id: checkEmail.id
+    }
+    const name = `${checkEmail.firstName} ${checkEmail.lastName}`;
+    const token = jwt.sign(payload, secret, {expiresIn: '5m'});
+    const link = `${process.env.BASE_URL}/reset-password/${checkEmail.id}/${token}`;
+    const message = `<h1>Reset Password</h1>
+    <h2>Hello ${name}</h2>
+    <p>Please Reset Your Password</p>
+    <a href=${process.env.BASE_URL}/reset-password/${checkEmail.id}/${token}> Click here</a>`;
+    const subject = 'Please Reset Your Password';
+
+    let ress = await sendConfirmationEmail(
+      name,
+      checkEmail.email,
+      subject,
+      message
+    );
+    if (ress !== null) {
+      return res.status(200).json({
+        message: 'Rest Password Link Sent successfully! Please check your mail',
+        reset_link: link
+      });
+    } else {
+      return res.status(400).json({ 
+        message: 'Something went wrong! Please try again' 
+      });
+    }
+  }catch(error){
+    console.log(error);
     res.status(400).json({
-      message: 'Error Logging In',
-      Error: error,
+      message: "Error Sending Reset Password Email"
+    })
+  }
+}
+
+
+/**
+ * @description Vendor Reset Password
+ * @method POST
+ * @route /api/vendors/restpassword
+ * @access public
+ */
+
+export const resetPassword = async(req: Request, res: Response) => {
+  try{
+    const { id, token } = req.params;
+    const { password, confirmPassword } = <IVendorResetPassword> req.body;
+    const user: any = await VendorModel.findById(id).exec();
+    if(user === null){
+      return res.status(400).json({
+        message: "No User With This Id"
+      });
+    }
+    const secret = process.env.JWT_SECRET + user.password;
+    const payload = jwt.verify(token, secret);
+    if(confirmPassword !== password){
+      return res.status(400).json({
+        message: "Passwords Do Not Match"
+      });
+    }
+    const newpassword = await bcrypt.hash(password, 10);
+    console.log(newpassword)
+    user.password = newpassword;
+    await user.save();
+    return res.status(200).json({
+      message: "Password Reset Successfully!"
+    })
+  }catch(error){
+    console.log(error);
+    res.status(400).json({
+      message: "Error Reseting Password"
     });
   }
-};
+}
