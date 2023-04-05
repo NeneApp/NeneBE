@@ -27,6 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: |
-       npm install typescript --save-dev
+       npm install -g typescript
+       npm run build
        npm run dev
        
