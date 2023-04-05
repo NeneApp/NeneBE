@@ -7,7 +7,10 @@ import {
   resendVendorVerificionLink,
   googleAuth,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  CreateProduct,
+  addCategory,
+  addSubCategory
 } from '../controllers/Vendor.controller';
 import { Authenticate } from '../middlewares';
 
@@ -23,5 +26,8 @@ router.post('/login', vendorLogin);
 router.post('/google', googleAuth);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:id/:token', resetPassword);
+router.post('/create_product', CreateProduct);
+router.post('/add_category', addCategory);
+router.post('/:categoryId/add_sub_category', addSubCategory);
 
 export default router;

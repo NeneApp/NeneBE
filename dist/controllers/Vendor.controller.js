@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetPassword = exports.forgotPassword = exports.googleAuth = exports.vendorLogin = exports.UpdateVendorProfile = exports.resendVendorVerificionLink = exports.verifyVendor = exports.RegisterVendor = void 0;
+exports.CreateProduct = exports.addSubCategory = exports.addCategory = exports.resetPassword = exports.forgotPassword = exports.googleAuth = exports.vendorLogin = exports.UpdateVendorProfile = exports.resendVendorVerificionLink = exports.verifyVendor = exports.RegisterVendor = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const Vendor_model_1 = __importDefault(require("../models/Vendor.model"));
+const product_model_1 = __importDefault(require("../models/product.model"));
+const category_model_1 = __importDefault(require("../models/category.model"));
 const VendorUtility_1 = require("../utility/VendorUtility");
 const MailerUtility_1 = require("../utility/MailerUtility");
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -357,3 +359,118 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.resetPassword = resetPassword;
+/**
+ * @description Vendor Add Category
+ * @method POST
+ * @route /api/vendors/add_category
+ * @access public
+ */
+const addCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { name } = req.body;
+        const category = yield category_model_1.default.findOne({ name });
+        if (category) {
+            return res.status(400).json({
+                message: "This Category Exists Already"
+            });
+        }
+        const newCategory = yield category_model_1.default.create({
+            name
+        });
+        return res.status(200).json({
+            message: "Category Added Successfully",
+            result: newCategory
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            message: "Error Adding Category"
+        });
+    }
+});
+exports.addCategory = addCategory;
+/**
+ * @description Vendor Create Product
+ * @method POST
+ * @route /api/vendors/{categoryId}/add_sub_category
+ * @access public
+ */
+const addSubCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { categoryId } = req.params;
+        const { name } = req.body;
+        const category = yield category_model_1.default.findById(categoryId).exec();
+        if (!category) {
+            return res.status(400).json({
+                message: "No Category with Such Id"
+            });
+        }
+        if (category.subCategory.includes(name)) {
+            return res.status(400).json({
+                message: "This Sub Category Exists Already"
+            });
+        }
+        category.subCategory.push(name);
+        const savedCategory = yield category.save();
+        return res.status(200).json({
+            message: "Sub Category Added Successfully",
+            result: savedCategory
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            message: "Error Adding Sub Category"
+        });
+    }
+});
+exports.addSubCategory = addSubCategory;
+/**
+ * @description Vendor Create Product
+ * @method POST
+ * @route /api/vendors/create_product
+ * @access public
+ */
+const CreateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { name, brand, quantity, description, prize, discount, attribute, category } = req.body;
+        const categoryInfo = yield category_model_1.default.findOne({ name: category });
+        if (!categoryInfo) {
+            return res.status(400).json({
+                message: "No Such Category"
+            });
+        }
+        const checkProd = yield product_model_1.default.findOne({ name });
+        if (checkProd && checkProd.quantity > 0 && checkProd.is_sold === false) {
+            return res.status(400).json({
+                message: "This Product Exists And Is Yet To Be Sold Out"
+            });
+        }
+        const product = yield product_model_1.default.create({
+            name,
+            store_id: yield (0, VendorUtility_1.GenCode)(),
+            brand,
+            quantity,
+            description,
+            code: yield (0, VendorUtility_1.GenCode)(),
+            slug: (0, VendorUtility_1.GenSlug)(name),
+            prize,
+            discount,
+            attribute,
+            is_sold: false,
+            category: categoryInfo.id
+        });
+        return res.status(200).json({
+            message: "Product created Successfully",
+            result: product
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            message: "Error Creating product"
+        });
+    }
+});
+exports.CreateProduct = CreateProduct;
