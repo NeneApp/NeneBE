@@ -141,7 +141,7 @@ export const resendBuyerVerificionLink = asyncHandler(
       console.log(error);
       res
         .status(500)
-        .send({ message: "Something went wrong! Please try again", error });
+        .send({ msg: "Something went wrong! Please try again", error });
     }
   }
 );
@@ -364,7 +364,7 @@ export const forgotPassword = async(req: Request, res: Response) => {
     }
   }catch(error){
     console.log(error);
-    res.status(400).json({
+    res.status(500).json({
       message: "Error Sending Reset Password Email"
     })
   }

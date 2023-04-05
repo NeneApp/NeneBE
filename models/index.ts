@@ -1,4 +1,4 @@
-import BuyerModel from "./buyer.model";
+import BuyerModel from "./Buyer.model";
 
 export {
     BuyerModel

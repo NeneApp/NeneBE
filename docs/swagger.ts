@@ -1,5 +1,22 @@
 import config from "../config/environment";
-import { createBuyer, createBuyerBody, resendVerifyBuyerMail, verifyBuyerMail } from "./buyer.docs";
+import {
+  createBuyer,
+  createBuyerBody,
+  forgotPasswordBuyer,
+  loginBuyer,
+  resendVerifyBuyerMail,
+  updateBuyer,
+  verifyBuyerMail,
+} from "./Buyer.docs";
+import {
+  createVendor,
+  createVendorBody,
+  forgotPasswordVendor,
+  loginVendor,
+  resendVerifyVendorMail,
+  updateVendor,
+  verifyVendorMail,
+} from "./Vendor.docs";
 
 //options object for swaggerjs
 export const options = {
@@ -11,6 +28,7 @@ export const options = {
       description: "An api for NeNe",
     },
     paths: {
+      // for buyers
       "/buyers/register": {
         post: createBuyer,
       },
@@ -19,6 +37,35 @@ export const options = {
       },
       "/buyers/resend-confirm": {
         post: resendVerifyBuyerMail,
+      },
+      "/buyers/login": {
+        post: loginBuyer,
+      },
+      "/buyers/update": {
+        put: updateBuyer,
+      },
+      "/buyers/forgot-password": {
+        post: forgotPasswordBuyer,
+      },
+
+      // for vendors
+      "/vendors/register": {
+        post: createVendor,
+      },
+      "/vendors/confirm/:confirmationCode": {
+        get: verifyVendorMail,
+      },
+      "/vendors/resend-confirm": {
+        post: resendVerifyVendorMail,
+      },
+      "/vendors/login": {
+        post: loginVendor,
+      },
+      "/vendors/update": {
+        put: updateVendor,
+      },
+      "/vendors/forgot-password": {
+        post: forgotPasswordVendor,
       },
     },
     components: {
@@ -31,6 +78,7 @@ export const options = {
       },
       schemas: {
         createBuyerBody,
+        createVendorBody,
       },
     },
     security: [
