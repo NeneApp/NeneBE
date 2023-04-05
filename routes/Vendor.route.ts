@@ -10,6 +10,8 @@ import {
   resetPassword
 } from '../controllers/Vendor.controller';
 import { Authenticate } from '../middlewares';
+import validate from '../middlewares/validateResource';
+import { VendorRegisterInputSchema } from '../dto';
 
 const router = express.Router();
 

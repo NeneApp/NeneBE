@@ -30,4 +30,4 @@ export const sendConfirmationEmail = async (
   } catch (error: any) {
     console.log(error.message);
   }
-
+};

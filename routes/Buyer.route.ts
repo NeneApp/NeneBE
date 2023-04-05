@@ -5,7 +5,7 @@ import {
   buyerLogin,
   googleAuth,
   updateBuyerProfile,
-  resendBuyerVerificionLink
+  resendBuyerVerificionLink,
   forgotPassword,
   resetPassword
 } from '../controllers/Buyer.controller';

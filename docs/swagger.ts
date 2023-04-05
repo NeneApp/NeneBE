@@ -17,7 +17,7 @@ export const options = {
       "/buyers/confirm/:confirmationCode": {
         get: verifyBuyerMail,
       },
-      "/resend-confirm": {
+      "/buyers/resend-confirm": {
         post: resendVerifyBuyerMail,
       },
     },
