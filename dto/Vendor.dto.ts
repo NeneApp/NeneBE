@@ -64,5 +64,28 @@ export interface IVendorResetPassword{
   confirmPassword: string;
 }
 
+export interface IVendorCreateProduct{
+  name: string;
+  store_id: string;
+  brand: string;
+  quantity: number;
+  description: string;
+  code: string;
+  slug: string;
+  prize: number;
+  discount: number;
+  attribute: [];
+  is_sold: boolean;
+  category: string;
+}
+
+export interface IVendorCategory{
+  name: string;
+}
+
+export interface IVendorAddSub{
+  name: string;
+}
+
 export type IVendorRegisterInput = TypeOf<typeof VendorRegisterInputSchema>;
 
