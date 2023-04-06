@@ -7,5 +7,6 @@ export default {
     GOOGLE_CLIENT_SECRET: process.env.CLIENT_SECRET,
     GOOGLE_OAUTH_REDIRECT_URI: process.env.GOOGLE_OAUTH_REDIRECT_URI,
     SERVER_ROOT_URI: process.env.SERVER_ROOT_URI,
-    AUTH_EMAIL: process.env.AUTH_EMAIL
+    AUTH_EMAIL: process.env.AUTH_EMAIL,
+    BASE_URL: process.env.BASE_URL
 }

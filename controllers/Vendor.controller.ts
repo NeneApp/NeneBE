@@ -22,6 +22,7 @@ import axios from "axios";
 import randomstring from "randomstring";
 
 import jwt from 'jsonwebtoken';
+import config from '../config/environment';
 
 /**
  * @description Vendor registration
@@ -67,7 +68,7 @@ export const RegisterVendor = async (
     const message = `<h1>Email Confirmation</h1>
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
-    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
+    <a href=${config.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
     const subject = 'Please confirm your account';
 
     let ress = await sendConfirmationEmail(
@@ -78,16 +79,16 @@ export const RegisterVendor = async (
     );
 
     if (ress !== null) {
-      res.status(200).json({
+      res.status(201).json({
         msg: 'User created successfully! Please check your mail',
       });
     } else {
       return res
-        .status(400)
+        .status(500)
         .json({ message: 'Something went wrong! Please try again' });
     }
   } catch (error: any) {
-    return res.status(400).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -114,7 +115,7 @@ export const verifyVendor = asyncHandler(
     await confimVendor.save();
 
     res.status(200).json({
-      msg: 'Verification Successful.You can now login in',
+      msg: 'Verification Successful.You can now login',
     });
   }
 );
@@ -132,8 +133,8 @@ export const resendVendorVerificionLink = asyncHandler(async (req: Request, res:
 
     const vendor = await VendorModel.findOne({ email: email.toLowerCase() });
     if (!vendor) {
-      res.status(400);
-      throw new Error("user does not exist");
+      res.status(400).send({ msg: "User does not exist" });
+      return;
     }
 
     //send confirmation code to buyer's email
@@ -142,7 +143,7 @@ export const resendVendorVerificionLink = asyncHandler(async (req: Request, res:
     const message = `<h1>Email Confirmation</h1>
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
-    <a href=${process.env.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
+    <a href=${config.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
     const subject = 'Please confirm your account';
     let ress = await sendConfirmationEmail(
       name,
@@ -161,7 +162,7 @@ export const resendVendorVerificionLink = asyncHandler(async (req: Request, res:
     }
     } catch (error: any) {
       console.log(error);
-      res.status(500).send({ message: "Error", error });
+      res.status(500).send({ msg: "Something went wrong! Please try again", error});
     }
 });
 
@@ -216,7 +217,7 @@ export const vendorLogin = async (req: Request, res: Response) => {
       const vendor: any = await VendorModel.findOne({email: email});
 
       if(!vendor) {
-        res.status(400).json({
+        res.status(404).json({
           message: "Vendor Not Found"
         });
       }
@@ -224,7 +225,7 @@ export const vendorLogin = async (req: Request, res: Response) => {
       const verifyPass = await bcrypt.compare(password, vendor.password);
 
       if(!verifyPass) {
-        res.status(400).json({
+        res.status(401).json({
           message: "Invalid Credentials"
         });
       }
@@ -249,7 +250,7 @@ export const vendorLogin = async (req: Request, res: Response) => {
       });
 
     }catch(error){
-      res.status(400).json({
+      res.status(500).json({
         message: "Error Logging In",
         Error: error
       })
@@ -380,7 +381,7 @@ export const forgotPassword = async(req: Request, res: Response) => {
     }
   }catch(error){
     console.log(error);
-    res.status(400).json({
+    res.status(500).json({
       message: "Error Sending Reset Password Email"
     })
   }

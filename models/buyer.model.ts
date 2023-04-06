@@ -51,7 +51,7 @@ const BuyerSchema: Schema = new mongoose.Schema<BuyerDoc>(
     address: { type: String },
     gender: {
       type: String,
-      enums: ["m", "f", "others"],
+      enums: ["male", "female", "others"],
     },
     confirmationCode: {
       type: String,
