@@ -9,6 +9,7 @@ import { IBuyerResendConfirm, IBuyerUpdateInput, IBuyerRegisterInput, IBuyerRese
 import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
 import jwt from 'jsonwebtoken';
+import log from "../utility/logger";
 
 /**
  * @description Buyer registration
@@ -134,7 +135,7 @@ export const resendBuyerVerificionLink = asyncHandler(async (req: Request, res: 
       throw new Error("Something went wrong! Please try again");
     }
     } catch (error: any) {
-      console.log(error);
+      log.info(error);
       res.status(500).send({ message: "Error", error });
     }
 });
@@ -192,7 +193,7 @@ export const resendBuyerVerificionLink = asyncHandler(async (req: Request, res: 
   }
 
   catch(error: any) {
-    console.log(error)
+    log.info(error)
     return res.status(500).json({
       message: "An Error Occured",
       error: error.error
@@ -272,7 +273,7 @@ export async function googleAuth(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.log(error);
+    log.info(error);
     res.status(500).send({ message: "Error", error });
   }
 }
@@ -360,7 +361,7 @@ export const forgotPassword = async(req: Request, res: Response) => {
       });
     }
   }catch(error){
-    console.log(error);
+    log.info(error);
     res.status(400).json({
       message: "Error Sending Reset Password Email"
     })
@@ -400,7 +401,7 @@ export const resetPassword = async(req: Request, res: Response) => {
       message: "Password Reset Successfully!"
     })
   }catch(error){
-    console.log(error);
+    log.info(error);
     res.status(400).json({
       message: "Error Reseting Password"
     });

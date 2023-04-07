@@ -13,7 +13,7 @@ interface ProductDoc extends Document {
     attribute: [];
     is_sold: boolean;
     category: string;
-  }
+}
 
 const productSchema = new mongoose.Schema({
     name: {
