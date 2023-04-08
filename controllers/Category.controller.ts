@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import CategoryModel from "../models/category.model";
 import ProductModel from "../models/product.model";
 import log from "../utility/logger";
 
@@ -14,7 +13,7 @@ export async function getAllCategory(req: Request, res: Response) {
     try {
         const allCategories: any = await ProductModel
             .find({})
-            .populate('category', 'name').select('name subCategory')
+            .populate('category', 'name').select('name subCategory');
 
         if (!allCategories) {
             return res
@@ -30,7 +29,7 @@ export async function getAllCategory(req: Request, res: Response) {
             })
 
     } catch (error: any) {
-        log.info(error)
+        log.error(error)
         return res.status(500).json({
           message: "An Error Occured",
           error: error
