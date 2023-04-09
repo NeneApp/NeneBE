@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
 import dotenv from 'dotenv';
+import log from './logger';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const transport = nodemailer.createTransport({
@@ -28,6 +29,6 @@ export const sendConfirmationEmail = async (
       html: message,
     });
   } catch (error: any) {
-    console.log(error.message);
+    log.error(error.message);
   }
 };

@@ -13,7 +13,7 @@ interface ProductDoc extends Document {
     attribute: [];
     is_sold: boolean;
     category: string;
-  }
+}
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -61,10 +61,12 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
-    category: {
-        type: String,
-        required: true
-    }
+    category: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Category'
+        }
+    ]
 },
 {timestamps: true});
 

@@ -23,6 +23,7 @@ import randomstring from "randomstring";
 
 import jwt from 'jsonwebtoken';
 import config from '../config/environment';
+import log from '../utility/logger';
 
 /**
  * @description Vendor registration
@@ -161,7 +162,7 @@ export const resendVendorVerificionLink = asyncHandler(async (req: Request, res:
       throw new Error("Something went wrong! Please try again");
     }
     } catch (error: any) {
-      console.log(error);
+      log.error(error)
       res.status(500).send({ msg: "Something went wrong! Please try again", error});
     }
 });
@@ -327,7 +328,7 @@ export async function googleAuth(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.log(error);
+    log.error(error)
     res.status(500).json({ message: "Error", error });
   }
 }
@@ -451,7 +452,7 @@ export const addCategory = async(req: Request, res: Response) => {
       result: newCategory
     })
   }catch(error){
-    console.log(error)
+    log.error(error)
     res.status(400).json({
       message: "Error Adding Category"
     })
@@ -486,7 +487,7 @@ export const addSubCategory = async(req: Request, res: Response) => {
       result: savedCategory
     })
   }catch(error){
-    console.log(error)
+    log.error(error)
     res.status(400).json({
       message: "Error Adding Sub Category"
     });
@@ -544,7 +545,7 @@ export const CreateProduct = async(req: Request, res: Response) => {
             result: product
           })
   }catch(error){
-    console.log(error)
+    log.error(error)
     res.status(400).json({
       message: "Error Creating product"
     })
