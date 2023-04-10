@@ -31,6 +31,9 @@ jobs:
        touch .env
        echo "${{ secrets.ENV_FILE }}" > .env
     - run: |
+       rm -rf node_modules
+       rm -f package-lock.json
+       npm cache clean --force
        npm i
        npm install --save-dev @types/bcryptjs
        npm run build
