@@ -28,7 +28,7 @@ jobs:
         cache: 'npm'
     - run: |
        npm install
-       npm run build
+       npm rebuild
        npm start
 
   Deploy_to_EC2:
