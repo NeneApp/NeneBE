@@ -27,6 +27,22 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: |
-       npm i
+       npm install
        npm run build
        npm start
+
+  Deploy_to_EC2:
+    name: Deploy to server
+    runs-on: ubuntu-latest
+    environment: staging
+
+    needs: build
+
+    steps:
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+            host : ${{ secrets.SSH_HOST  }}
+            username : ${{ secrets.USERNAME  }}
+            key: ${{ secrets.SSH_PRIVATEKEY  }}
+            port: ${{ secrets.PORT }}
