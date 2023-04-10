@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TechInnovationsandSolutions/NeneBE.git"
+    "url": "git+https://github.com/NeneApp/NeneBE.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/TechInnovationsandSolutions/NeneBE/issues"
+    "url": "https://github.com/NeneApp/NeneBE/issues"
   },
-  "homepage": "https://github.com/TechInnovationsandSolutions/NeneBE#readme",
+  "homepage": "https://github.com/NeneApp/NeneBE#readme",
   "dependencies": {
     "@types/axios": "^0.14.0",
     "@types/bcryptjs": "^2.4.2",
