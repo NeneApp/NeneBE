@@ -31,7 +31,8 @@ jobs:
        touch .env
        echo "${{ secrets.ENV_FILE }}" > .env
     - run: |
-       npm install -g typescript
+       npm i
+       npm i -g typescript
        npm run build
 
        npm run dev
