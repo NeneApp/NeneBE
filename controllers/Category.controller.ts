@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import ProductModel from "../models/product.model";
+import ProductModel from "../models/Product.model";
 import log from "../utility/logger";
 
 /**

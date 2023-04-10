@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import VendorModel from '../models/Vendor.model';
-import ProductModel from '../models/product.model';
-import CategoryModel from '../models/category.model';
+import ProductModel from '../models/Product.model';
+import CategoryModel from '../models/Category.model';
 import {
   IVendorRegisterInput,
   IVendorUpdateInput,
