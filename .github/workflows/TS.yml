@@ -32,5 +32,6 @@ jobs:
        echo "${{ secrets.ENV_FILE }}" > .env
     - run: |
        npm i
-       npm install --save-dev @types/bcryptjs
+       npm install bcryptjs
+       npm run build
        npm start
