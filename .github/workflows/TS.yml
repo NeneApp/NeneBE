@@ -30,7 +30,5 @@ jobs:
        touch .env
        echo "${{ secrets.ENV_FILE }}" > .env
        npm i
-       cd node_modules/bcryptjs
-       node-pre-gyp install --fallback-to-build
        npm run build
        npm start
