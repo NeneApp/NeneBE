@@ -26,11 +26,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: create .env fire
-      run: |
+    - run: |
        touch .env
        echo "${{ secrets.ENV_FILE }}" > .env
-    - run: |
        npm i
        cd node_modules/bcryptjs
        node-pre-gyp install --fallback-to-build
