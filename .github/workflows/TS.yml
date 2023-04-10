@@ -32,6 +32,7 @@ jobs:
        echo "${{ secrets.ENV_FILE }}" > .env
     - run: |
        npm i
-       npm install bcryptjs
+       cd node_modules/bcrypt
+       node-pre-gyp install --fallback-to-build
        npm run build
        npm start
