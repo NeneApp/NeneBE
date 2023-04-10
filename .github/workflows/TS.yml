@@ -27,8 +27,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: |
-       touch .env
-       echo "${{ secrets.ENV_FILE }}" > .env
        npm i
        npm run build
        npm start
