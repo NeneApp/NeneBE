@@ -55,37 +55,37 @@ const getAllCategories = {
             },
           },
         },
-      },
-    },
-    "401": {
-      description: "Something went wrong in fetching categories",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              message: {
-                type: "string",
-                example: "Something went wrong in fetching categories",
+        "401": {
+          description: "Something went wrong in fetching categories",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: {
+                    type: "string",
+                    example: "Something went wrong in fetching categories",
+                  },
+                },
               },
             },
           },
         },
-      },
-    },
-    "500": {
-      description: "An error occurred",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              message: {
-                type: "string",
-                example: "An error occurred",
-              },
-              error: {
+        "500": {
+          description: "An error occurred",
+          content: {
+            "application/json": {
+              schema: {
                 type: "object",
+                properties: {
+                  message: {
+                    type: "string",
+                    example: "An error occurred",
+                  },
+                  error: {
+                    type: "object",
+                  },
+                },
               },
             },
           },
@@ -97,9 +97,9 @@ const getAllCategories = {
 
 const getAllProductsInCategory = {
   tags: ["Categories"],
-  description: `Get all the products in a category with filter and sort functionalities.
-                An example of a full url path for a page number of 2, limit of 6, newIn and filtering by size of UK Size 3 is: 
-                *baseurl/api/categories/:categoryName?page=2&limit=4&orderBy=new+desc&filter=size;UK+Size+3`,
+  description: `Get all the products in a category with filter and sort functionalities
+                An example of a full url path for a page number 2, limit of 6, newIn and filtereing by size of UK Size 3 is: 
+                baseurl/api/categories/:categoryName?page=2&limit=4&orderBy=new+desc&filter=size;UK+Size+3`,
   operationId: "getAllProductsInCategory",
   security: [
     {
@@ -141,7 +141,7 @@ const getAllProductsInCategory = {
       name: "orderBy",
       in: "query",
       description: `Sorting pattern of the returned data; 
-                    The default sorting is arranging the data in alpabetical order 
+                    the default sorting is arranging the data in alpabetical order 
                     and can be used for the view all link as baseurl/api/categories/:categoryName.
                     For the newIn link, the data is sorting according to time created in descending order e.g
                     baseurl/api/categories/:categoryName?orderBy=new+desc.`,
@@ -171,94 +171,91 @@ const getAllProductsInCategory = {
   ],
   responses: {
     "200": {
-      description: "Return products found under the category",
+      description: "All categories displayed successfully",
       content: {
         "application/json": {
           schema: {
             type: "object",
             properties: {
               results: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    _id: {
-                      type: "string",
-                      example: "60f3fwhd3f3fa476342",
-                    },
-                    name: {
-                      type: "string",
-                      example: "Jordan 4",
-                    },
-                    store_id: {
-                      type: "string",
-                      example: "dhfw8r82ydf48r284yr42uciehfwef94y",
-                    },
-                    brand: {
-                      type: "string",
-                      example: "Nike",
-                    },
-                    quantity: {
-                      type: "integer",
-                      example: 5,
-                    },
-                    description: {
-                      type: "string",
-                      example: "Blue Jordan 4 suitable for summer",
-                    },
-                    code: {
-                      type: "string",
-                      example: "xefh2r92cnqoohr3292y9994uhef4hfi4",
-                    },
-                    slug: {
-                      type: "string",
-                      example: "Jordan-4",
-                    },
-                    price: {
-                      type: "integer",
-                      example: 5000,
-                    },
-                    discount: {
-                      type: "integer",
-                      example: 550,
-                    },
-                    attribute: {
-                      type: "Array of objects",
-                      example:
-                        "[{ size: UK Size 42 }, { color: blue }, { height: flat }]",
-                    },
-                    is_sold: {
-                      type: "Boolean",
-                      example: "false",
-                    },
-                    categoryName: {
-                      type: "object",
-                      properties: {
-                        _id: {
-                          type: "string",
-                          example: "6eq4dcw3iwrhfwa46fr2-",
-                        },
-                        name: {
-                          type: "string",
-                          example: "Clothes",
-                        },
+                type: "Array",
+                properties: {
+                  _id: {
+                    type: "string",
+                    example: "60f3fwhd3f3fa476342",
+                  },
+                  name: {
+                    type: "string",
+                    example: "Jordan 4",
+                  },
+                  store_id: {
+                    type: "string",
+                    example: "dhfw8r82ydf48r284yr42uciehfwef94y",
+                  },
+                  brand: {
+                    type: "string",
+                    example: "Nike",
+                  },
+                  quantity: {
+                    type: "number",
+                    example: 5,
+                  },
+                  description: {
+                    type: "string",
+                    example: "Blue Jordan 4 suitable for summer",
+                  },
+                  code: {
+                    type: "string",
+                    example: "xefh2r92cnqoohr3292y9994uhef4hfi4",
+                  },
+                  slug: {
+                    type: "string",
+                    example: "Jordan-4",
+                  },
+                  price: {
+                    type: "number",
+                    example: 5000,
+                  },
+                  discount: {
+                    type: "number",
+                    example: 550,
+                  },
+                  attribute: {
+                    type: "Array of objects",
+                    example:
+                      "[{ size: UK Size 42 }, { color: blue }, { height: flat }]",
+                  },
+                  is_sold: {
+                    type: "Boolean",
+                    example: "false",
+                  },
+                  categoryName: {
+                    type: "object",
+                    properties: {
+                      _id: {
+                        type: "string",
+                        example: "6eq4dcw3iwrhfwa46fr2-",
+                      },
+                      name: {
+                        type: "string",
+                        example: "Clothes",
                       },
                     },
-                    createdAt: {
-                      type: "string",
-                      example: "2023-04-11T14:42:01.627Z",
-                    },
-                    updatedAt: {
-                      type: "string",
-                      example: "2023-04-11T14:42:01.627Z",
-                    },
+                  },
+                  createdAt: {
+                    type: "string",
+                    example: "2023-04-11T14:42:01.627Z",
+                  },
+                  updatedAt: {
+                    type: "string",
+                    example: "2023-04-11T14:42:01.627Z",
                   },
                 },
               },
               currentPage: {
                 type: "number",
                 description: "the current page of pagination",
-                example: 1,
+                example: 2,
               },
               limit: {
                 type: "number",
@@ -269,48 +266,48 @@ const getAllProductsInCategory = {
                 type: "number",
                 description:
                   "the total number of pages available holding the returned products ",
-                example: 1,
+                example: 2,
               },
               totalReturnedProducts: {
                 type: "number",
                 description:
                   "the total count of returned products in this category",
-                example: 1,
+                example: 2,
               },
             },
           },
         },
-      },
-    },
-    "401": {
-      description: "No products found under the category",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              msg: {
-                type: "string",
-                example: "No product is available in this category",
-              },
-            },
-          },
-        },
-      },
-    },
-    "500": {
-      description: "Internal server error",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              message: {
-                type: "string",
-                example: "Internal server error",
-              },
-              error: {
+        "401": {
+          description: "No products found under the category",
+          content: {
+            "application/json": {
+              schema: {
                 type: "object",
+                properties: {
+                  msg: {
+                    type: "string",
+                    example: "No product is available in this category",
+                  },
+                },
+              },
+            },
+          },
+        },
+        "500": {
+          description: "Internal server error",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: {
+                    type: "string",
+                    example: "Internal server error",
+                  },
+                  error: {
+                    type: "object",
+                  },
+                },
               },
             },
           },
