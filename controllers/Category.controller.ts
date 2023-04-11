@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import ProductModel from '../models/product.model';
-import CategoryModel from '../models/category.model';
+import ProductModel from "../models/Product.model";
+import CategoryModel from "../models/Category.model";
 import log from "../utility/logger";
 import { GenCode, GenSlug } from '../utility/VendorUtility';
 import {
@@ -188,13 +188,14 @@ export const getSingleProd = async(req: Request, res: Response) => {
         const result = {
             Product_Name: getProd.name,
             Brand: getProd.brand,
+            product_type: getProd.product_type,
             Quantity: getProd.quantity,
             Description: getProd.description,
             Price: getProd.price,
-            Suggestions:string[] = []
+            Suggestions: any[] = []   
         }
-        const { categoryId } = getProd.category;
-        const suggest = await ProductModel.find({ categoryId })
+        const { similar_prod } = getProd.product_type;
+        const suggest = await ProductModel.find({ similar_prod })
         const newResult = result.Suggestions.push(suggest)
         console.log(newResult)
         return res.status(200).json({

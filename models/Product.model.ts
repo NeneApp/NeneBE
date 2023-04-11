@@ -4,7 +4,6 @@ interface ProductDoc extends Document {
   name: string;
   store_id: string;
   brand: string;
-  product_type: string;
   quantity: number;
   description: string;
   code: string;
@@ -29,10 +28,6 @@ const productSchema = new mongoose.Schema(
     brand: {
       type: String,
       required: ["Please enter the product brand"],
-    },
-    product_type: {
-      type: String,
-      required: true
     },
     quantity: {
       type: Number,
