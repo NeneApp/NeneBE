@@ -46,4 +46,4 @@ jobs:
             host : ${{ secrets.SSH_HOST  }}
             username : ${{ secrets.USERNAME  }}
             key: ${{ secrets.SSH_PRIVATEKEY  }}
-            port: ${{ secrets.PORT }}
+##            port: ${{ secrets.PORT }}
