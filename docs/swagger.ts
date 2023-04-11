@@ -7,7 +7,7 @@ import {
   resendVerifyBuyerMail,
   updateBuyer,
   verifyBuyerMail,
-} from "./buyer.docs";
+} from "./Buyer.docs";
 import {
   createVendor,
   createVendorBody,
@@ -16,9 +16,9 @@ import {
   resendVerifyVendorMail,
   updateVendor,
   verifyVendorMail,
-} from "./vendor.docs";
+} from "./Vendor.docs";
 
-import { getAllCategories } from "./categories.docs" 
+import { getAllCategories } from "./Categories.docs" 
 
 //options object for swaggerjs
 export const options = {
