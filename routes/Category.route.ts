@@ -1,8 +1,11 @@
-import { getAllCategory } from "../controllers/Category.controller";
 import express from 'express';
-const categories = express.Router();
+import { getAllCategory } from "../controllers/Category.controller";
+import { getProductsInCategory } from '../controllers/Category.controller';
+import validate from '../middlewares/validateResource';
 
-categories.get('/getAllCategories', getAllCategory);
+const router = express.Router();
 
-export default categories;
+router.get('/', getAllCategory);
+router.get('/:categoryName', getProductsInCategory);
 
+export default router

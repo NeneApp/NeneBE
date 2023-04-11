@@ -53,7 +53,7 @@ const productSchema = new mongoose.Schema(
     discount: {
       type: Number,
     },
-    arrtibute: {
+    attribute: {
       type: Array,
       default: [],
     },
@@ -61,12 +61,10 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    category: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Category",
-      },
-    ],
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
   },
   { timestamps: true }
 );
