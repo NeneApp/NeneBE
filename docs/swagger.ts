@@ -7,7 +7,7 @@ import {
   resendVerifyBuyerMail,
   updateBuyer,
   verifyBuyerMail,
-} from "./Buyer.docs";
+} from "./buyer.docs";
 import {
   createVendor,
   createVendorBody,
@@ -16,7 +16,9 @@ import {
   resendVerifyVendorMail,
   updateVendor,
   verifyVendorMail,
-} from "./Vendor.docs";
+} from "./vendor.docs";
+
+import { getAllCategories } from "./categories.docs" 
 
 //options object for swaggerjs
 export const options = {
@@ -67,6 +69,11 @@ export const options = {
       "/vendors/forgot-password": {
         post: forgotPasswordVendor,
       },
+
+      // For Categories
+      "/categories/get-all-categories": {
+        get: getAllCategories
+      }
     },
     components: {
       securitySchemes: {
@@ -99,6 +106,9 @@ export const options = {
       {
         name: "Vendors",
       },
+      {
+        name: "Categories"
+      }
     ],
   },
   apis: ["../routes/index.ts"],

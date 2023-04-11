@@ -1,17 +1,12 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import VendorModel from '../models/Vendor.model';
-import ProductModel from '../models/product.model';
-import CategoryModel from '../models/category.model';
 import {
   IVendorRegisterInput,
   IVendorUpdateInput,
   IVendorLogin,
   IVendorResendConfirm,
-  IVendorResetPassword,
-  IVendorCreateProduct,
-  IVendorCategory,
-  IVendorAddSub
+  IVendorResetPassword
 } from '../dto/Vendor.dto';
 
 import { GenCode, GenSlug } from '../utility/VendorUtility';
@@ -23,6 +18,7 @@ import randomstring from "randomstring";
 
 import jwt from 'jsonwebtoken';
 import config from '../config/environment';
+import log from '../utility/logger';
 
 /**
  * @description Vendor registration
@@ -161,7 +157,7 @@ export const resendVendorVerificionLink = asyncHandler(async (req: Request, res:
       throw new Error("Something went wrong! Please try again");
     }
     } catch (error: any) {
-      console.log(error);
+      log.error(error)
       res.status(500).send({ msg: "Something went wrong! Please try again", error});
     }
 });
@@ -327,7 +323,7 @@ export async function googleAuth(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.log(error);
+    log.error(error)
     res.status(500).json({ message: "Error", error });
   }
 }
@@ -426,127 +422,3 @@ export const resetPassword = async(req: Request, res: Response) => {
     });
   }
 }
-
-/**
- * @description Vendor Add Category
- * @method POST
- * @route /api/vendors/add_category
- * @access public
- */
-
-export const addCategory = async(req: Request, res: Response) => {
-  try{
-    const { name } = <IVendorCategory>req.body;
-    const category: any = await CategoryModel.findOne({ name });
-    if(category){
-      return res.status(400).json({
-        message: "This Category Exists Already"
-      })
-    }
-    const newCategory = await CategoryModel.create({
-      name
-    });
-    return res.status(200).json({
-      message: "Category Added Successfully",
-      result: newCategory
-    })
-  }catch(error){
-    console.log(error)
-    res.status(400).json({
-      message: "Error Adding Category"
-    })
-  }
-}
-
-/**
- * @description Vendor Create Product
- * @method POST
- * @route /api/vendors/{categoryId}/add_sub_category
- * @access public
- */
-export const addSubCategory = async(req: Request, res: Response) => {
-  try{
-    const { categoryId } = req.params;
-    const { name } = <IVendorAddSub>req.body;
-    const category: any = await CategoryModel.findById( categoryId ).exec();
-    if(!category){
-      return res.status(400).json({
-        message: "No Category with Such Id"
-      });
-    }
-    if(category.subCategory.includes(name)){
-      return res.status(400).json({
-        message: "This Sub Category Exists Already"
-      });
-    }
-    category.subCategory.push(name)
-    const savedCategory = await category.save()
-    return res.status(200).json({
-      message: "Sub Category Added Successfully",
-      result: savedCategory
-    })
-  }catch(error){
-    console.log(error)
-    res.status(400).json({
-      message: "Error Adding Sub Category"
-    });
-  }
-}
-
-/**
- * @description Vendor Create Product
- * @method POST
- * @route /api/vendors/create_product
- * @access public
- */
-
-export const CreateProduct = async(req: Request, res: Response) => {
-  try{
-    const {
-            name,
-            brand,
-            quantity,
-            description,
-            prize,
-            discount,
-            attribute,
-            category
-          } = <IVendorCreateProduct>req.body;
-          const categoryInfo: any = await CategoryModel.findOne({name: category});
-      
-          if(!categoryInfo){
-            return res.status(400).json({
-              message: "No Such Category"
-            });
-          }
-          const checkProd: any = await ProductModel.findOne({ name });
-          if(checkProd && checkProd.quantity > 0 && checkProd.is_sold === false){
-            return res.status(400).json({
-              message: "This Product Exists And Is Yet To Be Sold Out"
-            });
-          }
-          const product = await ProductModel.create({
-            name,
-            store_id: await GenCode(),
-            brand,
-            quantity,
-            description,
-            code: await GenCode(),
-            slug: GenSlug(name),
-            prize,
-            discount,
-            attribute,
-            is_sold: false,
-            category: categoryInfo.id
-          });
-          return res.status(200).json({
-            message: "Product created Successfully",
-            result: product
-          })
-  }catch(error){
-    console.log(error)
-    res.status(400).json({
-      message: "Error Creating product"
-    })
-  }
-};

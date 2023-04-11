@@ -10,6 +10,7 @@ import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
 import jwt from 'jsonwebtoken';
 import config from "../config/environment";
+import log from "../utility/logger";
 
 /**
  * @description Buyer registration
@@ -199,7 +200,7 @@ export async function buyerLogin(req: Request, res: Response) {
       token: await signToken(user.id),
     });
   } catch (error: any) {
-    console.log(error);
+    log.error(error)
     return res.status(500).json({
       message: "An Error Occured",
       error: error.error,
@@ -278,7 +279,7 @@ export async function googleAuth(req: Request, res: Response) {
       }
     }
   } catch (error) {
-    console.log(error);
+    log.error(error);
     res.status(500).send({ message: "Error", error });
   }
 }
@@ -363,7 +364,7 @@ export const forgotPassword = async(req: Request, res: Response) => {
       });
     }
   }catch(error){
-    console.log(error);
+    log.error(error)
     res.status(500).json({
       message: "Error Sending Reset Password Email"
     })
@@ -403,7 +404,7 @@ export const resetPassword = async(req: Request, res: Response) => {
       message: "Password Reset Successfully!"
     })
   }catch(error){
-    console.log(error);
+    log.error(error)
     res.status(400).json({
       message: "Error Reseting Password"
     });

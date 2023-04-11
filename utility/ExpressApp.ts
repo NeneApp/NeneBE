@@ -9,10 +9,10 @@ import hpp from "hpp";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 import { options } from '../docs/swagger'
+import categories from "../routes/Category.route";
 
 export default async (app: Application) => {
   app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
   app.use(cors());
 
   // Sanitize data
@@ -32,8 +32,10 @@ export default async (app: Application) => {
     res.sendStatus(200);
   });
 
-  app.use("/api/vendors", VendorRoutes);
-  app.use("/api/buyers", BuyerRoutes);
+  app.use('/api/vendors', VendorRoutes);
+  app.use('/api/buyers', BuyerRoutes);
+  app.use('/api/categories', categories);
+  
 
   // Error handler
   app.use(notFound);
