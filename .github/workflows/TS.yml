@@ -54,4 +54,5 @@ jobs:
                 git fetch --all
                 git reset --hard origin/dev
                 git pull origin dev
-
+                cd ..
+                sudo ./deploy2.sh 
