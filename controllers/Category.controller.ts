@@ -88,6 +88,7 @@ export const addCategory = async(req: Request, res: Response) => {
       const {
               name,
               brand,
+              product_type,
               quantity,
               description,
               prize,
@@ -112,6 +113,7 @@ export const addCategory = async(req: Request, res: Response) => {
               name,
               store_id: await GenCode(),
               brand,
+              product_type,
               quantity,
               description,
               code: await GenCode(),
@@ -192,17 +194,14 @@ export const getSingleProd = async(req: Request, res: Response) => {
             Quantity: getProd.quantity,
             Description: getProd.description,
             Price: getProd.price,
-            Suggestions: any[] = []   
+            category_Id: getProd.category 
         }
-        const { similar_prod } = getProd.product_type;
-        const suggest = await ProductModel.find({ similar_prod })
-        const newResult = result.Suggestions.push(suggest)
-        console.log(newResult)
         return res.status(200).json({
             message: "Product Found",
-            result: newResult
+            result: result
         });
     }catch(error){
+      console.log(error)
         res.status(400).json({
             message: "Error Getting Single Product"
         })
