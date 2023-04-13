@@ -26,17 +26,6 @@ export const VendorRegisterInputSchema = object({
   }),
 });
 
-// export const buyerLoginInputSchema = object({
-//   body: object({
-//     email: string({
-//       required_error: 'Email is required',
-//     }).email('Not a valid email address'),
-//     password: string({
-//       required_error: 'Password is required',
-//     }).min(6, 'Password too short - should be atleast 8 characters'),
-//   }),
-// });
-
 export interface IVendorUpdateInput {
   firstName?: string;
   lastName?: string;
@@ -68,6 +57,7 @@ export interface IVendorCreateProduct{
   name: string;
   store_id: string;
   brand: string;
+  product_type: string;
   quantity: number;
   description: string;
   code: string;

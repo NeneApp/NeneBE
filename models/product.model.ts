@@ -4,6 +4,7 @@ interface ProductDoc extends Document {
   name: string;
   store_id: string;
   brand: string;
+  product_type: string;
   quantity: number;
   description: string;
   code: string;
@@ -29,6 +30,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: ["Please enter the product brand"],
     },
+    product_type: {
+      type: String,
+      required: true
+    },
     quantity: {
       type: Number,
       required: true,
@@ -53,7 +58,7 @@ const productSchema = new mongoose.Schema(
     discount: {
       type: Number,
     },
-    attribute: {
+    arrtibute: {
       type: Array,
       default: [],
     },
@@ -61,10 +66,11 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-    },
+    category:
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+      }
   },
   { timestamps: true }
 );

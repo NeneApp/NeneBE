@@ -18,7 +18,11 @@ import {
   verifyVendorMail,
 } from "./Vendor.docs";
 
-import { getAllCategories } from "./Categories.docs" 
+import {
+  getAllCategories,
+  getAllProductsInCategory,
+  createCategoryBody,
+} from "./Categories.docs";
 
 //options object for swaggerjs
 export const options = {
@@ -71,9 +75,12 @@ export const options = {
       },
 
       // For Categories
-      "/categories/get-all-categories": {
-        get: getAllCategories
-      }
+      "/categories": {
+        get: getAllCategories,
+      },
+      "/categories/:categoryName": {
+        get: getAllProductsInCategory,
+      },
     },
     components: {
       securitySchemes: {
@@ -86,6 +93,7 @@ export const options = {
       schemas: {
         createBuyerBody,
         createVendorBody,
+        createCategoryBody,
       },
     },
     security: [
@@ -107,8 +115,8 @@ export const options = {
         name: "Vendors",
       },
       {
-        name: "Categories"
-      }
+        name: "Categories",
+      },
     ],
   },
   apis: ["../routes/index.ts"],
