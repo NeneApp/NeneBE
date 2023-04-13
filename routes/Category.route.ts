@@ -4,11 +4,8 @@ import { getAllCategory,
         addCategory,
         addSubCategory,
         getSingleProd,
-        getAllCategory,
         getProductsInCategory
 } from "../controllers/Category.controller";
-import { Authenticate } from '../middlewares';
-import validate from '../middlewares/validateResource';
 
 const router = express.Router();
 
