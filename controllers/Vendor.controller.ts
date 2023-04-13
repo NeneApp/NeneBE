@@ -11,7 +11,7 @@ import {
   IVendorResetPassword,
   IVendorCreateProduct,
   IVendorCategory,
-  IVendorAddSub,
+  IVendorAddSub
 } from '../dto/Vendor.dto';
 
 import { GenCode, GenSlug } from '../utility/VendorUtility';
@@ -427,7 +427,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       message: 'Error Reseting Password',
     });
   }
-};
+}
 
 /**
  * @description Vendor Add Category
@@ -436,29 +436,29 @@ export const resetPassword = async (req: Request, res: Response) => {
  * @access public
  */
 
-export const addCategory = async (req: Request, res: Response) => {
-  try {
+export const addCategory = async(req: Request, res: Response) => {
+  try{
     const { name } = <IVendorCategory>req.body;
     const category: any = await CategoryModel.findOne({ name });
-    if (category) {
+    if(category){
       return res.status(400).json({
-        message: 'This Category Exists Already',
-      });
+        message: "This Category Exists Already"
+      })
     }
     const newCategory = await CategoryModel.create({
-      name,
+      name
     });
     return res.status(200).json({
-      message: 'Category Added Successfully',
-      result: newCategory,
-    });
-  } catch (error) {
-    log.error(error);
+      message: "Category Added Successfully",
+      result: newCategory
+    })
+  }catch(error){
+    log.error(error)
     res.status(400).json({
-      message: 'Error Adding Category',
-    });
+      message: "Error Adding Category"
+    })
   }
-};
+}
 
 /**
  * @description Vendor Create Product
@@ -466,34 +466,34 @@ export const addCategory = async (req: Request, res: Response) => {
  * @route /api/vendors/{categoryId}/add_sub_category
  * @access public
  */
-export const addSubCategory = async (req: Request, res: Response) => {
-  try {
+export const addSubCategory = async(req: Request, res: Response) => {
+  try{
     const { categoryId } = req.params;
     const { name } = <IVendorAddSub>req.body;
-    const category: any = await CategoryModel.findById(categoryId).exec();
-    if (!category) {
+    const category: any = await CategoryModel.findById( categoryId ).exec();
+    if(!category){
       return res.status(400).json({
-        message: 'No Category with Such Id',
+        message: "No Category with Such Id"
       });
     }
-    if (category.subCategory.includes(name)) {
+    if(category.subCategory.includes(name)){
       return res.status(400).json({
-        message: 'This Sub Category Exists Already',
+        message: "This Sub Category Exists Already"
       });
     }
-    category.subCategory.push(name);
-    const savedCategory = await category.save();
+    category.subCategory.push(name)
+    const savedCategory = await category.save()
     return res.status(200).json({
-      message: 'Sub Category Added Successfully',
-      result: savedCategory,
-    });
-  } catch (error) {
-    log.error(error);
+      message: "Sub Category Added Successfully",
+      result: savedCategory
+    })
+  }catch(error){
+    log.error(error)
     res.status(400).json({
-      message: 'Error Adding Sub Category',
+      message: "Error Adding Sub Category"
     });
   }
-};
+}
 
 /**
  * @description Vendor Create Product
@@ -502,53 +502,53 @@ export const addSubCategory = async (req: Request, res: Response) => {
  * @access public
  */
 
-export const CreateProduct = async (req: Request, res: Response) => {
-  try {
+export const CreateProduct = async(req: Request, res: Response) => {
+  try{
     const {
-      name,
-      brand,
-      quantity,
-      description,
-      prize,
-      discount,
-      attribute,
-      category,
-    } = <IVendorCreateProduct>req.body;
-    const categoryInfo: any = await CategoryModel.findOne({ name: category });
-
-    if (!categoryInfo) {
-      return res.status(400).json({
-        message: 'No Such Category',
-      });
-    }
-    const checkProd: any = await ProductModel.findOne({ name });
-    if (checkProd && checkProd.quantity > 0 && checkProd.is_sold === false) {
-      return res.status(400).json({
-        message: 'This Product Exists And Is Yet To Be Sold Out',
-      });
-    }
-    const product = await ProductModel.create({
-      name,
-      store_id: await GenCode(),
-      brand,
-      quantity,
-      description,
-      code: await GenCode(),
-      slug: GenSlug(name),
-      prize,
-      discount,
-      attribute,
-      is_sold: false,
-      category: categoryInfo.id,
-    });
-    return res.status(200).json({
-      message: 'Product created Successfully',
-      result: product,
-    });
-  } catch (error) {
-    log.error(error);
+            name,
+            brand,
+            quantity,
+            description,
+            prize,
+            discount,
+            attribute,
+            category
+          } = <IVendorCreateProduct>req.body;
+          const categoryInfo: any = await CategoryModel.findOne({name: category});
+      
+          if(!categoryInfo){
+            return res.status(400).json({
+              message: "No Such Category"
+            });
+          }
+          const checkProd: any = await ProductModel.findOne({ name });
+          if(checkProd && checkProd.quantity > 0 && checkProd.is_sold === false){
+            return res.status(400).json({
+              message: "This Product Exists And Is Yet To Be Sold Out"
+            });
+          }
+          const product = await ProductModel.create({
+            name,
+            store_id: await GenCode(),
+            brand,
+            quantity,
+            description,
+            code: await GenCode(),
+            slug: GenSlug(name),
+            prize,
+            discount,
+            attribute,
+            is_sold: false,
+            category: categoryInfo.id
+          });
+          return res.status(200).json({
+            message: "Product created Successfully",
+            result: product
+          })
+  }catch(error){
+    log.error(error)
     res.status(400).json({
-      message: 'Error Creating product',
-    });
+      message: "Error Creating product"
+    })
   }
 };
