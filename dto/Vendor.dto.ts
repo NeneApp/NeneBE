@@ -57,6 +57,7 @@ export interface IVendorCreateProduct{
   name: string;
   store_id: string;
   brand: string;
+  product_type: string;
   quantity: number;
   description: string;
   code: string;
