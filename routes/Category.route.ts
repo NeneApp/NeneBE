@@ -1,18 +1,22 @@
+import express from 'express';
 import { getAllCategory,
         createProduct,
         addCategory,
         addSubCategory,
-        getSingleProd
+        getSingleProd,
+        getAllCategory,
+        getProductsInCategory
 } from "../controllers/Category.controller";
 import { Authenticate } from '../middlewares';
-import express from 'express';
-const categories = express.Router();
+import validate from '../middlewares/validateResource';
 
-categories.post('/createProduct', createProduct);
-categories.post('/addCategory', addCategory);
-categories.post('/:categoryId/addSubCategory', addSubCategory);
-categories.get('/getAllCategories', getAllCategory);
-categories.get('/:prodId/getSingleProd', getSingleProd);
+const router = express.Router();
 
-export default categories;
+router.post('/createProduct', createProduct);
+router.post('/addCategory', addCategory);
+router.post('/:categoryId/addSubCategory', addSubCategory);
+router.get('/getAllCategories', getAllCategory);
+router.get('/:prodId/getSingleProd', getSingleProd);
+router.get('/:categoryName', getProductsInCategory);
 
+export default router
