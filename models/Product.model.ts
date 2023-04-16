@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { productAttribute } from "../dto/Category.dto";
 
 interface ProductDoc extends Document {
   name: string;
@@ -10,9 +11,10 @@ interface ProductDoc extends Document {
   slug: string;
   prize: number;
   discount: number;
-  attribute: [];
+  attribute: productAttribute;
   is_sold: boolean;
   category: string;
+  productType: string
 }
 
 const productSchema = new mongoose.Schema(
@@ -54,8 +56,8 @@ const productSchema = new mongoose.Schema(
       type: Number,
     },
     attribute: {
-      type: Array,
-      default: [],
+      type: Object,
+      default: {},
     },
     is_sold: {
       type: Boolean,
@@ -64,7 +66,12 @@ const productSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
+      required: true,
     },
+    productType: {
+        type: String,
+        required: true
+    }
   },
   { timestamps: true }
 );

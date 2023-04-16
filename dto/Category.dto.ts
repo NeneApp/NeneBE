@@ -8,3 +8,10 @@ export interface IGetCategoryQuery {
 export interface IGetCategoryParams {
   categoryName: string;
 }
+
+export interface productAttribute {
+  size?: string;
+  color?: string;
+  height?: string;
+  weight?: string;
+}
