@@ -29,7 +29,7 @@ jobs:
     - run: |
        touch .env
        echo "${{ secrets.ENV_FILE }}" > .env
-       npm ci
+       npm install
        npm run build
        
   Deploy_to_EC2:
