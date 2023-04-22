@@ -562,6 +562,26 @@ const resetpasswordVendor = {
       bearerAuth: [],
     },
   ],
+  parameters: [
+    {
+      name: "Id",
+      in: "path",
+      description: "This Id Is The Vendors's ID",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+    {
+      name: "Token",
+      in: "path",
+      description: "This Is The Token Sent To The Vendors's Email",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
   requestBody: {
     content: {
       "application/json": {

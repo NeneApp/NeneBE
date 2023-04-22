@@ -3,6 +3,7 @@ import {
   createBuyer,
   createBuyerBody,
   forgotPasswordBuyer,
+  resetpasswordBuyer,
   loginBuyer,
   resendVerifyBuyerMail,
   updateBuyer,
@@ -12,13 +13,22 @@ import {
   createVendor,
   createVendorBody,
   forgotPasswordVendor,
+  resetpasswordVendor,
   loginVendor,
   resendVerifyVendorMail,
   updateVendor,
   verifyVendorMail,
 } from "./Vendor.docs";
 
-import { getAllCategories } from "./Categories.docs" 
+import {
+  getAllCategories,
+  getAllProductsInCategory,
+  createCategoryBody,
+  addCategory,
+  addSubCategory,
+  createProduct,
+  getSingleProduct
+} from "./Categories.docs";
 
 //options object for swaggerjs
 export const options = {
@@ -49,6 +59,9 @@ export const options = {
       "/buyers/forgot-password": {
         post: forgotPasswordBuyer,
       },
+      "/buyers/reset-password/:id/:token": {
+        post: resetpasswordBuyer,
+      },
 
       // for vendors
       "/vendors/register": {
@@ -69,11 +82,29 @@ export const options = {
       "/vendors/forgot-password": {
         post: forgotPasswordVendor,
       },
+      "/vendors/reset-password/:id/:token": {
+        post: resetpasswordVendor,
+      },
 
       // For Categories
-      "/categories/get-all-categories": {
-        get: getAllCategories
-      }
+      "/addCategory": {
+        post: addCategory,
+      },
+      "/:categoryId/addSubCategory": {
+        post: addSubCategory,
+      },
+      "/createProduct": {
+        post: createProduct,
+      },
+      "/categories": {
+        get: getAllCategories,
+      },
+      "/categories/:categoryName": {
+        get: getAllProductsInCategory,
+      },
+      "/:prodId/getSingleProd": {
+        get: getSingleProduct,
+      },
     },
     components: {
       securitySchemes: {
@@ -86,6 +117,7 @@ export const options = {
       schemas: {
         createBuyerBody,
         createVendorBody,
+        createCategoryBody,
       },
     },
     security: [
@@ -107,8 +139,8 @@ export const options = {
         name: "Vendors",
       },
       {
-        name: "Categories"
-      }
+        name: "Categories",
+      },
     ],
   },
   apis: ["../routes/index.ts"],
