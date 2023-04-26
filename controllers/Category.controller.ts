@@ -247,7 +247,7 @@ export const getProductsInCategory = async (
 
     if (queriedProducts.length === 0) {
       return res
-        .status(401)
+        .status(404)
         .send({ msg: "No product is available in this category" });
     }
 
