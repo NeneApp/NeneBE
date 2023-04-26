@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import ProductModel from "../models/Product.model";
 import { IGetBrandParams, IGetBrandQuery } from "../dto/Product.dto";
 import { BuyerModel } from "../models";
-import jwt from "jsonwebtoken";
 
 /**
  * @description
@@ -14,17 +13,17 @@ export const addOrRemoveFromWishlist = async (req: Request, res: Response) => {
   const brandId: string = req.params.productId;
   try {
     const user = await BuyerModel.findOne({ _id: req.user.id });
- 
-      if (user!.wishlist.includes(brandId)) {
-        const brandIdIndex: number = user!.wishlist.indexOf(brandId);
-        user!.wishlist.splice(brandIdIndex, 1);
-        await user!.save();
-        return res.status(200).send({ message: "Item removed from wishlist!" });
-      } else {
-        user!.wishlist.push(brandId);
-        await user!.save();
-        return res.status(200).send({ message: "Item added to wishlist!" });
-      }
+
+    if (user!.wishlist.includes(brandId)) {
+      const brandIdIndex: number = user!.wishlist.indexOf(brandId);
+      user!.wishlist.splice(brandIdIndex, 1);
+      await user!.save();
+      return res.status(200).send({ message: "Item removed from wishlist!" });
+    } else {
+      user!.wishlist.push(brandId);
+      await user!.save();
+      return res.status(200).send({ message: "Item added to wishlist!" });
+    }
   } catch (error) {
     res.status(500).send({ message: "Internal server error" });
   }

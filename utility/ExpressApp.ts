@@ -10,11 +10,11 @@ import { errorHandler, notFound } from "../middlewares";
 import hpp from "hpp";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
-import { options } from '../docs/swagger'
+import { options } from "../docs/swagger";
 
 export default async (app: Application) => {
   app.use(express.json());
-  app.use(express.urlencoded({ extended: true }))
+  app.use(express.urlencoded({ extended: true }));
 
   //set cross origin resource sharing
   app.use(cors());
@@ -36,11 +36,10 @@ export default async (app: Application) => {
     res.sendStatus(200);
   });
 
-  app.use('/api/vendors', VendorRoutes);
-  app.use('/api/buyers', BuyerRoutes);
-  app.use('/api/categories', CategoryRoutes);
-  app.use('/api/products', ProductRoutes);
-  
+  app.use("/api/vendors", VendorRoutes);
+  app.use("/api/buyers", BuyerRoutes);
+  app.use("/api/categories", CategoryRoutes);
+  app.use("/api/products", ProductRoutes);
 
   // Error handler
   app.use(notFound);
