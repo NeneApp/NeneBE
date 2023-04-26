@@ -518,6 +518,126 @@ const forgotPasswordBuyer = {
   },
 };
 
+const resetpasswordBuyer = {
+  tags: ["Buyers"],
+  description: "Reset buyer Password By Using The Link Sent From Forgot Password Endpoint",
+  operationId: "resetpassword",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "Id",
+      in: "path",
+      description: "This Id Is The Buyer's ID",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+    {
+      name: "Token",
+      in: "path",
+      description: "This Is The Token Sent To The Buyer's Email",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            password: {
+              description: "new unencrypted vendor password",
+              type: "string",
+              example: "!1234aWe1Ro3$#",
+            },
+            confirmpassword: {
+              description: "confirm unencrypted vendor password",
+              type: "string",
+              example: "!1234aWe1Ro3$#",
+            },
+          },
+        },
+      },
+    },
+    required: true,
+  },
+  responses: {
+    "200": {
+      description: "Password Reset Successful",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example:
+                  "Password Reset Successfully!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "User does not exist",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No User With This Id",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "Passwords Do Not Match",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Passwords Do Not Match!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Reseting Password",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 const createBuyerBody = {
   type: "object",
   properties: {
@@ -549,4 +669,5 @@ export {
   loginBuyer,
   updateBuyer,
   forgotPasswordBuyer,
+  resetpasswordBuyer
 };

@@ -1,3 +1,316 @@
+const addCategory = {
+  tags: ["Categories"],
+  description: "This Endpoint Aids The Admin To Add Categories",
+  operationId: "addCategory",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              example: "Clothes",
+            },
+            sub_categories: {
+              type: "Array",
+              example: ["Dresses", "Jeans"],
+            },
+          },
+        },
+      },
+    },
+    required: true,
+  },
+  responses: {
+    "201": {
+      description: "Category Is Created Successfully",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "Category Added Successfully!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "This Category Has been created Before And Exists In The Database",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "This Category Exists Already",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "Error Adding Category",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+const addSubCategory = {
+  tags: ["Categories"],
+  description: "This Endpoint Is For Adding Sub Category Into the Catory If You Failed To Add It While Creating The Category",
+  operationId: "addsubcategory",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "Category_Id",
+      in: "path",
+      description: "This Id Is The Id Of The Category You Want To Add ThIs Sub-Category To",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              example: "trousers",
+            },
+          },
+        },
+      },
+    },
+    required: true,
+  },
+  responses: {
+    "200": {
+      description: "Adding Sub-Category Successful",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example:
+                  "Sub Category Added Successfully!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "No Category With This Id",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Category With Such Id!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "This Sub-Category Exists",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "This Sub-Category Exists Already!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Adding Sub-category",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+const createProduct = {
+  tags: ["Categories"],
+  description: "This Endpoint Is For Creating A Product",
+  operationId: "createproduct",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              example: "trousers",
+            },
+            brand: {
+              type: "string",
+              example: "gucci",
+            },
+            product_type: {
+              type: "string",
+              example: "dresses",
+            },
+            quantity: {
+              type: "number",
+              example: 4,
+            },
+            description: {
+              type: "string",
+              example: "This is a gucci dress...",
+            },
+            prize: {
+              type: "number",
+              example: 10000,
+            },
+            discount: {
+              type: "number",
+              example: -76,
+            },
+            attribute: {
+              type: "string",
+              example: "trousers",
+            },
+            category_Id: {
+              type: "string",
+              example: "507f191e810c19729de860ea",
+            },
+          },
+        },
+      },
+    },
+    required: true,
+  },
+  responses: {
+    "200": {
+      description: "Adding Product Successful",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example:
+                  "Product Added Successfully!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "No Category With This Id",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Category With Such Id!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "This Product Exists And Is Yet To Be Sold Out",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "This Product Exists And Is Yet To Be Sold Out!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Creating Product",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+
 const getAllCategories = {
   tags: ["Categories"],
   description: "Get all the categories",
@@ -320,6 +633,124 @@ const getAllProductsInCategory = {
   },
 };
 
+
+
+const getSingleProduct = {
+  tags: ["Categories"],
+  description: "Get Single category",
+  operationId: "getsinglecategory",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "Product_Id",
+      in: "path",
+      description: "This Id Is The Id Of The Single Product To Be Shown",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    }, 
+  ],
+  responses: {
+    "200": {
+      description: "Product Found",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Product Found!",
+              },
+              result: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    _id: {
+                      type: "string",
+                      example: "60f34d3f3fa47634203e2d4c",
+                    },
+                    product_name: {
+                      type: "string",
+                      example: "Clothes",
+                    },
+                    brand: {
+                      type: "string",
+                      example: "Gucci/dior e.t.c",
+                    },
+                    product_type: {
+                      type: "string",
+                      example: "long Sleeve",
+                    },
+                    quantity: {
+                      type: "number",
+                      example: 10,
+                    },
+                    description: {
+                      type: "string",
+                      example: "This is a gucci shirt ...",
+                    },
+                    prize: {
+                      type: "number",
+                      example: 15750,
+                    },
+                    category_id: {
+                      type: "string",
+                      example: "507f191e810c19729de860ea",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "No Product With This Id",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Product With This Id!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Fetching Product!",
+              },
+              error: {
+                type: "object",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+
 const createCategoryBody = {
   type: "object",
   properties: {
@@ -334,4 +765,4 @@ const createCategoryBody = {
   },
 };
 
-export { getAllCategories, getAllProductsInCategory, createCategoryBody };
+export { getAllCategories, getAllProductsInCategory, createCategoryBody, addCategory, addSubCategory, createProduct, getSingleProduct };
