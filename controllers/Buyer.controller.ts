@@ -197,7 +197,7 @@ export async function buyerLogin(req: Request, res: Response) {
       lastname: user?.lastName,
       gender: user?.gender,
       email: user?.email,
-      token: await signToken(user.id),
+      token: await signToken({ id: user.id, role: "Buyer" }),
     });
   } catch (error: any) {
     log.error(error)

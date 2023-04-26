@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
-import { AuthPayload } from '../dto/Auth.dto';
-import { ValidateJwt } from '../utility';
-import asyncHandler from 'express-async-handler';
+import { NextFunction, Request, Response } from "express";
+import { AuthPayload } from "../dto/Auth.dto";
+import { ValidateJwt } from "../utility";
+import asyncHandler from "express-async-handler";
 
 declare global {
   namespace Express {
@@ -22,7 +22,36 @@ export const Authenticate = async (
     next();
   } else {
     return res.status(400).json({
-      message: 'User not Authorized',
+      message: "User not Authenticated",
+    });
+  }
+};
+
+export const AuthorizeBuyer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  if (req.user.role === "Buyer") {
+    next();
+  } else {
+    return res.status(400).json({
+      message: "User not Authorized",
+    });
+  }
+};
+
+export const AuthorizeVendor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user.role === "Vendor") {
+    next();
+  } else {
+    return res.status(400).json({
+      message: "User not Authorized",
     });
   }
 };

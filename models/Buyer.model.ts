@@ -12,6 +12,7 @@ interface BuyerDoc extends Document {
   gender: string;
   confirmationCode: string;
   status: string;
+  wishlist: string[];
 }
 
 const BuyerSchema: Schema = new mongoose.Schema<BuyerDoc>(
@@ -62,6 +63,12 @@ const BuyerSchema: Schema = new mongoose.Schema<BuyerDoc>(
       enum: ["Pending", "Active"],
       default: "Pending",
     },
+    wishlist: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   {
     timestamps: true,

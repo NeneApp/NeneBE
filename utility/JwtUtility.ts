@@ -9,7 +9,6 @@ export const ValidateJwt = async (req: Request) => {
       signature.split(' ')[1],
       process.env.JWT_SECRET!
     );
-
     req.user = payload;
 
     return true;

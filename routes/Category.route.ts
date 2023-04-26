@@ -6,12 +6,13 @@ import { getAllCategory,
         getSingleProd,
         getProductsInCategory
 } from "../controllers/Category.controller";
+import { Authenticate, AuthorizeVendor } from '../middlewares';
 
 const router = express.Router();
 
-router.post('/createProduct', createProduct);
-router.post('/addCategory', addCategory);
-router.post('/:categoryId/addSubCategory', addSubCategory);
+router.post('/createProduct',  Authenticate, AuthorizeVendor, createProduct);
+router.post('/addCategory', Authenticate, addCategory);
+router.post('/:categoryId/addSubCategory',  Authenticate, addSubCategory);
 router.get('/getAllCategories', getAllCategory);
 router.get('/:prodId/getSingleProd', getSingleProd);
 router.get('/:categoryName', getProductsInCategory);
