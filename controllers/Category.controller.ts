@@ -181,7 +181,6 @@ export const getProductsInCategory = async (
   const categoryName: string = req.params.categoryName;
   const page = parseInt(req.query.page) - 1 || 0;
   const limit = parseInt(req.query.limit) || 8;
-  // let filterType: string = req.query.filter;
   let sortField = {};
   let queryField: {};
 

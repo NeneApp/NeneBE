@@ -27,8 +27,13 @@ import {
   addCategory,
   addSubCategory,
   createProduct,
-  getSingleProduct
+  getSingleProduct,
 } from "./Categories.docs";
+import {
+  createProductBody,
+  addOrRemoveWishlist,
+  getProductsByBrand,
+} from "./Product.docs";
 
 //options object for swaggerjs
 export const options = {
@@ -87,13 +92,13 @@ export const options = {
       },
 
       // For Categories
-      "/addCategory": {
+      "/categories/addCategory": {
         post: addCategory,
       },
-      "/:categoryId/addSubCategory": {
+      "/categories/:categoryId/addSubCategory": {
         post: addSubCategory,
       },
-      "/createProduct": {
+      "categories/createProduct": {
         post: createProduct,
       },
       "/categories": {
@@ -102,8 +107,16 @@ export const options = {
       "/categories/:categoryName": {
         get: getAllProductsInCategory,
       },
-      "/:prodId/getSingleProd": {
+      "/categories/:prodId/getSingleProd": {
         get: getSingleProduct,
+      },
+
+      // For products
+      "/products/brand/:brandName": {
+        get: getProductsByBrand,
+      },
+      "/products/:productId/wishlist": {
+        get: addOrRemoveWishlist,
       },
     },
     components: {
@@ -118,13 +131,9 @@ export const options = {
         createBuyerBody,
         createVendorBody,
         createCategoryBody,
+        createProductBody,
       },
     },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
     servers: [
       {
         //update to production url
@@ -140,6 +149,9 @@ export const options = {
       },
       {
         name: "Categories",
+      },
+      {
+        name: "Products",
       },
     ],
   },

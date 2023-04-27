@@ -484,7 +484,7 @@ const getAllProductsInCategory = {
   ],
   responses: {
     "200": {
-      description: "All categories displayed successfully",
+      description: "All products displayed successfully",
       content: {
         "application/json": {
           schema: {
@@ -595,7 +595,7 @@ const getAllProductsInCategory = {
         },
       },
     },
-    "401": {
+    "404": {
       description: "No products found under the category",
       content: {
         "application/json": {
