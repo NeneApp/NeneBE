@@ -355,7 +355,7 @@ export const forgotPassword = async(req: Request, res: Response) => {
     );
     if (ress !== null) {
       return res.status(200).json({
-        message: 'Rest Password Link Sent successfully! Please check your mail',
+        message: 'Reset Password Link Sent successfully! Please check your mail',
         reset_link: link
       });
     } else {

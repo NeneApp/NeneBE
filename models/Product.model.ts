@@ -29,7 +29,7 @@ const productSchema = new mongoose.Schema(
     },
     brand: {
       type: String,
-      required: ["Please enter the product brand"],
+      required: [true, "Please enter the product brand"],
     },
     quantity: {
       type: Number,

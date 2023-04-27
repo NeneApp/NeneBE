@@ -436,7 +436,7 @@ const getAllProductsInCategory = {
       description: "The page number to be queried",
       schema: {
         type: "string",
-        example: "2",
+        example: "1",
         default: "1",
       },
     },
@@ -446,7 +446,7 @@ const getAllProductsInCategory = {
       description: "The number of data to be returned per request",
       schema: {
         type: "string",
-        example: "6",
+        example: "8",
         default: "8",
       },
     },
@@ -484,7 +484,7 @@ const getAllProductsInCategory = {
   ],
   responses: {
     "200": {
-      description: "All categories displayed successfully",
+      description: "All products displayed successfully",
       content: {
         "application/json": {
           schema: {
@@ -595,7 +595,7 @@ const getAllProductsInCategory = {
         },
       },
     },
-    "401": {
+    "404": {
       description: "No products found under the category",
       content: {
         "application/json": {

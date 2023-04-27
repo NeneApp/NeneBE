@@ -249,91 +249,91 @@ const loginBuyer = {
       },
       required: true,
     },
-    responses: {
-      "200": {
-        description: "Login successful",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example: "User login successfully",
-                },
-                id: {
-                  type: "string",
-                  example: "94ty-hfuw-ftr3-tu5t",
-                },
-                firstName: {
-                  type: "string",
-                  example: "John",
-                },
-                lastName: {
-                  type: "string",
-                  example: "snow",
-                },
-                gender: {
-                  type: "string",
-                  example: "male",
-                },
-                email: {
-                  type: "string",
-                  example: "male",
-                },
-                token: {
-                  type: "string",
-                  example:
-                    "f42r4urh84u3395t53t53gng35jt93.fu3u4t40yhwwrfr2.fu349tu3udvwrf394uu",
-                },
+  },
+  responses: {
+    "200": {
+      description: "Login successful",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "User login successfully",
+              },
+              id: {
+                type: "string",
+                example: "94ty-hfuw-ftr3-tu5t",
+              },
+              firstName: {
+                type: "string",
+                example: "John",
+              },
+              lastName: {
+                type: "string",
+                example: "snow",
+              },
+              gender: {
+                type: "string",
+                example: "male",
+              },
+              email: {
+                type: "string",
+                example: "male",
+              },
+              token: {
+                type: "string",
+                example:
+                  "f42r4urh84u3395t53t53gng35jt93.fu3u4t40yhwwrfr2.fu349tu3udvwrf394uu",
               },
             },
           },
         },
       },
-      "400": {
-        description: "Email not yet verified",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example: "your email is yet to be verified",
-                },
+    },
+    "400": {
+      description: "Email not yet verified",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "your email is yet to be verified",
               },
             },
           },
         },
       },
-      "401": {
-        description: "Invalid email or password",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example: "Unable to login, Invalid email or  password",
-                },
+    },
+    "401": {
+      description: "Invalid email or password",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Unable to login, Invalid email or  password",
               },
             },
           },
         },
       },
-      "500": {
-        description: "Internal Server Error",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                msg: {
-                  type: "string",
-                  example: "An Error Occured",
-                },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "An Error Occured",
               },
             },
           },
@@ -476,7 +476,7 @@ const forgotPasswordBuyer = {
               message: {
                 type: "string",
                 example:
-                  "Rest Password Link Sent successfully! Please check your mail",
+                  "Reset Password Link Sent successfully! Please check your mail",
               },
             },
           },
@@ -520,7 +520,8 @@ const forgotPasswordBuyer = {
 
 const resetpasswordBuyer = {
   tags: ["Buyers"],
-  description: "Reset buyer Password By Using The Link Sent From Forgot Password Endpoint",
+  description:
+    "Reset buyer Password By Using The Link Sent From Forgot Password Endpoint",
   operationId: "resetpassword",
   security: [
     {
@@ -579,8 +580,7 @@ const resetpasswordBuyer = {
             properties: {
               message: {
                 type: "string",
-                example:
-                  "Password Reset Successfully!",
+                example: "Password Reset Successfully!",
               },
             },
           },
@@ -669,5 +669,5 @@ export {
   loginBuyer,
   updateBuyer,
   forgotPasswordBuyer,
-  resetpasswordBuyer
+  resetpasswordBuyer,
 };
