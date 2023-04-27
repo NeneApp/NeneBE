@@ -98,7 +98,7 @@ export const options = {
       "/categories/:categoryId/addSubCategory": {
         post: addSubCategory,
       },
-      "categories/createProduct": {
+      "/categories/createProduct": {
         post: createProduct,
       },
       "/categories": {
