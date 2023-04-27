@@ -27,7 +27,7 @@ const getProductsByBrand = {
       description: "The page number to be queried",
       schema: {
         type: "string",
-        example: "2",
+        example: "1",
         default: "1",
       },
     },
@@ -37,7 +37,7 @@ const getProductsByBrand = {
       description: "The number of data to be returned per request",
       schema: {
         type: "string",
-        example: "6",
+        example: "8",
         default: "8",
       },
     },

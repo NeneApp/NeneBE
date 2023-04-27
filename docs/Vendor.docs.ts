@@ -511,7 +511,7 @@ const forgotPasswordVendor = {
               message: {
                 type: "string",
                 example:
-                  "Rest Password Link Sent successfully! Please check your mail",
+                  "Reset Password Link Sent successfully! Please check your mail",
               },
             },
           },

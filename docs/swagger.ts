@@ -49,7 +49,7 @@ export const options = {
       "/buyers/register": {
         post: createBuyer,
       },
-      "/buyers/confirm/:confirmationCode": {
+      "/buyers/confirm/{confirmationCode}": {
         get: verifyBuyerMail,
       },
       "/buyers/resend-confirm": {
@@ -64,7 +64,7 @@ export const options = {
       "/buyers/forgot-password": {
         post: forgotPasswordBuyer,
       },
-      "/buyers/reset-password/:id/:token": {
+      "/buyers/reset-password/{id}/{token}": {
         post: resetpasswordBuyer,
       },
 
@@ -72,7 +72,7 @@ export const options = {
       "/vendors/register": {
         post: createVendor,
       },
-      "/vendors/confirm/:confirmationCode": {
+      "/vendors/confirm/{confirmationCode}": {
         get: verifyVendorMail,
       },
       "/vendors/resend-confirm": {
@@ -87,7 +87,7 @@ export const options = {
       "/vendors/forgot-password": {
         post: forgotPasswordVendor,
       },
-      "/vendors/reset-password/:id/:token": {
+      "/vendors/reset-password/{id}/{token}": {
         post: resetpasswordVendor,
       },
 
@@ -95,7 +95,7 @@ export const options = {
       "/categories/addCategory": {
         post: addCategory,
       },
-      "/categories/:categoryId/addSubCategory": {
+      "/categories/{categoryId}/addSubCategory": {
         post: addSubCategory,
       },
       "/categories/createProduct": {
@@ -104,18 +104,18 @@ export const options = {
       "/categories": {
         get: getAllCategories,
       },
-      "/categories/:categoryName": {
+      "/categories/{categoryName}": {
         get: getAllProductsInCategory,
       },
-      "/categories/:prodId/getSingleProd": {
+      "/categories/{prodId}/getSingleProd": {
         get: getSingleProduct,
       },
 
       // For products
-      "/products/brand/:brandName": {
+      "/products/brand/{brandName}": {
         get: getProductsByBrand,
       },
-      "/products/:productId/wishlist": {
+      "/products/{productId}/wishlist": {
         get: addOrRemoveWishlist,
       },
     },
