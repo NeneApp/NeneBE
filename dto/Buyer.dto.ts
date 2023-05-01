@@ -32,9 +32,6 @@ export interface IBuyerResetPassword{
   password: string;
   confirmPassword: string;
 }
-export interface IBuyerAddToCart{
-  quantity: string;
-}
 
 export const buyerLoginInputSchema = object({
   body: object({
