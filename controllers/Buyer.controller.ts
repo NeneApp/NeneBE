@@ -421,9 +421,9 @@ export const resetPassword = async(req: Request, res: Response) => {
  */
 export const addToCart = async(req: Request, res: Response) => {
   try{
-    const {buyerId, prodId} = req.params
+    const {prodId} = req.params
     const { quantity } = <IBuyerAddToCart> req.body;
-    const checkBuyer = await BuyerModel.findById( buyerId ).exec()
+    const checkBuyer = await BuyerModel.find({ id: req.user.id }).exec()
     if(!checkBuyer){
       return res.status(400).json({
         message: "No User With This Id!"
@@ -435,7 +435,7 @@ export const addToCart = async(req: Request, res: Response) => {
         message: "No Product With This Id!"
       })
     }
-    const checkCart: any = await CartModel.findOne({ buyerId })
+    const checkCart: any = await CartModel.findOne({ id: req.user.id })
     if(checkCart !== null && checkCart.isPaid === false){
       let cart = {
         name: checkProd.name,
@@ -451,7 +451,7 @@ export const addToCart = async(req: Request, res: Response) => {
       })
     }else{
       let cart = await CartModel.create({
-        buyerId: buyerId,
+        buyerId: req.user.id,
         cart: {
           name: checkProd.name,
           description: checkProd.description, 
@@ -480,8 +480,8 @@ export const addToCart = async(req: Request, res: Response) => {
  */
 export const checkout = async(req: Request, res: Response) => {
   try{
-    const { buyerId, cartId } = req.params;
-    const checkUser = await BuyerModel.findById( buyerId ).exec()
+    const { cartId } = req.params;
+    const checkUser = await BuyerModel.find({ id: req.user.id}).exec()
     if(!checkUser){
       return res.status(400).json({
         message: "No Such User"
@@ -493,7 +493,7 @@ export const checkout = async(req: Request, res: Response) => {
         message: "No Such Cart"
       })
     }
-    const getBuyer = await CartModel.findOne({ buyerId })
+    const getBuyer = await CartModel.findOne({id: req.user.id})
     if(!getBuyer){
       return res.status(400).json({
         message: "This cart does'nt Belong To This User, Can't Check It Out"

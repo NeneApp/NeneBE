@@ -29,7 +29,7 @@ router.post('/google', googleAuth);
 router.put('/update', Authenticate, updateBuyerProfile)
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:id/:token', resetPassword);
-router.post('/add-to-cart/:buyerId/:prodId', addToCart);
-router.post('/checkout/:buyerId/:cartId', checkout);
+router.post('/addToCart/:prodId', addToCart);
+router.post('/checkout/:cartId', checkout);
 
 export default router;

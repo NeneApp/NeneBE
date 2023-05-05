@@ -638,6 +638,251 @@ const resetpasswordBuyer = {
   },
 };
 
+const addToCart = {
+  tags: ["Buyers"],
+  description:
+    "Adding products into cart",
+  operationId: "addtocart",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "ProductId",
+      in: "path",
+      description: "This Id Is The Product's ID",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            quantity: {
+              description: "quantity of product",
+              type: "number",
+              example: 5,
+            }
+          },
+        },
+      },
+    },
+    required: true,
+  },
+  responses: {
+    "201": {
+      description: "Product Successfully Added To Old Cart",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Product Successfully Added To Old Cart!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "200": {
+      description: "Product Successfully Added To New Cart",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Product Successfully Added To New Cart!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "User does not exist",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No User With This Id",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "No Product With This Id",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Product With This Id!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Adding To Cart",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+
+const checkOut = {
+  tags: ["Buyers"],
+  description:
+    "Checking out",
+  operationId: "checkout",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "cartId",
+      in: "path",
+      description: "This Id Is The Cart's ID",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
+  responses: {
+    "201": {
+      description: "Total Price",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Total Price!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "No Cart To CheckOut",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Cart To CheckOut!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "This cart does'nt Belong To This User, Can't Check It Out",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "This cart does'nt Belong To This User, Can't Check It Out!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "402": {
+      description: "No Such Cart",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Such Cart!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "403": {
+      description: "No Such User",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Such User!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Checking Out",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+
 const createBuyerBody = {
   type: "object",
   properties: {
@@ -670,4 +915,6 @@ export {
   updateBuyer,
   forgotPasswordBuyer,
   resetpasswordBuyer,
+  addToCart,
+  checkOut
 };
