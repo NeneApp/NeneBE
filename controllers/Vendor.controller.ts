@@ -250,7 +250,7 @@ export const vendorLogin = async (req: Request, res: Response) => {
       role: vendor.role,
       image: vendor.image,
       phone: vendor.phone,
-      token: await signToken({ vendor: vendor._id, role: vendor.role }),
+      token: await signToken({ vendor: vendor.id, role: vendor.role }),
     });
   } catch (error) {
     res.status(500).json({

@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import ProductModel from "../models/Product.model";
-import { IGetBrandParams, IGetBrandQuery } from "../dto/Product.dto";
+import {
+  IGetBrandParams,
+  IGetBrandQuery,
+  IUpdateVendorProductBody,
+} from "../dto/Product.dto";
 import { BuyerModel } from "../models";
+import VendorModel from "../models/Vendor.model";
 
 /**
  * @description
@@ -63,6 +68,47 @@ export const getProductsByBrand = async (
     const result: {}[] = queriedProducts.splice(
       page * limit,
       page * limit + limit
+    );
+    return res.status(200).send({
+      results: result,
+      currentPage: req.query.page || 1,
+      limit,
+      totalPages,
+      totalReturnedProducts,
+    });
+  } catch (error) {
+    res.status(500).send({ msg: "Internal server error", error });
+  }
+};
+
+/**
+ * @description
+ * @method GET
+ * @route /api/products/my-products
+ * @access private
+ */
+
+export const getVendorProducts = async (req: Request, res: Response) => {
+  const page = req.query.page as string;
+  const limit = req.query.limit as string;
+  const pageNo = parseInt(page) - 1 || 0;
+  const limitNo = parseInt(limit) || 8;
+
+  try {
+    const vendorsProduct = await VendorModel.find({ _id: req.user.vendor })
+      .populate("products")
+      .select("products")
+      .exec();
+
+    if (vendorsProduct.length === 0) {
+      return res.status(404).send({ msg: "You currently have no product" });
+    }
+
+    const totalReturnedProducts: number = vendorsProduct.length;
+    const totalPages: number = Math.ceil(totalReturnedProducts / limitNo);
+    const result: {}[] = vendorsProduct.splice(
+      pageNo * limitNo,
+      pageNo * limitNo + limitNo
     );
     return res.status(200).send({
       results: result,
