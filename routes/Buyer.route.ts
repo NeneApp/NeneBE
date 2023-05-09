@@ -7,9 +7,7 @@ import {
   updateBuyerProfile,
   resendBuyerVerificionLink,
   forgotPassword,
-  resetPassword,
-  addToCart,
-  checkout
+  resetPassword
 } from '../controllers/Buyer.controller';
 
 import validate from '../middlewares/validateResource';
@@ -29,7 +27,5 @@ router.post('/google', googleAuth);
 router.put('/update', Authenticate, updateBuyerProfile)
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:id/:token', resetPassword);
-router.post('/add-to-cart/:buyerId/:prodId', addToCart);
-router.post('/checkout/:buyerId/:cartId', checkout);
 
 export default router;
