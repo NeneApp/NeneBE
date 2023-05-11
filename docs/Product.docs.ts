@@ -626,16 +626,7 @@ const updateVendorProduct = {
                 },
                 category: {
                   type: "object",
-                  properties: {
-                    _id: {
-                      type: "string",
-                      example: "6eq4dcw3iwrhfwa46fr2-",
-                    },
-                    name: {
-                      type: "string",
-                      example: "Clothes",
-                    },
-                  },
+                  example: "wyru-3848-og3y-vui3u4"
                 },
                 productType: {
                   type: "string",

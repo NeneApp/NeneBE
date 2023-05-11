@@ -251,7 +251,7 @@ const createProduct = {
             },
             category: {
               type: "string",
-              example: "Clothes",
+              example: "9284-h84ty4-ufhu4-2484",
             },
             productType: {
               type: "string",
