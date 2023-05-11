@@ -34,6 +34,7 @@ import {
   addOrRemoveWishlist,
   getProductsByBrand,
   getVendorProducts,
+  updateVendorProduct,
 } from "./Product.docs";
 
 //options object for swaggerjs
@@ -121,6 +122,9 @@ export const options = {
       },
       "/products/my-products": {
         get: getVendorProducts,
+      },
+      "/products/{productId}/update": {
+        put: updateVendorProduct,
       },
     },
     components: {

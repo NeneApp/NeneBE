@@ -324,6 +324,8 @@ const getVendorProducts = {
                     },
                     products: {
                       type: "array",
+                      items: {
+                        type: "object",
                       properties: {
                         _id: {
                           type: "string",
@@ -402,6 +404,7 @@ const getVendorProducts = {
                       },
                     },
                   },
+                },
                 },
               },
               currentPage: {
@@ -540,12 +543,12 @@ const updateVendorProduct = {
               type: "string",
               example: "Clothes",
             },
+            productType: {
+              description: "type of the product",
+              type: "string",
+              example: "Dresses",
+            },
           },
-        },
-        productType: {
-          description: "type of the product",
-          type: "string",
-          example: "Dresses",
         },
       },
     },
@@ -626,7 +629,7 @@ const updateVendorProduct = {
                 },
                 category: {
                   type: "object",
-                  example: "wyru-3848-og3y-vui3u4"
+                  example: "wyru-3848-og3y-vui3u4",
                 },
                 productType: {
                   type: "string",
