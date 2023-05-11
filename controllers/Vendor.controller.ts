@@ -250,7 +250,7 @@ export const vendorLogin = async (req: Request, res: Response) => {
       role: vendor.role,
       image: vendor.image,
       phone: vendor.phone,
-      token: await signToken({ vendor: vendor._id, role: vendor.role }),
+      token: await signToken({ vendor: vendor.id, role: vendor.role }),
     });
   } catch (error) {
     res.status(500).json({
@@ -494,61 +494,3 @@ export const addSubCategory = async(req: Request, res: Response) => {
     });
   }
 }
-
-/**
- * @description Vendor Create Product
- * @method POST
- * @route /api/vendors/create_product
- * @access public
- */
-
-export const CreateProduct = async(req: Request, res: Response) => {
-  try{
-    const {
-            name,
-            brand,
-            quantity,
-            description,
-            prize,
-            discount,
-            attribute,
-            category
-          } = <IVendorCreateProduct>req.body;
-          const categoryInfo: any = await CategoryModel.findOne({name: category});
-      
-          if(!categoryInfo){
-            return res.status(400).json({
-              message: "No Such Category"
-            });
-          }
-          const checkProd: any = await ProductModel.findOne({ name });
-          if(checkProd && checkProd.quantity > 0 && checkProd.is_sold === false){
-            return res.status(400).json({
-              message: "This Product Exists And Is Yet To Be Sold Out"
-            });
-          }
-          const product = await ProductModel.create({
-            name,
-            store_id: await GenCode(),
-            brand,
-            quantity,
-            description,
-            code: await GenCode(),
-            slug: GenSlug(name),
-            prize,
-            discount,
-            attribute,
-            is_sold: false,
-            category: categoryInfo.id
-          });
-          return res.status(200).json({
-            message: "Product created Successfully",
-            result: product
-          })
-  }catch(error){
-    log.error(error)
-    res.status(400).json({
-      message: "Error Creating product"
-    })
-  }
-};

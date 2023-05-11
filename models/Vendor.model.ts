@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 
 interface VendorDoc extends Document {
@@ -14,7 +14,7 @@ interface VendorDoc extends Document {
   confirmationCode: string;
   status: string;
   role: string;
-  //   products
+  products: String[]
 }
 
 const VendorSchema = new mongoose.Schema(
@@ -67,6 +67,12 @@ const VendorSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    products: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   {
     timestamps: true,
