@@ -7,6 +7,7 @@ import {
 } from "../dto/Product.dto";
 import { BuyerModel } from "../models";
 import VendorModel from "../models/Vendor.model";
+import { GenSlug } from "../utility/VendorUtility";
 
 /**
  * @description
@@ -117,6 +118,71 @@ export const getVendorProducts = async (req: Request, res: Response) => {
       totalPages,
       totalReturnedProducts,
     });
+  } catch (error) {
+    res.status(500).send({ msg: "Internal server error", error });
+  }
+};
+
+/**
+ * @description
+ * @method PUT
+ * @route /api/products/:productId/update
+ * @access private
+ */
+
+export const updateVendorProducts = async (req: Request, res: Response) => {
+  const {
+    name,
+    brand,
+    quantity,
+    description,
+    prize,
+    discount,
+    size,
+    color,
+    weight,
+    height,
+    category,
+    productType,
+  } = <IUpdateVendorProductBody>req.body;
+  const { productId } = req.params;
+  try {
+    const vendor = await VendorModel.findOne({ _id: req.user.vendor });
+
+    if (!vendor?.products.includes(productId)) {
+      res.status(400).send("msg: User not the owner of product!!!");
+    }
+
+    const productDetails = await ProductModel.findOne({ _id: productId });
+
+    if (!productDetails) {
+      res.status(404).send({ msg: "Product not found!" });
+    } else {
+      if (name) {
+        productDetails.name = name || productDetails.name;
+        productDetails.slug = GenSlug(name);
+      }
+      productDetails.brand = brand || productDetails.brand;
+      productDetails.quantity = quantity || productDetails.quantity;
+      productDetails.description = description || productDetails.description;
+      productDetails.prize = prize || productDetails.prize;
+      productDetails.discount = discount || productDetails.discount;
+      productDetails.category = category || productDetails.category;
+      productDetails.productType = productType || productDetails.productType;
+      productDetails.attribute.size = size || productDetails.attribute.size;
+      productDetails.attribute.color = color || productDetails.attribute.color;
+      productDetails.attribute.height =
+        height || productDetails.attribute.height;
+      productDetails.attribute.weight =
+        weight || productDetails.attribute.weight;
+
+      productDetails.markModified("attribute")
+      const updatedDetails = await productDetails.save();
+
+      res
+        .status(200)
+        .send({ msg: "Product updated successfully!", updatedDetails });
+    }
   } catch (error) {
     res.status(500).send({ msg: "Internal server error", error });
   }
