@@ -3,7 +3,7 @@ import {
   addOrRemoveFromWishlist,
   getProductsByBrand,
   getVendorProducts,
-  updateVendorProducts,
+  updateVendorProduct,
 } from "../controllers/Product.controller";
 import { Authenticate, AuthorizeBuyer } from "../middlewares";
 
@@ -17,5 +17,5 @@ router.get(
   addOrRemoveFromWishlist
 );
 router.get("/my-products", Authenticate, getVendorProducts);
-router.put("/:productId/update", Authenticate, updateVendorProducts);
+router.put("/:productId/update", Authenticate, updateVendorProduct);
 export default router;

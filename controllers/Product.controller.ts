@@ -8,6 +8,7 @@ import {
 import { BuyerModel } from "../models";
 import VendorModel from "../models/Vendor.model";
 import { GenSlug } from "../utility/VendorUtility";
+import CategoryModel from "../models/Category.model";
 
 /**
  * @description
@@ -61,7 +62,7 @@ export const getProductsByBrand = async (
     if (queriedProducts.length === 0) {
       return res
         .status(404)
-        .send({ msg: "No product is available for this brand!" });
+        .send({ msg: "No products found under the brand!" });
     }
 
     const totalReturnedProducts: number = queriedProducts.length;
@@ -130,7 +131,7 @@ export const getVendorProducts = async (req: Request, res: Response) => {
  * @access private
  */
 
-export const updateVendorProducts = async (req: Request, res: Response) => {
+export const updateVendorProduct = async (req: Request, res: Response) => {
   const {
     name,
     brand,
@@ -153,7 +154,9 @@ export const updateVendorProducts = async (req: Request, res: Response) => {
       res.status(400).send("msg: User not the owner of product!!!");
     }
 
-    const productDetails = await ProductModel.findOne({ _id: productId });
+    const productDetails = await ProductModel.findOne({ _id: productId })
+      .populate("category", ["name", "_id"])
+      .exec();
 
     if (!productDetails) {
       res.status(404).send({ msg: "Product not found!" });
@@ -167,8 +170,33 @@ export const updateVendorProducts = async (req: Request, res: Response) => {
       productDetails.description = description || productDetails.description;
       productDetails.prize = prize || productDetails.prize;
       productDetails.discount = discount || productDetails.discount;
-      productDetails.category = category || productDetails.category;
-      productDetails.productType = productType || productDetails.productType;
+
+      if (category || productType) {
+        const categoryInfo: any = await CategoryModel.findOne({
+          name: category,
+        });
+        if (category) {
+          if (!categoryInfo) {
+            return res.status(400).json({
+              message: "No Such Category",
+            });
+          } else {
+            productDetails.category =
+              categoryInfo.id || productDetails.category;
+          }
+        }
+
+        if (productType) {
+          if (categoryInfo.subCategory.includes(productType)) {
+            productDetails.productType =
+              productType || productDetails.productType;
+          } else {
+            return res.status(400).json({
+              message: "No Such producType",
+            });
+          }
+        }
+      }
       productDetails.attribute.size = size || productDetails.attribute.size;
       productDetails.attribute.color = color || productDetails.attribute.color;
       productDetails.attribute.height =
@@ -176,7 +204,7 @@ export const updateVendorProducts = async (req: Request, res: Response) => {
       productDetails.attribute.weight =
         weight || productDetails.attribute.weight;
 
-      productDetails.markModified("attribute")
+      productDetails.markModified("attribute");
       const updatedDetails = await productDetails.save();
 
       res
