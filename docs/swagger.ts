@@ -8,6 +8,8 @@ import {
   resendVerifyBuyerMail,
   updateBuyer,
   verifyBuyerMail,
+  addToCart,
+  checkOut
 } from "./Buyer.docs";
 import {
   createVendor,
@@ -68,6 +70,12 @@ export const options = {
       },
       "/buyers/reset-password/{id}/{token}": {
         post: resetpasswordBuyer,
+      },
+      "/buyers/addToCart/{prodId}": {
+        post: addToCart,
+      },
+      "/buyers/checkout/{cartId}": {
+        post: checkOut,
       },
 
       // for vendors

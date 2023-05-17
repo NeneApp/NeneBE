@@ -33,6 +33,10 @@ export interface IBuyerResetPassword{
   confirmPassword: string;
 }
 
+export interface IBuyerAddToCart{
+  quantity: string;
+}
+
 export const buyerLoginInputSchema = object({
   body: object({
     email: string({
