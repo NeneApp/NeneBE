@@ -215,3 +215,21 @@ export const updateVendorProduct = async (req: Request, res: Response) => {
     res.status(500).send({ msg: "Internal server error", error });
   }
 };
+
+
+/**
+ * @description
+ * @method GET
+ * @route /api/products/:productId/
+ * @access private
+ */
+
+export const getVendorProd = async (req: Request, res: Response) => {
+  try{
+
+  }catch(error){
+    res.status(500).json({
+      message: "Error Getting Vendor Product"
+    });
+  }
+}

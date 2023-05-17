@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { BuyerModel } from "../models";
+import CartModel from '../models/Cart.model';
+import ProductModel from '../models/Product.model';
 import randomstring from "randomstring";
 import * as bcrypt from "bcryptjs";
 import { signToken } from "../utility";
 import axios from "axios";
-import { IBuyerResendConfirm, IBuyerUpdateInput, IBuyerRegisterInput, IBuyerResetPassword } from "../dto/Buyer.dto";
+import { IBuyerResendConfirm, IBuyerUpdateInput, IBuyerRegisterInput, IBuyerResetPassword, IBuyerAddToCart} from "../dto/Buyer.dto";
 import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
 import jwt from 'jsonwebtoken';
@@ -408,5 +410,114 @@ export const resetPassword = async(req: Request, res: Response) => {
     res.status(400).json({
       message: "Error Reseting Password"
     });
+  }
+}
+
+
+/**
+ * @description Buyer Add To Cart
+ * @method POST
+ * @route /api/buyers/addToCart
+ * @access public
+ */
+export const addToCart = async(req: Request, res: Response) => {
+  try{
+    const {prodId} = req.params
+    const { quantity } = <IBuyerAddToCart> req.body;
+    const checkBuyer = await BuyerModel.find({ id: req.user.id }).exec()
+    if(!checkBuyer){
+      return res.status(400).json({
+        message: "No User With This Id!"
+      })
+    }
+    const checkProd: any = await ProductModel.findById( prodId ).exec()
+    if(!checkProd){
+      return res.status(400).json({
+        message: "No Product With This Id!"
+      })
+    }
+    const checkCart: any = await CartModel.findOne({ id: req.user.id })
+    if(checkCart !== null && checkCart.isPaid === false){
+      let cart = {
+        name: checkProd.name,
+        description: checkProd.description, 
+        quantity: quantity,
+        price: checkProd.prize
+      }
+      checkCart.cart.push(cart)
+      const newCart = await checkCart.save()
+      return res.status(200).json({
+        message: "Product Added To Old Cart",
+        result: newCart
+      })
+    }else{
+      let cart = await CartModel.create({
+        buyerId: req.user.id,
+        cart: {
+          name: checkProd.name,
+          description: checkProd.description, 
+          quantity: quantity,
+          price: checkProd.prize
+        }
+      });
+      return res.status(200).json({
+        message: "Product Added To New Cart",
+        result: cart
+      })
+    }
+  }catch(error){
+    console.log(error)
+    res.status(500).json({
+      message: "Error Adding To Cart"
+    })
+  }
+}
+
+/**
+ * @description Buyer Checkout
+ * @method POST
+ * @route /api/buyers/checkout
+ * @access public
+ */
+export const checkout = async(req: Request, res: Response) => {
+  try{
+    const { cartId } = req.params;
+    const checkUser = await BuyerModel.find({ id: req.user.id}).exec()
+    if(!checkUser){
+      return res.status(400).json({
+        message: "No Such User"
+      })
+    }
+    const checkCart: any = await CartModel.findById( cartId ).exec()
+    if(!checkCart){
+      return res.status(400).json({
+        message: "No Such Cart"
+      })
+    }
+    const getBuyer = await CartModel.findOne({id: req.user.id})
+    if(!getBuyer){
+      return res.status(400).json({
+        message: "This cart does'nt Belong To This User, Can't Check It Out"
+      })
+    }
+    if(getBuyer.isPaid === false){
+      let totalPrice = 0
+      for(let i in checkCart.cart){
+        let sumPrice = checkCart.cart[i].price * checkCart.cart[i].quantity;
+        totalPrice += sumPrice
+      }
+      return res.status(200).json({
+        message: "Total Price",
+        result: totalPrice
+      })
+    }else{
+      return res.status(400).json({
+        message: "No Cart To CheckOut!"
+      })
+    }
+  }catch(error){
+    res.status(500).json({
+      message: "Error Checking Out!"
+    })
   }
 }
