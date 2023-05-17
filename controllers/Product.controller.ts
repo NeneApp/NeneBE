@@ -11,7 +11,7 @@ import { GenSlug } from "../utility/VendorUtility";
 import CategoryModel from "../models/Category.model";
 
 /**
- * @description
+ * @description -cached
  * @method GET
  * @route /api/products/:productId/wishlist
  * @access private
