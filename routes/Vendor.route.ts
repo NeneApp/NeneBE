@@ -7,7 +7,7 @@ import {
   resendVendorVerificionLink,
   googleAuth,
   forgotPassword,
-  resetPassword
+  resetPassword,
 } from '../controllers/Vendor.controller';
 import { Authenticate } from '../middlewares';
 import validate from '../middlewares/validateResource';

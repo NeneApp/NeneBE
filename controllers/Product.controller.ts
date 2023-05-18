@@ -220,12 +220,31 @@ export const updateVendorProduct = async (req: Request, res: Response) => {
 /**
  * @description
  * @method GET
- * @route /api/products/:productId/
+ * @route /api/products/:vendorSlug/
  * @access private
  */
 
 export const getVendorProd = async (req: Request, res: Response) => {
   try{
+    const {vendorSlug} = req.params;
+    const checkVendor: any = await VendorModel.findOne({ slug: vendorSlug });
+    if(!checkVendor){
+      return res.status(400).json({
+        message: "No Vendor With This Slug!"
+      });
+    }
+    const vendorId = checkVendor._id;
+    const checkSlug: any = await ProductModel.find({ vendorId });
+    if(!checkSlug){
+      return res.status(400).json({
+        message: "No Product With This Vendor Slug!"
+      });
+    }
+
+    return res.status(200).json({
+      message: "Vendor Products Fetched Successfully!",
+      result: checkSlug
+    });
 
   }catch(error){
     res.status(500).json({

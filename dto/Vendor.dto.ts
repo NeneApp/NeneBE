@@ -60,6 +60,7 @@ export interface IVendorCreateProduct{
   product_type: string;
   quantity: number;
   description: string;
+  attribute: string;
   code: string;
   slug: string;
   prize: number;

@@ -101,7 +101,13 @@ export const createProduct = async (req: Request, res: Response) => {
       subCategory,
     } = <IVendorCreateProduct>req.body;
     const categoryInfo: any = await CategoryModel.findOne({ name: category });
-
+    const {vendorId} = req.params;
+    const checkVendor: any = await VendorModel.findById( vendorId ).exec();
+    if(!checkVendor || null){
+      return res.status(400).json({
+        message: "No Vendor With Thid Id!"
+      })
+    }
     if (!categoryInfo) {
       return res.status(400).json({
         message: "No Such Category",
@@ -144,6 +150,7 @@ export const createProduct = async (req: Request, res: Response) => {
       is_sold: false,
       category: categoryInfo.id,
       productType,
+      vendorId: vendorId
     });
 
     const vendor = await VendorModel.findOne({ _id: req.user.vendor });
