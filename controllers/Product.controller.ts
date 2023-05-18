@@ -220,7 +220,7 @@ export const updateVendorProduct = async (req: Request, res: Response) => {
 /**
  * @description
  * @method GET
- * @route /api/products/:productId/
+ * @route /api/products/:vendorSlug/
  * @access private
  */
 
