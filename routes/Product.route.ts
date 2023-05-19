@@ -2,6 +2,7 @@ import express from "express";
 import {
   addOrRemoveFromWishlist,
   getProductsByBrand,
+  searchProduct,
 } from "../controllers/Product.controller";
 import { Authenticate, AuthorizeBuyer } from "../middlewares";
 
@@ -14,5 +15,6 @@ router.get(
   AuthorizeBuyer,
   addOrRemoveFromWishlist
 );
+router.get("/search", searchProduct)
 
 export default router;

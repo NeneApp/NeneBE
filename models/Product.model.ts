@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { productAttribute } from "../dto/Category.dto";
 
-interface ProductDoc extends Document {
+export interface ProductDoc extends Document {
   name: string;
   store_id: string;
   brand: string;
@@ -48,7 +48,7 @@ const productSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    prize: {
+    price: {
       type: Number,
       required: true,
     },

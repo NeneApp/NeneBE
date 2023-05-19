@@ -248,7 +248,7 @@ export const getProductsInCategory = async (
       return res
         .status(404)
         .send({ msg: "No product is available in this category" });
-    }
+      }
 
     const totalReturnedProducts: number = queriedProducts.length;
     const totalPages: number = Math.ceil(totalReturnedProducts / limit);
