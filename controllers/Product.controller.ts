@@ -284,18 +284,7 @@ export const searchProduct = async (
     sortBy.price = 1;
   }
     
-  try {
-    // sort by price 
-    if (sort == "new") {
-      sort = await ProductModel.find({}).sort({createdAt: -1});
-    }
-    else if (sort == "priceFromHighToLow") {
-      sort = await ProductModel.find({}).sort({price: -1});
-    }
-    else if (sort == "priceFromLowToHigh") {
-      sort = await ProductModel.find({}).sort({price: 1}).skip(skipIndex).limit(limit);
-    }   
-    
+  try {  
     const filter: FilterQuery<ProductDoc> = {};
 
     if (name) {
@@ -342,13 +331,13 @@ export const searchProduct = async (
       }
 
 
-      const sortedResult = await ProductModel.find(filter).countDocuments();
-      const totalPages = Math.ceil(sortedResult / limit);
+      const filteredResult = await ProductModel.find(filter).countDocuments();
+      const totalPages = Math.ceil(filteredResult / limit);
 
       return res.status(200).json({
         sort: sortedResults,
         totalPages,
-        totalResults: sortedResult,
+        totalResults: filteredResult,
       });
     }
   catch(error: any) {
