@@ -1,8 +1,17 @@
 import { Request, Response } from "express";
-import {FilterQuery} from "mongoose";
-import ProductModel, {ProductDoc} from "../models/Product.model";
-import { IGetBrandParams, IGetBrandQuery, IMatch, ISearchQuery, ISortPriceQuery, IsortPriceParams } from "../dto/Product.dto";
+import ProductModel, { ProductDoc } from "../models/Product.model";
+import {
+  IGetBrandParams,
+  IGetBrandQuery,
+  ISortPriceQuery,
+  IUpdateVendorProductBody,
+  IsortPriceParams
+} from "../dto/Product.dto";
 import { BuyerModel } from "../models";
+import VendorModel from "../models/Vendor.model";
+import { GenSlug } from "../utility/VendorUtility";
+import CategoryModel from "../models/Category.model";
+import { FilterQuery } from "mongoose";
 import log from "../utility/logger";
 
 /**
@@ -57,7 +66,7 @@ export const getProductsByBrand = async (
     if (queriedProducts.length === 0) {
       return res
         .status(404)
-        .send({ msg: "No product is available for this brand!" });
+        .send({ msg: "No products found under the brand!" });
     }
 
     const totalReturnedProducts: number = queriedProducts.length;
@@ -78,55 +87,202 @@ export const getProductsByBrand = async (
   }
 };
 
+/**
+ * @description
+ * @method GET
+ * @route /api/products/my-products
+ * @access private
+ */
 
-// export const searchProduct = async ( 
-//   req: Request<{}, {}, {}, ISearchQuery>, 
-//   res: Response
-//   ) => {
-//   try {
-//     let match = {} as IMatch;
-//     let {name, product_type} = req.query;
+export const getVendorProducts = async (req: Request, res: Response) => {
+  const page = req.query.page as string;
+  const limit = req.query.limit as string;
+  const pageNo = parseInt(page) - 1 || 0;
+  const limitNo = parseInt(limit) || 8;
 
-//     if (name) {
-//       match.name = new RegExp(name, "i")
-//     }
-//     if (product_type) {
-//       match.product_type = new RegExp(product_type, "i")
-//     }
+  try {
+    const vendorsProduct = await VendorModel.find({ _id: req.user.vendor })
+      .populate("products")
+      .select("products")
+      .exec();
 
-//     const products = await ProductModel.aggregate([ {$match: match}])
+    if (vendorsProduct.length === 0) {
+      return res.status(404).send({ msg: "You currently have no product" });
+    }
 
-//     return res.status(200).json({message: "match found", products})
-//   } catch (error) {
-//     log.info(error);
-//     return res.status(500).send({ msg: "Internal server error", error });
-//   }
-// }
+    const totalReturnedProducts: number = vendorsProduct.length;
+    const totalPages: number = Math.ceil(totalReturnedProducts / limitNo);
+    const result: {}[] = vendorsProduct.splice(
+      pageNo * limitNo,
+      pageNo * limitNo + limitNo
+    );
+    return res.status(200).send({
+      results: result,
+      currentPage: req.query.page || 1,
+      limit,
+      totalPages,
+      totalReturnedProducts,
+    });
+  } catch (error) {
+    res.status(500).send({ msg: "Internal server error", error });
+  }
+};
 
 /**
- * favourites
- * what's new 
- * price high to low
- * price low to high
-*/
+ * @description
+ * @method PUT
+ * @route /api/products/:productId/update
+ * @access private
+ */
+
+export const updateVendorProduct = async (req: Request, res: Response) => {
+  const {
+    name,
+    brand,
+    quantity,
+    description,
+    prize,
+    discount,
+    size,
+    color,
+    weight,
+    height,
+    category,
+    productType,
+  } = <IUpdateVendorProductBody>req.body;
+  const { productId } = req.params;
+  try {
+    const vendor = await VendorModel.findOne({ _id: req.user.vendor });
+
+    if (!vendor?.products.includes(productId)) {
+      res.status(400).send("msg: User not the owner of product!!!");
+    }
+
+    const productDetails = await ProductModel.findOne({ _id: productId })
+      .populate("category", ["name", "_id"])
+      .exec();
+
+    if (!productDetails) {
+      res.status(404).send({ msg: "Product not found!" });
+    } else {
+      if (name) {
+        productDetails.name = name || productDetails.name;
+        productDetails.slug = GenSlug(name);
+      }
+      productDetails.brand = brand || productDetails.brand;
+      productDetails.quantity = quantity || productDetails.quantity;
+      productDetails.description = description || productDetails.description;
+      productDetails.prize = prize || productDetails.prize;
+      productDetails.discount = discount || productDetails.discount;
+
+      if (category || productType) {
+        const categoryInfo: any = await CategoryModel.findOne({
+          name: category,
+        });
+        if (category) {
+          if (!categoryInfo) {
+            return res.status(400).json({
+              message: "No Such Category",
+            });
+          } else {
+            productDetails.category =
+              categoryInfo.id || productDetails.category;
+          }
+        }
+
+        if (productType) {
+          if (categoryInfo.subCategory.includes(productType)) {
+            productDetails.productType =
+              productType || productDetails.productType;
+          } else {
+            return res.status(400).json({
+              message: "No Such producType",
+            });
+          }
+        }
+      }
+      productDetails.attribute.size = size || productDetails.attribute.size;
+      productDetails.attribute.color = color || productDetails.attribute.color;
+      productDetails.attribute.height =
+        height || productDetails.attribute.height;
+      productDetails.attribute.weight =
+        weight || productDetails.attribute.weight;
+
+      productDetails.markModified("attribute");
+      const updatedDetails = await productDetails.save();
+
+      res
+        .status(200)
+        .send({ msg: "Product updated successfully!", updatedDetails });
+    }
+  } catch (error) {
+    res.status(500).send({ msg: "Internal server error", error });
+  }
+};
+
+
+/**
+ * @description
+ * @method GET
+ * @route /api/products/:vendorSlug/
+ * @access private
+ */
+
+export const getVendorProd = async (req: Request, res: Response) => {
+  try{
+    const {vendorSlug} = req.params;
+    const checkVendor: any = await VendorModel.findOne({ slug: vendorSlug });
+    if(!checkVendor){
+      return res.status(400).json({
+        message: "No Vendor With This Slug!"
+      });
+    }
+    const vendorId = checkVendor._id;
+    const checkSlug: any = await ProductModel.find({ vendorId });
+    if(!checkSlug){
+      return res.status(400).json({
+        message: "No Product With This Vendor Slug!"
+      });
+    }
+
+    return res.status(200).json({
+      message: "Vendor Products Fetched Successfully!",
+      result: checkSlug
+    });
+
+  }catch(error){
+    res.status(500).json({
+      message: "Error Getting Vendor Product"
+    });
+  }
+}
+
+
+/**
+ * @description
+ * @method GET
+ * @route /api/products/search
+ * @access public
+ */
+
 export const searchProduct = async (
   req: Request<IsortPriceParams, {}, {}, ISortPriceQuery>,
   res: Response
 ) => {
   const page = Number(req.query.page) - 1|| 0;
   const limit = Number(req.query.limit) || 5;
-  const skipIndex = (page - 1) * limit;
-  const { name, product_type, size, colour, body_fit, price_range }: ISortPriceQuery = req.query;
-  let sort:any = req.query.sort;
+  const skipIndex = page * limit;
+  const { name, product_type, size, colour, body_fit, price_range } = req.query;
 
-  req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
-
-		let sortBy: any = {};
-		if (sort[1]) {
-			sortBy[sort[0]] = sort[1];
-		} else {
-			sortBy[sort[0]] = "asc";
-		}
+  let sort = req.query.sort || 'asc';
+  const sortBy: any = {};
+  if (sort === 'desc') {
+    sortBy.createdAt = -1;
+  } else if (sort === 'priceFromHighToLow') {
+    sortBy.price = -1;
+  } else if (sort === 'priceFromLowToHigh') {
+    sortBy.price = 1;
+  }
     
   try {
     // sort by price 
@@ -138,46 +294,65 @@ export const searchProduct = async (
     }
     else if (sort == "priceFromLowToHigh") {
       sort = await ProductModel.find({}).sort({price: 1}).skip(skipIndex).limit(limit);
+    }   
+    
+    const filter: FilterQuery<ProductDoc> = {};
+
+    if (name) {
+      filter.name = { $regex: name, $options: "i" };
     }
 
-    // const sortedResult: number = sort.length;
-    // const totalPages: number = Math.ceil(sortedResult / limit);
-
-
-    // // const filter = {};
-    // const filter: FilterQuery<ProductDoc> = {};
-
-    // if (name) {
-    //   filter.name = { $regex: name, $options: "i" };
-    // }
-
-    // if (product_type) {
-    //   filter.product_type = product_type;
-    // }
-
-    // if (size) {
-    //   filter.size = size;
-    // }
-
-    // if (colour) {
-    //   filter.colour = { $regex: colour, $options: "i" };
-    // }
-
-    // if (body_fit) {
-    //   filter.body_fit = body_fit;
-    // }
-
-    // if (price_range) {
-    //   const [minPrice, maxPrice] = price_range.split("-");
-    //   filter.price = { $gte: minPrice, $lte: maxPrice };
-    // }
-
-    return res.status(200).json({sort});
+    if (product_type) {
+      filter.product_type = product_type;
     }
 
+    if (size) {
+      filter.size = size;
+    }
 
+    if (colour) {
+      filter.colour = { $regex: colour, $options: "i" };
+    }
+
+    if (body_fit) {
+      filter.body_fit = body_fit;
+    }
+
+    if (price_range) {
+      const [minPrice, maxPrice] = price_range.split("-");
+      filter.price = { $gte: minPrice, $lte: maxPrice };
+    }
+     
+      let sortedResults: any;
+      if (sort === "new") {
+        sortedResults = await ProductModel.find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skipIndex)
+          .limit(limit);
+      } else if (sort === "priceFromHighToLow") {
+        sortedResults = await ProductModel.find(filter)
+          .sort({ price: -1 })
+          .skip(skipIndex)
+          .limit(limit);
+      } else if (sort === "priceFromLowToHigh") {
+        sortedResults = await ProductModel.find(filter)
+          .sort({ price: 1 })
+          .skip(skipIndex)
+          .limit(limit);
+      }
+
+
+      const sortedResult = await ProductModel.find(filter).countDocuments();
+      const totalPages = Math.ceil(sortedResult / limit);
+
+      return res.status(200).json({
+        sort: sortedResults,
+        totalPages,
+        totalResults: sortedResult,
+      });
+    }
   catch(error: any) {
-    console.log(error)
+    log.info(error)
     return res.status(500).send({ msg: "Internal server error", error });
   }
 }

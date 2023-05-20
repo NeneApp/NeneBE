@@ -8,6 +8,8 @@ import {
   resendVerifyBuyerMail,
   updateBuyer,
   verifyBuyerMail,
+  addToCart,
+  checkOut
 } from "./Buyer.docs";
 import {
   createVendor,
@@ -33,6 +35,8 @@ import {
   createProductBody,
   addOrRemoveWishlist,
   getProductsByBrand,
+  getVendorProducts,
+  updateVendorProduct,
 } from "./Product.docs";
 
 //options object for swaggerjs
@@ -66,6 +70,12 @@ export const options = {
       },
       "/buyers/reset-password/{id}/{token}": {
         post: resetpasswordBuyer,
+      },
+      "/buyers/addToCart/{prodId}": {
+        post: addToCart,
+      },
+      "/buyers/checkout/{cartId}": {
+        post: checkOut,
       },
 
       // for vendors
@@ -117,6 +127,12 @@ export const options = {
       },
       "/products/{productId}/wishlist": {
         get: addOrRemoveWishlist,
+      },
+      "/products/my-products": {
+        get: getVendorProducts,
+      },
+      "/products/{productId}/update": {
+        put: updateVendorProduct,
       },
     },
     components: {

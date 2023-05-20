@@ -60,13 +60,18 @@ export interface IVendorCreateProduct{
   product_type: string;
   quantity: number;
   description: string;
+  attribute: string;
   code: string;
   slug: string;
   prize: number;
   discount: number;
-  attribute: [];
+  size?: string;
+  color?: string;
+  weight?: string;
+  height?: string;
   is_sold: boolean;
   category: string;
+  subCategory?: string;
 }
 
 export interface IVendorCategory{

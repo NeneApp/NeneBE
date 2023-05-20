@@ -3,6 +3,9 @@ import {
   addOrRemoveFromWishlist,
   getProductsByBrand,
   searchProduct,
+  getVendorProducts,
+  updateVendorProduct,
+  getVendorProd
 } from "../controllers/Product.controller";
 import { Authenticate, AuthorizeBuyer } from "../middlewares";
 
@@ -17,4 +20,7 @@ router.get(
 );
 router.get("/search", searchProduct)
 
+router.get("/my-products", Authenticate, getVendorProducts);
+router.put("/:productId/update", Authenticate, updateVendorProduct);
+router.get("/getVendorProduct/:vendorSlug", getVendorProd);
 export default router;

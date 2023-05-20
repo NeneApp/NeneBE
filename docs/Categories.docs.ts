@@ -45,7 +45,8 @@ const addCategory = {
       },
     },
     "400": {
-      description: "This Category Has been created Before And Exists In The Database",
+      description:
+        "This Category Has been created Before And Exists In The Database",
       content: {
         "application/json": {
           schema: {
@@ -81,7 +82,8 @@ const addCategory = {
 
 const addSubCategory = {
   tags: ["Categories"],
-  description: "This Endpoint Is For Adding Sub Category Into the Catory If You Failed To Add It While Creating The Category",
+  description:
+    "This Endpoint Is For Adding Sub Category Into the Catory If You Failed To Add It While Creating The Category",
   operationId: "addsubcategory",
   security: [
     {
@@ -92,7 +94,8 @@ const addSubCategory = {
     {
       name: "Category_Id",
       in: "path",
-      description: "This Id Is The Id Of The Category You Want To Add ThIs Sub-Category To",
+      description:
+        "This Id Is The Id Of The Category You Want To Add ThIs Sub-Category To",
       required: true,
       schema: {
         type: "string",
@@ -125,8 +128,7 @@ const addSubCategory = {
             properties: {
               message: {
                 type: "string",
-                example:
-                  "Sub Category Added Successfully!",
+                example: "Sub Category Added Successfully!",
               },
             },
           },
@@ -227,13 +229,33 @@ const createProduct = {
               type: "number",
               example: -76,
             },
-            attribute: {
-              type: "string",
-              example: "trousers",
+            size: {
+              description: "size of the product",
+              type: "strings",
+              example: "UK Size 42",
             },
-            category_Id: {
+            color: {
+              description: "descriptive color of the product",
+              type: "strings",
+              example: "blue",
+            },
+            height: {
+              description: "height of the product",
+              type: "strings",
+              example: "flat",
+            },
+            weight: {
+              description: "weight of the product",
+              type: "strings",
+              example: "4 pounds",
+            },
+            category: {
               type: "string",
-              example: "507f191e810c19729de860ea",
+              example: "Clothes",
+            },
+            productType: {
+              type: "string",
+              example: "Dresses",
             },
           },
         },
@@ -251,8 +273,7 @@ const createProduct = {
             properties: {
               message: {
                 type: "string",
-                example:
-                  "Product Added Successfully!",
+                example: "Product Added Successfully!",
               },
             },
           },
@@ -309,7 +330,6 @@ const createProduct = {
     },
   },
 };
-
 
 const getAllCategories = {
   tags: ["Categories"],
@@ -633,8 +653,6 @@ const getAllProductsInCategory = {
   },
 };
 
-
-
 const getSingleProduct = {
   tags: ["Categories"],
   description: "Get Single category",
@@ -653,7 +671,7 @@ const getSingleProduct = {
       schema: {
         type: "string",
       },
-    }, 
+    },
   ],
   responses: {
     "200": {
@@ -750,7 +768,6 @@ const getSingleProduct = {
   },
 };
 
-
 const createCategoryBody = {
   type: "object",
   properties: {
@@ -765,4 +782,12 @@ const createCategoryBody = {
   },
 };
 
-export { getAllCategories, getAllProductsInCategory, createCategoryBody, addCategory, addSubCategory, createProduct, getSingleProduct };
+export {
+  getAllCategories,
+  getAllProductsInCategory,
+  createCategoryBody,
+  addCategory,
+  addSubCategory,
+  createProduct,
+  getSingleProduct,
+};
