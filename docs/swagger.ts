@@ -3,15 +3,19 @@ import {
   createBuyer,
   createBuyerBody,
   forgotPasswordBuyer,
+  resetpasswordBuyer,
   loginBuyer,
   resendVerifyBuyerMail,
   updateBuyer,
   verifyBuyerMail,
+  addToCart,
+  checkOut
 } from "./Buyer.docs";
 import {
   createVendor,
   createVendorBody,
   forgotPasswordVendor,
+  resetpasswordVendor,
   loginVendor,
   resendVerifyVendorMail,
   updateVendor,
@@ -22,7 +26,18 @@ import {
   getAllCategories,
   getAllProductsInCategory,
   createCategoryBody,
+  addCategory,
+  addSubCategory,
+  createProduct,
+  getSingleProduct,
 } from "./Categories.docs";
+import {
+  createProductBody,
+  addOrRemoveWishlist,
+  getProductsByBrand,
+  getVendorProducts,
+  updateVendorProduct,
+} from "./Product.docs";
 
 //options object for swaggerjs
 export const options = {
@@ -38,7 +53,7 @@ export const options = {
       "/buyers/register": {
         post: createBuyer,
       },
-      "/buyers/confirm/:confirmationCode": {
+      "/buyers/confirm/{confirmationCode}": {
         get: verifyBuyerMail,
       },
       "/buyers/resend-confirm": {
@@ -53,12 +68,21 @@ export const options = {
       "/buyers/forgot-password": {
         post: forgotPasswordBuyer,
       },
+      "/buyers/reset-password/{id}/{token}": {
+        post: resetpasswordBuyer,
+      },
+      "/buyers/addToCart/{prodId}": {
+        post: addToCart,
+      },
+      "/buyers/checkout/{cartId}": {
+        post: checkOut,
+      },
 
       // for vendors
       "/vendors/register": {
         post: createVendor,
       },
-      "/vendors/confirm/:confirmationCode": {
+      "/vendors/confirm/{confirmationCode}": {
         get: verifyVendorMail,
       },
       "/vendors/resend-confirm": {
@@ -73,13 +97,42 @@ export const options = {
       "/vendors/forgot-password": {
         post: forgotPasswordVendor,
       },
+      "/vendors/reset-password/{id}/{token}": {
+        post: resetpasswordVendor,
+      },
 
       // For Categories
+      "/categories/addCategory": {
+        post: addCategory,
+      },
+      "/categories/{categoryId}/addSubCategory": {
+        post: addSubCategory,
+      },
+      "/categories/createProduct": {
+        post: createProduct,
+      },
       "/categories": {
         get: getAllCategories,
       },
-      "/categories/:categoryName": {
+      "/categories/{categoryName}": {
         get: getAllProductsInCategory,
+      },
+      "/categories/{prodId}/getSingleProd": {
+        get: getSingleProduct,
+      },
+
+      // For products
+      "/products/brand/{brandName}": {
+        get: getProductsByBrand,
+      },
+      "/products/{productId}/wishlist": {
+        get: addOrRemoveWishlist,
+      },
+      "/products/my-products": {
+        get: getVendorProducts,
+      },
+      "/products/{productId}/update": {
+        put: updateVendorProduct,
       },
     },
     components: {
@@ -94,13 +147,9 @@ export const options = {
         createBuyerBody,
         createVendorBody,
         createCategoryBody,
+        createProductBody,
       },
     },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
     servers: [
       {
         //update to production url
@@ -116,6 +165,9 @@ export const options = {
       },
       {
         name: "Categories",
+      },
+      {
+        name: "Products",
       },
     ],
   },

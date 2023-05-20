@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { productAttribute } from "../dto/Category.dto";
 
-interface ProductDoc extends Document {
+export interface ProductDoc extends Document {
   name: string;
   store_id: string;
   brand: string;
@@ -29,7 +29,7 @@ const productSchema = new mongoose.Schema(
     },
     brand: {
       type: String,
-      required: ["Please enter the product brand"],
+      required: [true, "Please enter the product brand"],
     },
     quantity: {
       type: Number,
@@ -48,12 +48,17 @@ const productSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    prize: {
+    price: {
       type: Number,
       required: true,
     },
     discount: {
       type: Number,
+    //   validate: [
+    //     (value: number)  => {
+    //         return this.prize >= value;
+    //     }, "value must be less than product's prize"
+    // ]
     },
     attribute: {
       type: Object,
@@ -66,6 +71,11 @@ const productSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
+      required: true,
+    },
+    vendorId:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vendor",
       required: true,
     },
     productType: {

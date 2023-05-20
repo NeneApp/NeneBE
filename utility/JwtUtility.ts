@@ -1,15 +1,14 @@
-import { Request } from 'express';
-import jwt from 'jsonwebtoken';
+import { Request } from "express";
+import jwt from "jsonwebtoken";
 
 export const ValidateJwt = async (req: Request) => {
-  const signature = req.get('Authorization');
+  const signature = req.get("Authorization");
 
   if (signature) {
     const payload = await jwt.verify(
-      signature.split(' ')[1],
+      signature.split(" ")[1],
       process.env.JWT_SECRET!
     );
-
     req.user = payload;
 
     return true;
@@ -18,7 +17,6 @@ export const ValidateJwt = async (req: Request) => {
   return false;
 };
 
-
 const genToken = async (data: any) => {
   let token;
   // generate new jwt token for registeration
@@ -26,7 +24,7 @@ const genToken = async (data: any) => {
     {
       ...data,
     },
-    (process.env.JWT_SECRET as string),
+    process.env.JWT_SECRET as string,
     {
       expiresIn: "7d",
     }

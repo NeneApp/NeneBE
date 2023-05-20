@@ -249,91 +249,91 @@ const loginBuyer = {
       },
       required: true,
     },
-    responses: {
-      "200": {
-        description: "Login successful",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example: "User login successfully",
-                },
-                id: {
-                  type: "string",
-                  example: "94ty-hfuw-ftr3-tu5t",
-                },
-                firstName: {
-                  type: "string",
-                  example: "John",
-                },
-                lastName: {
-                  type: "string",
-                  example: "snow",
-                },
-                gender: {
-                  type: "string",
-                  example: "male",
-                },
-                email: {
-                  type: "string",
-                  example: "male",
-                },
-                token: {
-                  type: "string",
-                  example:
-                    "f42r4urh84u3395t53t53gng35jt93.fu3u4t40yhwwrfr2.fu349tu3udvwrf394uu",
-                },
+  },
+  responses: {
+    "200": {
+      description: "Login successful",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "User login successfully",
+              },
+              id: {
+                type: "string",
+                example: "94ty-hfuw-ftr3-tu5t",
+              },
+              firstName: {
+                type: "string",
+                example: "John",
+              },
+              lastName: {
+                type: "string",
+                example: "snow",
+              },
+              gender: {
+                type: "string",
+                example: "male",
+              },
+              email: {
+                type: "string",
+                example: "male",
+              },
+              token: {
+                type: "string",
+                example:
+                  "f42r4urh84u3395t53t53gng35jt93.fu3u4t40yhwwrfr2.fu349tu3udvwrf394uu",
               },
             },
           },
         },
       },
-      "400": {
-        description: "Email not yet verified",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example: "your email is yet to be verified",
-                },
+    },
+    "400": {
+      description: "Email not yet verified",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "your email is yet to be verified",
               },
             },
           },
         },
       },
-      "401": {
-        description: "Invalid email or password",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example: "Unable to login, Invalid email or  password",
-                },
+    },
+    "401": {
+      description: "Invalid email or password",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Unable to login, Invalid email or  password",
               },
             },
           },
         },
       },
-      "500": {
-        description: "Internal Server Error",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                msg: {
-                  type: "string",
-                  example: "An Error Occured",
-                },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "An Error Occured",
               },
             },
           },
@@ -476,7 +476,7 @@ const forgotPasswordBuyer = {
               message: {
                 type: "string",
                 example:
-                  "Rest Password Link Sent successfully! Please check your mail",
+                  "Reset Password Link Sent successfully! Please check your mail",
               },
             },
           },
@@ -518,6 +518,370 @@ const forgotPasswordBuyer = {
   },
 };
 
+const resetpasswordBuyer = {
+  tags: ["Buyers"],
+  description:
+    "Reset buyer Password By Using The Link Sent From Forgot Password Endpoint",
+  operationId: "resetpassword",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "Id",
+      in: "path",
+      description: "This Id Is The Buyer's ID",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+    {
+      name: "Token",
+      in: "path",
+      description: "This Is The Token Sent To The Buyer's Email",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            password: {
+              description: "new unencrypted vendor password",
+              type: "string",
+              example: "!1234aWe1Ro3$#",
+            },
+            confirmpassword: {
+              description: "confirm unencrypted vendor password",
+              type: "string",
+              example: "!1234aWe1Ro3$#",
+            },
+          },
+        },
+      },
+    },
+    required: true,
+  },
+  responses: {
+    "200": {
+      description: "Password Reset Successful",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Password Reset Successfully!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "User does not exist",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No User With This Id",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "Passwords Do Not Match",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Passwords Do Not Match!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Reseting Password",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+const addToCart = {
+  tags: ["Buyers"],
+  description:
+    "Adding products into cart",
+  operationId: "addtocart",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "ProductId",
+      in: "path",
+      description: "This Id Is The Product's ID",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            quantity: {
+              description: "quantity of product",
+              type: "number",
+              example: 5,
+            }
+          },
+        },
+      },
+    },
+    required: true,
+  },
+  responses: {
+    "201": {
+      description: "Product Successfully Added To Old Cart",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Product Successfully Added To Old Cart!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "200": {
+      description: "Product Successfully Added To New Cart",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Product Successfully Added To New Cart!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "User does not exist",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No User With This Id",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "No Product With This Id",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Product With This Id!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Adding To Cart",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+
+const checkOut = {
+  tags: ["Buyers"],
+  description:
+    "Checking out",
+  operationId: "checkout",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "cartId",
+      in: "path",
+      description: "This Id Is The Cart's ID",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
+  responses: {
+    "201": {
+      description: "Total Price",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Total Price!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "No Cart To CheckOut",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Cart To CheckOut!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "This cart does'nt Belong To This User, Can't Check It Out",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "This cart does'nt Belong To This User, Can't Check It Out!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "402": {
+      description: "No Such Cart",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Such Cart!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "403": {
+      description: "No Such User",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No Such User!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Checking Out",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 const createBuyerBody = {
   type: "object",
   properties: {
@@ -549,4 +913,7 @@ export {
   loginBuyer,
   updateBuyer,
   forgotPasswordBuyer,
+  resetpasswordBuyer,
+  addToCart,
+  checkOut
 };
