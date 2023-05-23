@@ -51,7 +51,7 @@ jobs:
       - name: Run the image in a container
         uses: addnab/docker-run-action@v3
         with:
-          image: ${{ secrets.DOCKER_USERNAME }}/nenebe.be:v1
+          image: ${{ secrets.DOCKER_USERNAME }}/nene.be:v1
           run: |
             echo "running the docker image"
 
