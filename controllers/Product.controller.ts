@@ -216,6 +216,39 @@ export const updateVendorProduct = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @description
+ * @method DELETE
+ * @route /api/products/:productId/
+ * @access private
+ */
+
+export const deleteVendorProduct = async (req: Request, res: Response) => {
+  const { productId } = req.params;
+  try {
+    const vendor = await VendorModel.findOne({ _id: req.user.vendor });
+
+    if (!vendor?.products.includes(productId)) {
+      return res.status(400).send("msg: User not the owner of product!!!");
+    }
+
+    const productDetails = await ProductModel.findOneAndDelete({  
+      _id: productId,
+    }).exec();
+
+    if (!productDetails) {
+      return res.status(404).send({ msg: "Product not found!" });
+    } 
+
+    const productIdIndex: number = vendor!.products.indexOf(productId);
+    vendor!.products.splice(productIdIndex, 1);
+    await vendor!.save();
+
+    return res.status(200).send({ msg: "Product deleted successfully!" });
+  } catch (error) {
+    return res.status(500).send({ msg: "Internal server error", error });
+  }
+};
 
 /**
  * @description
@@ -225,30 +258,29 @@ export const updateVendorProduct = async (req: Request, res: Response) => {
  */
 
 export const getVendorProd = async (req: Request, res: Response) => {
-  try{
-    const {vendorSlug} = req.params;
+  try {
+    const { vendorSlug } = req.params;
     const checkVendor: any = await VendorModel.findOne({ slug: vendorSlug });
-    if(!checkVendor){
+    if (!checkVendor) {
       return res.status(400).json({
-        message: "No Vendor With This Slug!"
+        message: "No Vendor With This Slug!",
       });
     }
     const vendorId = checkVendor._id;
     const checkSlug: any = await ProductModel.find({ vendorId });
-    if(!checkSlug){
+    if (!checkSlug) {
       return res.status(400).json({
-        message: "No Product With This Vendor Slug!"
+        message: "No Product With This Vendor Slug!",
       });
     }
 
     return res.status(200).json({
       message: "Vendor Products Fetched Successfully!",
-      result: checkSlug
+      result: checkSlug,
     });
-
-  }catch(error){
+  } catch (error) {
     res.status(500).json({
-      message: "Error Getting Vendor Product"
+      message: "Error Getting Vendor Product",
     });
   }
-}
+};
