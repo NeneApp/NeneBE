@@ -32,7 +32,7 @@ import log from '../utility/logger';
  * @access public
  */
 export const RegisterVendor = async (
-  req: Request<{}, {}, IVendorRegisterInput['body']>,
+  req: Request<{}, {}, IVendorRegisterInput["body"]>,
   res: Response
 ) => {
   try {
@@ -49,7 +49,7 @@ export const RegisterVendor = async (
     const existUser = await VendorModel.findOne({ email });
 
     if (existUser) {
-      return res.status(400).json({ msg: 'User already exists' });
+      return res.status(400).json({ msg: "User already exists" });
     }
 
     const vendor = await VendorModel.create({
@@ -65,33 +65,23 @@ export const RegisterVendor = async (
     });
 
     const name = `${vendor.firstName} ${vendor.lastName}`;
-    const userType = 'vendors';
+    const userType = "vendors";
     const message = `<h1>Email Confirmation</h1>
     <h2>Hello ${name}</h2>
     <p>Verify your email address to complete the signup and login to your account</p>
     <a href=${config.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
-    const subject = 'Please confirm your account';
+    const subject = "Please confirm your account";
 
-    let ress = await sendConfirmationEmail(
-      name,
-      vendor?.email,
-      subject,
-      message
-    );
+    await sendConfirmationEmail(name, vendor?.email, subject, message);
 
-    if (ress !== null) {
-      res.status(201).json({
-        msg: 'User created successfully! Please check your mail',
-      });
-    } else {
-      return res
-        .status(500)
-        .json({ message: 'Something went wrong! Please try again' });
-    }
+    res.status(201).json({
+      msg: "User created successfully! Please check your mail",
+    });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 /**
  * @description Verify Vendor account
