@@ -22,4 +22,5 @@ router.get("/my-products", Authenticate, getVendorProducts);
 router.put("/:productId/update", Authenticate, updateVendorProduct);
 router.delete("/:productId/", Authenticate, deleteVendorProduct);
 router.get("/getVendorProduct/:vendorSlug", getVendorProd);
+
 export default router;

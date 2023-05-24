@@ -326,85 +326,85 @@ const getVendorProducts = {
                       type: "array",
                       items: {
                         type: "object",
-                      properties: {
-                        _id: {
-                          type: "string",
-                          example: "60f3fwhd3f3fa476342",
-                        },
-                        name: {
-                          type: "string",
-                          example: "Jordan 4",
-                        },
-                        store_id: {
-                          type: "string",
-                          example: "dhfw8r82ydf48r284yr42uciehfwef94y",
-                        },
-                        brand: {
-                          type: "string",
-                          example: "Nike",
-                        },
-                        quantity: {
-                          type: "number",
-                          example: 5,
-                        },
-                        description: {
-                          type: "string",
-                          example: "Blue Jordan 4 suitable for summer",
-                        },
-                        code: {
-                          type: "string",
-                          example: "xefh2r92cnqoohr3292y9994uhef4hfi4",
-                        },
-                        slug: {
-                          type: "string",
-                          example: "Jordan-4",
-                        },
-                        price: {
-                          type: "number",
-                          example: 5000,
-                        },
-                        discount: {
-                          type: "number",
-                          example: 550,
-                        },
-                        attribute: {
-                          type: "objects",
-                          example:
-                            "{ size: UK Size 42 }, { color: blue }, { height: flat }, {weigth: 4 pounds}",
-                        },
-                        is_sold: {
-                          type: "Boolean",
-                          example: "false",
-                        },
-                        category: {
-                          type: "object",
-                          properties: {
-                            _id: {
-                              type: "string",
-                              example: "6eq4dcw3iwrhfwa46fr2-",
-                            },
-                            name: {
-                              type: "string",
-                              example: "Clothes",
+                        properties: {
+                          _id: {
+                            type: "string",
+                            example: "60f3fwhd3f3fa476342",
+                          },
+                          name: {
+                            type: "string",
+                            example: "Jordan 4",
+                          },
+                          store_id: {
+                            type: "string",
+                            example: "dhfw8r82ydf48r284yr42uciehfwef94y",
+                          },
+                          brand: {
+                            type: "string",
+                            example: "Nike",
+                          },
+                          quantity: {
+                            type: "number",
+                            example: 5,
+                          },
+                          description: {
+                            type: "string",
+                            example: "Blue Jordan 4 suitable for summer",
+                          },
+                          code: {
+                            type: "string",
+                            example: "xefh2r92cnqoohr3292y9994uhef4hfi4",
+                          },
+                          slug: {
+                            type: "string",
+                            example: "Jordan-4",
+                          },
+                          price: {
+                            type: "number",
+                            example: 5000,
+                          },
+                          discount: {
+                            type: "number",
+                            example: 550,
+                          },
+                          attribute: {
+                            type: "objects",
+                            example:
+                              "{ size: UK Size 42 }, { color: blue }, { height: flat }, {weigth: 4 pounds}",
+                          },
+                          is_sold: {
+                            type: "Boolean",
+                            example: "false",
+                          },
+                          category: {
+                            type: "object",
+                            properties: {
+                              _id: {
+                                type: "string",
+                                example: "6eq4dcw3iwrhfwa46fr2-",
+                              },
+                              name: {
+                                type: "string",
+                                example: "Clothes",
+                              },
                             },
                           },
-                        },
-                        productType: {
-                          type: "string",
-                          example: "Dresses",
-                        },
-                        createdAt: {
-                          type: "string",
-                          example: "2023-04-11T14:42:01.627Z",
-                        },
-                        updatedAt: {
-                          type: "string",
-                          example: "2023-04-11T14:42:01.627Z",
+                          productType: {
+                            type: "string",
+                            example: "Dresses",
+                          },
+                          createdAt: {
+                            type: "string",
+                            example: "2023-04-11T14:42:01.627Z",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            example: "2023-04-11T14:42:01.627Z",
+                          },
                         },
                       },
                     },
                   },
-                },
                 },
               },
               currentPage: {
@@ -703,6 +703,86 @@ const updateVendorProduct = {
   },
 };
 
+const deleteVendorProduct = {
+  tags: ["Products"],
+  description: "Vendors can delete product created by them",
+  operationId: "deleteVendorProduct",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  responses: {
+    "200": {
+      description: "Product deleted successfully!",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "Product deleted successfully!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "msg: User not the owner of product!!!",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "msg: User not the owner of product!!!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "404": {
+      description: "Product not found!",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "Product not found!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal server error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Internal server error",
+              },
+              error: {
+                type: "object",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 const createProductBody = {
   type: "object",
   properties: {
@@ -769,4 +849,5 @@ export {
   addOrRemoveWishlist,
   getVendorProducts,
   updateVendorProduct,
+  deleteVendorProduct,
 };

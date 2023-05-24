@@ -37,6 +37,7 @@ import {
   getProductsByBrand,
   getVendorProducts,
   updateVendorProduct,
+  deleteVendorProduct,
 } from "./Product.docs";
 
 //options object for swaggerjs
@@ -133,6 +134,9 @@ export const options = {
       },
       "/products/{productId}/update": {
         put: updateVendorProduct,
+      },
+      "/products/{productId}": {
+        delete: deleteVendorProduct,
       },
     },
     components: {
