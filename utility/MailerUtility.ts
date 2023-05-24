@@ -1,20 +1,18 @@
-import nodemailer from 'nodemailer';
-import path from 'path';
-import dotenv from 'dotenv';
-import log from './logger';
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+import nodemailer from "nodemailer";
+import path from "path";
+import dotenv from "dotenv";
+import log from "./logger";
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-const transport = nodemailer.createTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  port: 587,
+export const transport = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
   secure: true,
   auth: {
     user: process.env.AUTH_EMAIL,
     pass: process.env.AUTH_PASS,
   },
 });
-
 export const sendConfirmationEmail = async (
   name: string,
   email: string,
@@ -22,11 +20,18 @@ export const sendConfirmationEmail = async (
   message: string
 ) => {
   try {
-    return await transport.sendMail({
+    const mailOptions = {
       from: process.env.AUTH_EMAIL,
       to: email,
       subject,
       html: message,
+    };
+    return await transport.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error occurred while sending email:", error);
+      } else {
+        console.log("Email sent successfully!", info.response);
+      }
     });
   } catch (error: any) {
     log.error(error.message);
