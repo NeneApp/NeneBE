@@ -16,16 +16,16 @@ router.post(
   upload.fields([{ name: "image" }, { name: "video" }]),
   createFeaturedPost
 );
-router.get("/", Authenticate, getFeaturedPosts);
+router.get("/getPosts", Authenticate, getFeaturedPosts);
 router.get("/:slug", Authenticate, getFeaturedPost);
 router.put(
-  "/:slug", Authenticate, AuthorizeAdmin,
+  "/:slug/update", Authenticate, AuthorizeAdmin,
   upload.fields([
     { name: "image", maxCount: 1 },
     { name: "video", maxCount: 1 },
   ]),
   updateFeaturedPost
 );
-router.delete("/:slug", Authenticate, AuthorizeAdmin, deleteFeaturedPost);
+router.delete("/:slug/delete", Authenticate, AuthorizeAdmin, deleteFeaturedPost);
 
 export default router;
