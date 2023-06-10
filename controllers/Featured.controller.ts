@@ -46,7 +46,6 @@ export const createFeaturedPost = async (req: Request, res: Response) => {
       videoURL,
       slug: GenSlug(title),
     };
-    console.log(featuredPost);
 
     // Save the blog post to the database or perform any other required operations
     const postCreated = FeaturedModel.create(featuredPost);
@@ -97,15 +96,18 @@ export const getFeaturedPost = async (req: Request, res: Response) => {
  * @access private
  */
 export const getFeaturedPosts = async (
-  req: Request<{}, {}, {}, IGetPostQuery>,
+  req: Request,
   res: Response
 ) => {
-  const page = parseInt(req.query.page) - 1 || 0;
-  const limit = parseInt(req.query.limit) || 8;
+  const page = req.query.page as string;
+  const limit = req.query.limit as string;
+  const orderBy = req.query.orderBy as string
+  const pageNo = parseInt(page) - 1 || 0;
+  const limitNo = parseInt(limit) || 8;
   let sortField = {};
 
   if (req.query.orderBy) {
-    let sortArray: string[] = req.query.orderBy.split(" ");
+    let sortArray: string[] = orderBy.split(" ");
     sortArray[0] === "new"
       ? (sortField = { createdAt: sortArray[1] })
       : (sortField = { title: "asc" });
@@ -121,10 +123,10 @@ export const getFeaturedPosts = async (
     }
 
     const totalReturnedPosts: number = featuredPosts.length;
-    const totalPages: number = Math.ceil(totalReturnedPosts / limit);
+    const totalPages: number = Math.ceil(totalReturnedPosts / limitNo);
     const result: {}[] = featuredPosts.splice(
-      page * limit,
-      page * limit + limit
+      pageNo * limitNo,
+      pageNo * limitNo + limitNo
     );
     return res.status(200).send({
       result,
@@ -225,7 +227,7 @@ export const deleteFeaturedPost = async (req: Request, res: Response) => {
 
     // Check if the featured post exists
     if (!existingPost) {
-      return res.status(404).send({ error: "Featured post not found" });
+      return res.status(404).send({ message: "Featured post not found" });
     }
 
     // Delete the associated files from S3

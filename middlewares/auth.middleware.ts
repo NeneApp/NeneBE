@@ -55,3 +55,17 @@ export const AuthorizeVendor = async (
     });
   }
 };
+
+export const AuthorizeAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user.role === "Admin") {
+    next();
+  } else {
+    return res.status(400).json({
+      message: "User not Authorized",
+    });
+  }
+};
