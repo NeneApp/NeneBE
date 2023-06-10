@@ -3,6 +3,7 @@ import VendorRoutes from "../routes/Vendor.route";
 import BuyerRoutes from "../routes/Buyer.route";
 import CategoryRoutes from "../routes/Category.route";
 import ProductRoutes from "../routes/Product.route";
+import FeaturedRoutes from "../routes/Featured.route";
 import cors from "cors";
 import mongoSanitize from "express-mongo-sanitize";
 import helmet from "helmet";
@@ -40,6 +41,7 @@ export default async (app: Application) => {
   app.use("/api/buyers", BuyerRoutes);
   app.use("/api/categories", CategoryRoutes);
   app.use("/api/products", ProductRoutes);
+  app.use("/api/featured", FeaturedRoutes);
 
   // Error handler
   app.use(notFound);

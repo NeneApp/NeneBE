@@ -9,7 +9,7 @@ import {
   updateBuyer,
   verifyBuyerMail,
   addToCart,
-  checkOut
+  checkOut,
 } from "./Buyer.docs";
 import {
   createVendor,
@@ -39,6 +39,15 @@ import {
   updateVendorProduct,
   deleteVendorProduct,
 } from "./Product.docs";
+
+import {
+  createFeaturedPost,
+  createFeaturedPostBody,
+  deleteFeaturedPost,
+  getFeaturedPost,
+  getFeaturedPosts,
+  updateFeaturedPost,
+} from "./Featured.docs";
 
 //options object for swaggerjs
 export const options = {
@@ -138,6 +147,23 @@ export const options = {
       "/products/{productId}": {
         delete: deleteVendorProduct,
       },
+
+      // For featured
+      "/featured": {
+        post: createFeaturedPost,
+      },
+      "/featured/{slug}": {
+        get: getFeaturedPost,
+      },
+      "/featured/getPosts": {
+        get: getFeaturedPosts,
+      },
+      "/featured/{slug}/update": {
+        put: updateFeaturedPost,
+      },
+      "/featured/{slug}/delete": {
+        delete: deleteFeaturedPost,
+      },
     },
     components: {
       securitySchemes: {
@@ -152,6 +178,7 @@ export const options = {
         createVendorBody,
         createCategoryBody,
         createProductBody,
+        createFeaturedPostBody,
       },
     },
     servers: [
