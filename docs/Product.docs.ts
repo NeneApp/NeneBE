@@ -326,85 +326,85 @@ const getVendorProducts = {
                       type: "array",
                       items: {
                         type: "object",
-                      properties: {
-                        _id: {
-                          type: "string",
-                          example: "60f3fwhd3f3fa476342",
-                        },
-                        name: {
-                          type: "string",
-                          example: "Jordan 4",
-                        },
-                        store_id: {
-                          type: "string",
-                          example: "dhfw8r82ydf48r284yr42uciehfwef94y",
-                        },
-                        brand: {
-                          type: "string",
-                          example: "Nike",
-                        },
-                        quantity: {
-                          type: "number",
-                          example: 5,
-                        },
-                        description: {
-                          type: "string",
-                          example: "Blue Jordan 4 suitable for summer",
-                        },
-                        code: {
-                          type: "string",
-                          example: "xefh2r92cnqoohr3292y9994uhef4hfi4",
-                        },
-                        slug: {
-                          type: "string",
-                          example: "Jordan-4",
-                        },
-                        price: {
-                          type: "number",
-                          example: 5000,
-                        },
-                        discount: {
-                          type: "number",
-                          example: 550,
-                        },
-                        attribute: {
-                          type: "objects",
-                          example:
-                            "{ size: UK Size 42 }, { color: blue }, { height: flat }, {weigth: 4 pounds}",
-                        },
-                        is_sold: {
-                          type: "Boolean",
-                          example: "false",
-                        },
-                        category: {
-                          type: "object",
-                          properties: {
-                            _id: {
-                              type: "string",
-                              example: "6eq4dcw3iwrhfwa46fr2-",
-                            },
-                            name: {
-                              type: "string",
-                              example: "Clothes",
+                        properties: {
+                          _id: {
+                            type: "string",
+                            example: "60f3fwhd3f3fa476342",
+                          },
+                          name: {
+                            type: "string",
+                            example: "Jordan 4",
+                          },
+                          store_id: {
+                            type: "string",
+                            example: "dhfw8r82ydf48r284yr42uciehfwef94y",
+                          },
+                          brand: {
+                            type: "string",
+                            example: "Nike",
+                          },
+                          quantity: {
+                            type: "number",
+                            example: 5,
+                          },
+                          description: {
+                            type: "string",
+                            example: "Blue Jordan 4 suitable for summer",
+                          },
+                          code: {
+                            type: "string",
+                            example: "xefh2r92cnqoohr3292y9994uhef4hfi4",
+                          },
+                          slug: {
+                            type: "string",
+                            example: "Jordan-4",
+                          },
+                          price: {
+                            type: "number",
+                            example: 5000,
+                          },
+                          discount: {
+                            type: "number",
+                            example: 550,
+                          },
+                          attribute: {
+                            type: "objects",
+                            example:
+                              "{ size: UK Size 42 }, { color: blue }, { height: flat }, {weigth: 4 pounds}",
+                          },
+                          is_sold: {
+                            type: "Boolean",
+                            example: "false",
+                          },
+                          category: {
+                            type: "object",
+                            properties: {
+                              _id: {
+                                type: "string",
+                                example: "6eq4dcw3iwrhfwa46fr2-",
+                              },
+                              name: {
+                                type: "string",
+                                example: "Clothes",
+                              },
                             },
                           },
-                        },
-                        productType: {
-                          type: "string",
-                          example: "Dresses",
-                        },
-                        createdAt: {
-                          type: "string",
-                          example: "2023-04-11T14:42:01.627Z",
-                        },
-                        updatedAt: {
-                          type: "string",
-                          example: "2023-04-11T14:42:01.627Z",
+                          productType: {
+                            type: "string",
+                            example: "Dresses",
+                          },
+                          createdAt: {
+                            type: "string",
+                            example: "2023-04-11T14:42:01.627Z",
+                          },
+                          updatedAt: {
+                            type: "string",
+                            example: "2023-04-11T14:42:01.627Z",
+                          },
                         },
                       },
                     },
                   },
-                },
                 },
               },
               currentPage: {
@@ -763,10 +763,193 @@ const createProductBody = {
   },
 };
 
+const searchProduct = {
+  tags: ["Products"],
+  description: `This endpoint allows you to search for products based on various filters and sorting options.
+                Note: the products are sorted from newest to oldest by default, with a limit of 5: 
+                baseurl/api/categories/:product?page=2&limit=4`,
+  operationId: "searchProduct",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "page",
+      in: "query",
+      description: "The page number (default: 1)",
+      schema: {
+        type: "integer",
+        example: "1",
+        default: "1",
+      },
+    },
+    {
+      name: "limit",
+      in: "query",
+      description: "The maximum number of results per page (default: 5)",
+      required: false,
+      schema: {
+        type: "integer",
+        example: "8",
+        default: "8",
+      },
+    },
+    {
+      name: "product_name",
+      in: "query",
+      description: "The name of the product to search for (case-insensitive)",
+      required: false,
+      schema: {
+        type: "string"
+      },
+    },
+    {
+      name: "product_type",
+      in: "query",
+      description: "The type of the product to search for",
+      required: false,
+      schema: {
+        type: "string"
+      },
+    },
+    {
+      name: "size",
+      in: "query",
+      description: "The size of the product to search for",
+      required: false,
+      schema: {
+        type: "string"
+      },
+    },
+    {
+      name: "colour",
+      in: "query",
+      description: "The colour of the product to search for",
+      required: false,
+      schema: {
+        type: "string"
+      },
+    },
+    {
+      name: "body_fit",
+      in: "query",
+      description: "The body fit of the product to search for",
+      required: false,
+      schema: {
+        type: "string"
+      },
+    },
+    {
+      name: "price_range",
+      in: "query",
+      description: "The price range of the product to search for (format: minPrice-maxPrice)",
+      required: false,
+      schema: {
+        type: "string"
+      },
+    },
+    {
+      name: "sort",
+      in: "query",
+      description: "The sorting option for the results (values: asc, desc, priceFromHighToLow, priceFromLowToHigh)",
+      required: false,
+      schema: {
+        type: "string"
+      },
+    },
+  ],
+  response: {
+    "200": {
+      description: "products displayed successfully",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              sort: {
+                type: "array",
+                iems: {
+                  _id: {
+                    type: "string",
+                    example: "60f3fwhd3f3fa476342",
+                  },
+                  name: {
+                    description: "name of the product",
+                    type: "string",
+                    example: "Jordan",
+                  },
+                  product_type: {
+                    description: "The type of the product",
+                    type: "string",
+                    example: "clothes"
+                  },
+                  size: {
+                    description: "The size of the product",
+                    type: "string",
+                    example: "size 40"
+                  },
+                  colour: {
+                    description: "The colour of the product",
+                    type: "string",
+                    example: "red"
+
+                  },
+                  body_fit: {
+                    description: "The body fit of the product",
+                    type: "string"
+
+                  },
+                  price: {
+                    description: "The price of the product",
+                    type: "number"
+
+                  },
+                  createdAt: {
+                    type: "string",
+                    example: "2023-04-11T14:42:01.627Z",
+                  },
+                }
+              }
+            },
+            totalPages: {
+              type: "integer"
+            },
+            totalresults: {
+              type: "integer"
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "500": {
+    description: "Internal server error",
+      content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            message: {
+              type: "string",
+                example: "Internal server error",
+              },
+            error: {
+              type: "object",
+              },
+          },
+        },
+      },
+    },
+  }
+}
 export {
   createProductBody,
   getProductsByBrand,
   addOrRemoveWishlist,
   getVendorProducts,
   updateVendorProduct,
+  searchProduct
 };

@@ -3,12 +3,15 @@ import multer from "multer";
 import multerS3 from "multer-s3";
 
 aws.config.update({
-    secretAccessKey: process.env.AWS_ACCESS_SECRET as string,
-    accessKeyId: process.env.AWS_ACCESS_KEY as string,
-    region: process.env.REGION as string,
-    apiVersion: 'latest' as string,
+    secretAccessKey: "f23peMFOFAmcizB446sZYTzP5IJZLBVs9oZ0Z0Hi",
+    accessKeyId: "AKIAVIVNKJA4HDMKDBGK",
+    region: "us-east-1"
+    
+    // region: process.env.REGION as string,
+    // apiVersion: 'latest' as string,
 });
-const BUCKET: any = process.env.AWS_BUCKET
+// const BUCKET = process.env.AWS_BUCKET as unknown as string
+const BUCKET = "nenebucketv1"
 const s3: any = new aws.S3();
 
 export const upload = multer({
@@ -16,9 +19,7 @@ export const upload = multer({
         s3: s3,
         acl: "public-read",
         bucket: BUCKET,
-        // metadata: function (req, file, cb) {
-        //     cb(null, { fieldName: file.fieldname });
-        //   },
+        contentType: multerS3.AUTO_CONTENT_TYPE,
         key: function (req, file, cb) {
             console.log(file);
             cb(null, file.originalname)
