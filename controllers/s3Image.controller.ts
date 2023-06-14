@@ -22,7 +22,7 @@ export const uploadSingleFile = async (req: Request, res: Response) => {
   } catch (error) {
     log.error(error)
     return res.status(500).json({
-      message: "something went wrong",
+      message: "Internal server error",
       error
     })
   }
@@ -55,7 +55,7 @@ export const uploadMultipleFiles = async (req: Request, res: Response) => {
   }
 }
 
-export const getAllImages = async (req: Request, res: Response) => {
+export const getAllFiles = async (req: Request, res: Response) => {
   try {
     let objectResponse = await s3.listObjectsV2({ Bucket: "nenebucketv1" }).promise();
     let allImages = objectResponse.Contents.map((item: any) => item.Key as any);
@@ -72,7 +72,7 @@ export const getAllImages = async (req: Request, res: Response) => {
   }
 };
 
-export const downloadImage = async (req: Request, res: Response) => {
+export const downloadFile = async (req: Request, res: Response) => {
   try {
     const filename = req.params.filename;
     let obj = await s3.getObject({ Bucket: "nenebucketv1", Key: filename }).promise();
@@ -86,7 +86,7 @@ export const downloadImage = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteImage = async (req: Request, res: Response) => {
+export const deleteFile = async (req: Request, res: Response) => {
   try {
     const filename = req.params.filename;
     await s3.deleteObject({ Bucket: "nenebucketv1", Key: filename }).promise();

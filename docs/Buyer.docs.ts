@@ -899,8 +899,13 @@ const createBuyerBody = {
     },
     password: {
       type: "string",
-      description: "unencrypted user's password",
+      description: "unencrypted user's password, password must contain capital letter, small letter, a special character and must be at least 6 chars",
       example: "!1234aWe1Ro3$#",
+    },
+    address: {
+      type: "string",
+      description: "address of the buyer",
+      example: "No 6, Anthony street, Gbagada, Lagos",
     },
   },
 };

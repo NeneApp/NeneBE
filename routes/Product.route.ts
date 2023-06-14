@@ -5,7 +5,8 @@ import {
   searchProduct,
   getVendorProducts,
   updateVendorProduct,
-  getVendorProd
+  getVendorProd,
+  deleteVendorProduct
 } from "../controllers/Product.controller";
 import { Authenticate, AuthorizeBuyer } from "../middlewares";
 
@@ -22,5 +23,7 @@ router.get("/search", searchProduct)
 
 router.get("/my-products", Authenticate, getVendorProducts);
 router.put("/:productId/update", Authenticate, updateVendorProduct);
+router.delete("/:productId/", Authenticate, deleteVendorProduct);
 router.get("/getVendorProduct/:vendorSlug", getVendorProd);
+
 export default router;

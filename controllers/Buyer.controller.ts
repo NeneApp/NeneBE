@@ -26,7 +26,7 @@ export const RegisterBuyer = async (
   res: Response
 ) => {
   try {
-    const { firstName, lastName, password, email } = req.body;
+    const { firstName, lastName, password, email, address } = req.body;
 
     // check if buyer already exists in the database
     const existUser = await BuyerModel.findOne({ email: email.toLowerCase() });
@@ -39,6 +39,7 @@ export const RegisterBuyer = async (
       firstName,
       lastName,
       password,
+      address,
       email: email.toLowerCase(),
       confirmationCode: await GenCode(),
     });

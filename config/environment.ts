@@ -8,5 +8,9 @@ export default {
     GOOGLE_OAUTH_REDIRECT_URI: process.env.GOOGLE_OAUTH_REDIRECT_URI,
     SERVER_ROOT_URI: process.env.SERVER_ROOT_URI,
     AUTH_EMAIL: process.env.AUTH_EMAIL,
-    BASE_URL: process.env.BASE_URL
+    BASE_URL: process.env.BASE_URL,
+    AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+    AWS_BUCKET_REGION: process.env.AWS_BUCKET_REGION,
+    AWS_ACCESS_KEY : process.env.AWS_ACCESS_KEY,
+    AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
 }

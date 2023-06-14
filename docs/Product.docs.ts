@@ -703,6 +703,87 @@ const updateVendorProduct = {
   },
 };
 
+const deleteVendorProduct = {
+  tags: ["Products"],
+  description: "Vendors can delete product created by them",
+  operationId: "deleteVendorProduct",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  responses: {
+    "200": {
+      description: "Product deleted successfully!",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "Product deleted successfully!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "msg: User not the owner of product!!!",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "msg: User not the owner of product!!!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "404": {
+      description: "Product not found!",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "Product not found!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal server error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Internal server error",
+              },
+              error: {
+                type: "object",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+
 const createProductBody = {
   type: "object",
   properties: {
@@ -951,5 +1032,6 @@ export {
   addOrRemoveWishlist,
   getVendorProducts,
   updateVendorProduct,
-  searchProduct
+  searchProduct,
+  deleteVendorProduct,
 };
