@@ -17,7 +17,7 @@ const transport = nodemailer.createTransport({
 
 export const sendConfirmationEmail = async (
   name: string,
-  email: string,
+  email: any,
   subject: string,
   message: string
 ) => {

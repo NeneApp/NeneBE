@@ -72,14 +72,30 @@ export const RegisterVendor = async (
     <a href=${config.BASE_URL}/api/${userType}/confirm/${vendor?.confirmationCode}> Click here</a>`;
     const subject = 'Please confirm your account';
 
+
+    const adminName = "Admin";
+    const user = 'vendors';
+    const adminMessage = `<h1>Verify Vendor</h1>
+    <h2>Hello ${name}</h2>
+    <p>Verify your vendor signup by clicking the link below</p>
+    <a href=${config.BASE_URL}/api/${userType}/verify/${vendor?.slug}> Click here</a>`;
+    const adminSubject = 'Please verify vendor account';
+
     let ress = await sendConfirmationEmail(
       name,
       vendor?.email,
       subject,
       message
     );
+    
+    let adminRess = await sendConfirmationEmail(
+      adminName,
+      process.env.ADMIN_EMAIL,
+      adminSubject,
+      adminMessage
+    );
 
-    if (ress !== null) {
+    if (ress || adminRess !== null) {
       res.status(201).json({
         msg: 'User created successfully! Please check your mail',
       });
@@ -120,6 +136,39 @@ export const verifyVendor = asyncHandler(
     });
   }
 );
+
+/**
+ * @description Approve Vendor as aglamour and lauxry vendor
+ * @method POST
+ * @route /api/vendors/aprove-glamour-and-lauxry-vendor
+ * @access public
+ */
+export const glamourLauxry = async (req: Request, res:Response) => {
+  try{
+    const { id } = req.params;
+    const checkVendor: any = await VendorModel.findById(id).exec();
+    if(!checkVendor || checkVendor === null){
+      return res.status(400).json({
+        message: "No Such Vendor"
+      })
+    }
+    if(checkVendor.isGlamourLauxry === true){
+      return res.status(400).json({
+        message: "This Vendor Is Already A Glamour And Lauxry Agent!"
+      })
+    }
+    checkVendor.isGlamourLauxry = true;
+    await checkVendor.save();
+    return res.status(200).json({
+      message: "Vendor Approved As Glamour And Lauxry Agent!."
+    })
+  }catch(error){
+    res.status(500).json({
+      message: "Error Validating Vendor As Glamour And Lauxry Agent."
+    })
+  }
+}
+
 
 /**
  * @description Resend verification link to Vendor's email
