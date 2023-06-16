@@ -4,6 +4,7 @@ import BuyerRoutes from "../routes/Buyer.route";
 import CategoryRoutes from "../routes/Category.route";
 import ProductRoutes from "../routes/Product.route";
 import FeaturedRoutes from "../routes/Featured.route";
+import ScrapbookRoutes from "../routes/Scrapbook.routes";
 import cors from "cors";
 import mongoSanitize from "express-mongo-sanitize";
 import helmet from "helmet";
@@ -42,6 +43,7 @@ export default async (app: Application) => {
   app.use("/api/categories", CategoryRoutes);
   app.use("/api/products", ProductRoutes);
   app.use("/api/featured", FeaturedRoutes);
+  app.use("/api/scrapbook", ScrapbookRoutes);
 
   // Error handler
   app.use(notFound);
