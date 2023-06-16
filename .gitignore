@@ -1,5 +1,14 @@
+<<<<<<< HEAD
 node_modules
 package-lock.json
 *.env
 build
 dist
+=======
+node_modules
+package-lock.json
+*.env
+build
+dist
+.vscode
+>>>>>>> 5968221f787dc12f6418da5d4f4508229c845768

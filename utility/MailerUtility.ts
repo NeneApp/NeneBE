@@ -13,8 +13,6 @@ export const transport = nodemailer.createTransport({
     pass: process.env.AUTH_PASS,
   },
 });
-// shopneneapp@gmail.com
-// Reshaping1Experience$
 export const sendConfirmationEmail = async (
   name: string,
   email: string,
