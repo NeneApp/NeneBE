@@ -17,7 +17,7 @@ interface VendorDoc extends Document {
   products: String[]
 }
 
-const VendorSchema = new mongoose.Schema(
+const VendorSchema: Schema = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -67,6 +67,10 @@ const VendorSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isGlamourLauxry: {
+      type: Boolean,
+      default: false
+    },
     products: [
       {
         type: Schema.Types.ObjectId,
@@ -88,7 +92,7 @@ const VendorSchema = new mongoose.Schema(
 VendorSchema.pre("save", async function (next) {
   try {
     if (!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password, 12);
+    this.password = await bcrypt.hash(this.password, 12); 
   } catch (error: any) {
     throw new Error(error);
   }

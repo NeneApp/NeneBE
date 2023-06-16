@@ -8,6 +8,7 @@ import {
   googleAuth,
   forgotPassword,
   resetPassword,
+  glamourLauxry
 } from '../controllers/Vendor.controller';
 import { Authenticate } from '../middlewares';
 import validate from '../middlewares/validateResource';
@@ -23,5 +24,6 @@ router.post('/login', vendorLogin);
 router.post('/google', googleAuth);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:id/:token', resetPassword);
+router.post('/approve-glamour-and-lauxry-vendor/:id', glamourLauxry);
 
 export default router;
