@@ -63,10 +63,16 @@ export interface IVendorCreateProduct{
   attribute: string;
   code: string;
   slug: string;
+  style?: string;
+  material?: string;
+  length?: string;
+  neckline?: string;
+  sleeve_length?:string;
+  dress_type?: string;
   prize: number;
   discount: number;
   size?: string;
-  color?: string;
+  colour?: string;
   weight?: string;
   height?: string;
   is_sold: boolean;

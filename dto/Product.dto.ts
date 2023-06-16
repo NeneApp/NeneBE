@@ -39,6 +39,13 @@ export interface ISortPriceQuery {
   page: string;
   limit: string;
   name: string;
+  brand: string;
+  style: string;
+  material: string;
+  length?: string;
+  neckline?: string;
+  sleeve_length?:string;
+  dress_type?: string;
   product_type: string;
   price_range: string;
   size: any;

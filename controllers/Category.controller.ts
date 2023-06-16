@@ -94,9 +94,15 @@ export const createProduct = async (req: Request, res: Response) => {
       prize,
       discount,
       size,
+      style,
+      material,
+      length,
+      neckline,
+      sleeve_length,
+      dress_type,
       height,
       weight,
-      color,
+      colour,
       category,
       subCategory,
     } = <IVendorCreateProduct>req.body;
@@ -132,9 +138,15 @@ export const createProduct = async (req: Request, res: Response) => {
     }
     const attribute = {
       size: size,
-      color: color,
+      color: colour,
       height: height,
       weight: weight,
+      style: style,
+      material: material,
+      length: length,
+      neckline: neckline,
+      sleeve_length: sleeve_length,
+      dress_type: dress_type
     };
     const product = await ProductModel.create({
       name,

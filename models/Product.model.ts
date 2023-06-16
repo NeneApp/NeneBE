@@ -10,6 +10,15 @@ export interface ProductDoc extends Document {
   code: string;
   slug: string;
   prize: number;
+  body_fit: string;
+  size: string;
+  colour: string;
+  style: string;
+  material: string;
+  length: string
+  neckline: string;
+  sleeve_length: string;
+  dress_type: string;
   discount: number;
   attribute: productAttribute;
   is_sold: boolean;
@@ -48,7 +57,34 @@ const productSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    price: {
+    size: {
+      type: String
+    },
+    colour: {
+      type: String
+    },
+    style: {
+      type: String
+    },
+    material: {
+      type: String
+    },
+    body_fit: {
+      type: String
+    },
+    length: {
+      type: String
+    },
+    neckline: {
+      type: String
+    },
+    sleeve_length: {
+      type: String
+    },
+    dress_type: {
+      type: String
+    },
+    prize: {
       type: Number,
       required: true,
     },

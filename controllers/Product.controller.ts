@@ -296,7 +296,7 @@ export const getVendorProd = async (req: Request, res: Response) => {
  * @route /api/products/search
  * @access public
  */
-
+// 
 export const searchProduct = async (
   req: Request<IsortPriceParams, {}, {}, ISortPriceQuery>,
   res: Response
@@ -304,7 +304,20 @@ export const searchProduct = async (
   const page = Number(req.query.page) - 1|| 0;
   const limit = Number(req.query.limit) || 5;
   const skipIndex = page * limit;
-  const { name, product_type, size, colour, body_fit, price_range } = req.query;
+  const { 
+    name, 
+    product_type,
+    size, 
+    colour, 
+    body_fit, 
+    price_range, 
+    style, 
+    material, 
+    length, 
+    sleeve_length, 
+    neckline, 
+    dress_type 
+  } = req.query;
 
   let sort = req.query.sort || 'asc';
   const sortBy: any = {};
@@ -329,6 +342,24 @@ export const searchProduct = async (
 
     if (size) {
       filter.size = size;
+    }
+    if (style) {
+      filter.style = style;
+    }
+    if (material) {
+      filter.material = material;
+    }
+    if (length) {
+      filter.length = length;
+    }
+    if (neckline) {
+      filter.neckline = neckline;
+    }
+    if (sleeve_length) {
+      filter.sleeve_length = sleeve_length;
+    }
+    if (dress_type) {
+      filter.dress_type = dress_type;
     }
 
     if (colour) {
