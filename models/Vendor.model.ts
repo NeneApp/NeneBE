@@ -1,19 +1,20 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 interface VendorDoc extends Document {
   firstName: string;
   lastName: string;
   businessName: string;
   email: string;
-  password: string;
+  password: string | Promise<string>;
   phone: string;
   image: string;
   address: string;
   slug: string;
-  confirmationCode: string;
+  confirmationCode?: string;
   status: string;
   role: string;
+  accStatus: string;
   //   products
 }
 
@@ -21,28 +22,28 @@ const VendorSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: [true, "Please enter your first name"],
+      required: [true, 'Please enter your first name'],
     },
     lastName: {
       type: String,
-      required: [true, "Please enter your first name"],
+      required: [true, 'Please enter your first name'],
     },
     password: {
       type: String,
-      required: [true, "Please enter your password"],
-      minLenght: [8, "Password must be at least 6 characters"],
+      required: [true, 'Please enter your password'],
+      minLenght: [8, 'Password must be at least 6 characters'],
     },
     businessName: {
       type: String,
-      required: [true, "Please enter your business name"],
+      required: [true, 'Please enter your business name'],
     },
     email: {
       type: String,
-      required: [true, "Please enter a vaild email"],
+      required: [true, 'Please enter a vaild email'],
       unique: true,
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-        "Please add a valid email",
+        'Please add a valid email',
       ],
     },
     image: {
@@ -56,16 +57,21 @@ const VendorSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Active"],
-      default: "Pending",
+      enum: ['Pending', 'Active'],
+      default: 'Pending',
     },
     role: {
       type: String,
-      default: "Vendor",
+      default: 'Vendor',
     },
     activated: {
       type: Boolean,
       default: false,
+    },
+    accStatus: {
+      type: String,
+      enum: ['Pending', 'Approved', 'Declined', 'Suspended'],
+      default: 'Pending',
     },
   },
   {
@@ -73,21 +79,17 @@ const VendorSchema = new mongoose.Schema(
   }
 );
 
-// create slug from business name
-// VendorSchema.pre('save', function (next) {
-//   this.slug = slugify(this.businessName, { lower: true });
+// Encrypt password with bcrypt
+// VendorSchema.pre('save', async function (next) {
+//   try {
+//     if (!this.isModified('password')) return next();
+//     this.password = await bcrypt.hash(this.password, 12);
+//     return next(); // Add a return statement here
+//   } catch (error: any) {
+//     return next(error);
+//   }
 // });
 
-// Encrypt password with bcrypt
-VendorSchema.pre("save", async function (next) {
-  try {
-    if (!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password, 12);
-  } catch (error: any) {
-    throw new Error(error);
-  }
-});
-
-const VendorModel = mongoose.model<VendorDoc>("Vendor", VendorSchema);
+const VendorModel = mongoose.model<VendorDoc>('Vendor', VendorSchema);
 
 export default VendorModel;

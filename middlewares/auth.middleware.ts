@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { AuthPayload } from '../dto/Auth.dto';
 import { ValidateJwt } from '../utility';
-import asyncHandler from 'express-async-handler';
 
 declare global {
   namespace Express {

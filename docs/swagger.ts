@@ -1,4 +1,4 @@
-import config from "../config/environment";
+import config from '../config/environment';
 import {
   createBuyer,
   createBuyerBody,
@@ -7,7 +7,7 @@ import {
   resendVerifyBuyerMail,
   updateBuyer,
   verifyBuyerMail,
-} from "./Buyer.docs";
+} from './Buyer.docs';
 import {
   createVendor,
   createVendorBody,
@@ -16,84 +16,99 @@ import {
   resendVerifyVendorMail,
   updateVendor,
   verifyVendorMail,
-} from "./Vendor.docs";
+} from './Vendor.docs';
+
+import {
+  GetAllVendors,
+  createVendorByAdminBody,
+  createVendorByAdmins,
+} from './Admin.docs';
 
 import {
   getAllCategories,
   getAllProductsInCategory,
   createCategoryBody,
-} from "./Categories.docs";
+} from './Categories.docs';
 
 //options object for swaggerjs
 export const options = {
   definition: {
-    openapi: "3.0.0",
+    openapi: '3.0.0',
     info: {
-      title: "Nene",
-      version: "1.0.0",
-      description: "An api for NeNe",
+      title: 'Nene',
+      version: '1.0.0',
+      description: 'An api for NeNe',
     },
     paths: {
       // for buyers
-      "/buyers/register": {
+      '/buyers/register': {
         post: createBuyer,
       },
-      "/buyers/confirm/:confirmationCode": {
+      '/buyers/confirm/:confirmationCode': {
         get: verifyBuyerMail,
       },
-      "/buyers/resend-confirm": {
+      '/buyers/resend-confirm': {
         post: resendVerifyBuyerMail,
       },
-      "/buyers/login": {
+      '/buyers/login': {
         post: loginBuyer,
       },
-      "/buyers/update": {
+      '/buyers/update': {
         put: updateBuyer,
       },
-      "/buyers/forgot-password": {
+      '/buyers/forgot-password': {
         post: forgotPasswordBuyer,
       },
 
       // for vendors
-      "/vendors/register": {
+      '/vendors/register': {
         post: createVendor,
       },
-      "/vendors/confirm/:confirmationCode": {
+      '/vendors/confirm/:confirmationCode': {
         get: verifyVendorMail,
       },
-      "/vendors/resend-confirm": {
+      '/vendors/resend-confirm': {
         post: resendVerifyVendorMail,
       },
-      "/vendors/login": {
+      '/vendors/login': {
         post: loginVendor,
       },
-      "/vendors/update": {
+      '/vendors/update': {
         put: updateVendor,
       },
-      "/vendors/forgot-password": {
+      '/vendors/forgot-password': {
         post: forgotPasswordVendor,
       },
 
       // For Categories
-      "/categories": {
+      '/categories': {
         get: getAllCategories,
       },
-      "/categories/:categoryName": {
+      '/categories/:categoryName': {
         get: getAllProductsInCategory,
+      },
+
+      // For Admins
+      '/admin/vendor/create': {
+        post: createVendorByAdmins,
+      },
+      '/admin/vendors': {
+        get: GetAllVendors,
       },
     },
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
         },
       },
       schemas: {
         createBuyerBody,
         createVendorBody,
         createCategoryBody,
+        createVendorByAdminBody,
       },
     },
     security: [
@@ -109,15 +124,18 @@ export const options = {
     ],
     tags: [
       {
-        name: "Buyers",
+        name: 'Buyers',
       },
       {
-        name: "Vendors",
+        name: 'Vendors',
       },
       {
-        name: "Categories",
+        name: 'Categories',
+      },
+      {
+        name: 'Admins',
       },
     ],
   },
-  apis: ["../routes/index.ts"],
+  apis: ['../routes/index.ts'],
 };
