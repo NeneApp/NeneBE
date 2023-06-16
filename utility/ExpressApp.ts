@@ -1,17 +1,17 @@
-import express, { Application, Request, Response } from 'express';
-import VendorRoutes from '../routes/Vendor.route';
-import BuyerRoutes from '../routes/Buyer.route';
-import CategoryRoutes from '../routes/Category.route';
-import AdminRoutes from '../routes/Admin.route';
-import cors from 'cors';
-import mongoSanitize from 'express-mongo-sanitize';
-import helmet from 'helmet';
-import { errorHandler, notFound } from '../middlewares';
-import hpp from 'hpp';
-import swaggerUI from 'swagger-ui-express';
-import swaggerJsDoc from 'swagger-jsdoc';
-import { options } from '../docs/swagger';
-import { Authenticate } from '../middlewares';
+import express, { Application, Request, Response } from "express";
+import VendorRoutes from "../routes/Vendor.route";
+import BuyerRoutes from "../routes/Buyer.route";
+import CategoryRoutes from "../routes/Category.route";
+import ProductRoutes from "../routes/Product.route";
+import FeaturedRoutes from "../routes/Featured.route";
+import cors from "cors";
+import mongoSanitize from "express-mongo-sanitize";
+import helmet from "helmet";
+import { errorHandler, notFound } from "../middlewares";
+import hpp from "hpp";
+import swaggerUI from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
+import { options } from "../docs/swagger";
 
 export default async (app: Application) => {
   app.use(express.json());
@@ -31,16 +31,17 @@ export default async (app: Application) => {
 
   //setting up swagger doc
   const specs = swaggerJsDoc(options);
-  app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(specs));
+  app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(specs));
 
-  app.get('/healthcheck', (req: Request, res: Response) => {
+  app.get("/healthcheck", (req: Request, res: Response) => {
     res.sendStatus(200);
   });
 
-  app.use('/api/vendors', VendorRoutes);
-  app.use('/api/buyers', BuyerRoutes);
-  app.use('/api/categories', Authenticate, CategoryRoutes);
-  app.use('/api/admin', AdminRoutes);
+  app.use("/api/vendors", VendorRoutes);
+  app.use("/api/buyers", BuyerRoutes);
+  app.use("/api/categories", CategoryRoutes);
+  app.use("/api/products", ProductRoutes);
+  app.use("/api/featured", FeaturedRoutes);
 
   // Error handler
   app.use(notFound);

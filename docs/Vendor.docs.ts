@@ -233,124 +233,124 @@ const loginVendor = {
       },
       required: true,
     },
-    responses: {
-      "200": {
-        description: "Login successful",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                id: {
-                  type: "string",
-                  example: "94ty-hfuw-ftr3-tu5t",
-                },
-                firstName: {
-                  type: "string",
-                  example: "John",
-                },
-                lastName: {
-                  type: "string",
-                  example: "snow",
-                },
-                businessName: {
-                  type: "string",
-                  example: "John snow venture",
-                },
-                email: {
-                  type: "string",
-                  example: "johnsnow@email.com",
-                },
-                address: {
-                  type: "string",
-                  example: "No 1, snow's street, Gbagada, Lagos",
-                },
-                slug: {
-                  type: "string",
-                  example: "John-snow-venture",
-                },
-                image: {
-                  type: "string",
-                  example: "https://mimage.com/johnsnow",
-                },
-                role: {
-                  type: "string",
-                  example: "Vendor",
-                },
-                phone: {
-                  type: "string",
-                  example: "07067242865",
-                },
-                token: {
-                  type: "string",
-                  example:
-                    "f42r4urh84u3395t53t53gng35jt93.fu3u4t40yhwwrfr2.fu349tu3udvwrf394uu",
-                },
+  },
+  responses: {
+    "200": {
+      description: "Login successful",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              id: {
+                type: "string",
+                example: "94ty-hfuw-ftr3-tu5t",
+              },
+              firstName: {
+                type: "string",
+                example: "John",
+              },
+              lastName: {
+                type: "string",
+                example: "snow",
+              },
+              businessName: {
+                type: "string",
+                example: "John snow venture",
+              },
+              email: {
+                type: "string",
+                example: "johnsnow@email.com",
+              },
+              address: {
+                type: "string",
+                example: "No 1, snow's street, Gbagada, Lagos",
+              },
+              slug: {
+                type: "string",
+                example: "John-snow-venture",
+              },
+              image: {
+                type: "string",
+                example: "https://mimage.com/johnsnow",
+              },
+              role: {
+                type: "string",
+                example: "Vendor",
+              },
+              phone: {
+                type: "string",
+                example: "07067242865",
+              },
+              token: {
+                type: "string",
+                example:
+                  "f42r4urh84u3395t53t53gng35jt93.fu3u4t40yhwwrfr2.fu349tu3udvwrf394uu",
               },
             },
           },
         },
       },
-      "400": {
-        description: "Email not yet verified",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example:
-                    "Please Activate Your Account By Confirming Your Email Address",
-                },
+    },
+    "400": {
+      description: "Email not yet verified",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example:
+                  "Please Activate Your Account By Confirming Your Email Address",
               },
             },
           },
         },
       },
-      "401": {
-        description: "Invalid email or password",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example: "Invalid Credentials",
-                },
+    },
+    "401": {
+      description: "Invalid email or password",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Invalid Credentials",
               },
             },
           },
         },
       },
-      "404": {
-        description: "Vendor has not yet registered",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: {
-                  type: "string",
-                  example: "Vendor Not Found",
-                },
+    },
+    "404": {
+      description: "Vendor has not yet registered",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Vendor Not Found",
               },
             },
           },
         },
       },
-      "500": {
-        description: "Internal Server Error",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                msg: {
-                  type: "string",
-                  example: "Error Logging In",
-                },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              msg: {
+                type: "string",
+                example: "Error Logging In",
               },
             },
           },
@@ -511,7 +511,7 @@ const forgotPasswordVendor = {
               message: {
                 type: "string",
                 example:
-                  "Rest Password Link Sent successfully! Please check your mail",
+                  "Reset Password Link Sent successfully! Please check your mail",
               },
             },
           },
@@ -544,6 +544,126 @@ const forgotPasswordVendor = {
               message: {
                 type: "string",
                 example: "Error Sending Reset Password Email",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+const resetpasswordVendor = {
+  tags: ["Vendors"],
+  description:
+    "Reset vendor Password By Using The Link Sent From Forgot Password Endpoint",
+  operationId: "resetpassword",
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  parameters: [
+    {
+      name: "Id",
+      in: "path",
+      description: "This Id Is The Vendors's ID",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+    {
+      name: "Token",
+      in: "path",
+      description: "This Is The Token Sent To The Vendors's Email",
+      required: true,
+      schema: {
+        type: "string",
+      },
+    },
+  ],
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            password: {
+              description: "new unencrypted vendor password",
+              type: "string",
+              example: "!1234aWe1Ro3$#",
+            },
+            confirmpassword: {
+              description: "confirm unencrypted vendor password",
+              type: "string",
+              example: "!1234aWe1Ro3$#",
+            },
+          },
+        },
+      },
+    },
+    required: true,
+  },
+  responses: {
+    "200": {
+      description: "Password Reset Successful",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Password Reset Successfully!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "400": {
+      description: "User does not exist",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "No User With This Id",
+              },
+            },
+          },
+        },
+      },
+    },
+    "401": {
+      description: "Passwords Do Not Match",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Passwords Do Not Match!",
+              },
+            },
+          },
+        },
+      },
+    },
+    "500": {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              message: {
+                type: "string",
+                example: "Error Reseting Password",
               },
             },
           },
@@ -599,4 +719,5 @@ export {
   loginVendor,
   updateVendor,
   forgotPasswordVendor,
+  resetpasswordVendor,
 };

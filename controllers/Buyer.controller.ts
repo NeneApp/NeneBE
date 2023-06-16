@@ -1,19 +1,16 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { BuyerModel } from "../models";
+import CartModel from '../models/Cart.model';
+import ProductModel from '../models/Product.model';
 import randomstring from "randomstring";
 import * as bcrypt from "bcryptjs";
 import { signToken } from "../utility";
 import axios from "axios";
-import {
-  IBuyerResendConfirm,
-  IBuyerUpdateInput,
-  IBuyerRegisterInput,
-  IBuyerResetPassword,
-} from "../dto/Buyer.dto";
+import { IBuyerResendConfirm, IBuyerUpdateInput, IBuyerRegisterInput, IBuyerResetPassword, IBuyerAddToCart} from "../dto/Buyer.dto";
 import { GenCode } from "../utility/VendorUtility";
 import { sendConfirmationEmail } from "../utility/MailerUtility";
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 import config from "../config/environment";
 import log from "../utility/logger";
 
@@ -29,7 +26,7 @@ export const RegisterBuyer = async (
   res: Response
 ) => {
   try {
-    const { firstName, lastName, password, email } = req.body;
+    const { firstName, lastName, password, email, address } = req.body;
 
     // check if buyer already exists in the database
     const existUser = await BuyerModel.findOne({ email: email.toLowerCase() });
@@ -42,6 +39,7 @@ export const RegisterBuyer = async (
       firstName,
       lastName,
       password,
+      address,
       email: email.toLowerCase(),
       confirmationCode: await GenCode(),
     });
@@ -60,8 +58,6 @@ export const RegisterBuyer = async (
       subject,
       message
     );
-
-    console.log("res", ress);
 
     if (ress !== null) {
       res.status(201).json({
@@ -204,10 +200,10 @@ export async function buyerLogin(req: Request, res: Response) {
       lastname: user?.lastName,
       gender: user?.gender,
       email: user?.email,
-      token: await signToken(user.id),
+      token: await signToken({ id: user.id, role: "Buyer" }),
     });
   } catch (error: any) {
-    log.error(error);
+    log.error(error)
     return res.status(500).json({
       message: "An Error Occured",
       error: error.error,
@@ -322,6 +318,7 @@ export const updateBuyerProfile = asyncHandler(
   }
 );
 
+
 /**
  * @description Buyer Forgot Password
  * @method POST
@@ -329,29 +326,29 @@ export const updateBuyerProfile = asyncHandler(
  * @access public
  */
 
-export const forgotPassword = async (req: Request, res: Response) => {
-  try {
-    const { email } = req.body;
-    const checkEmail: any = await BuyerModel.findOne({ email });
-    if (!checkEmail) {
+export const forgotPassword = async(req: Request, res: Response) => {
+  try{
+    const { email } = req.body
+    const checkEmail: any = await BuyerModel.findOne({ email })
+    if(!checkEmail){
       return res.status(400).json({
-        message: "No User With This Email",
+        message: "No User With This Email"
       });
     }
 
     const secret = process.env.JWT_SECRET + checkEmail.password;
     const payload = {
       email: checkEmail.email,
-      id: checkEmail.id,
-    };
+      id: checkEmail.id
+    }
     const name = `${checkEmail.firstName} ${checkEmail.lastName}`;
-    const token = jwt.sign(payload, secret, { expiresIn: "5m" });
+    const token = jwt.sign(payload, secret, {expiresIn: '5m'});
     const link = `${process.env.BASE_URL}/reset-password/${checkEmail.id}/${token}`;
     const message = `<h1>Reset Password</h1>
     <h2>Hello ${name}</h2>
     <p>Please Reset Your Password</p>
     <a href=${process.env.BASE_URL}/reset-password/${checkEmail.id}/${token}> Click here</a>`;
-    const subject = "Please Reset Your Password";
+    const subject = 'Please Reset Your Password';
 
     let ress = await sendConfirmationEmail(
       name,
@@ -361,21 +358,22 @@ export const forgotPassword = async (req: Request, res: Response) => {
     );
     if (ress !== null) {
       return res.status(200).json({
-        message: "Rest Password Link Sent successfully! Please check your mail",
-        reset_link: link,
+        message: 'Reset Password Link Sent successfully! Please check your mail',
+        reset_link: link
       });
     } else {
-      return res.status(400).json({
-        message: "Something went wrong! Please try again",
+      return res.status(400).json({ 
+        message: 'Something went wrong! Please try again' 
       });
     }
-  } catch (error) {
-    log.error(error);
+  }catch(error){
+    log.error(error)
     res.status(500).json({
-      message: "Error Sending Reset Password Email",
-    });
+      message: "Error Sending Reset Password Email"
+    })
   }
-};
+}
+
 
 /**
  * @description Buyer Reset Password
@@ -384,34 +382,143 @@ export const forgotPassword = async (req: Request, res: Response) => {
  * @access public
  */
 
-export const resetPassword = async (req: Request, res: Response) => {
-  try {
+export const resetPassword = async(req: Request, res: Response) => {
+  try{
     const { id, token } = req.params;
-    const { password, confirmPassword } = <IBuyerResetPassword>req.body;
+    const { password, confirmPassword } = <IBuyerResetPassword> req.body;
     const user: any = await BuyerModel.findById(id).exec();
-    if (user === null) {
+    if(user === null){
       return res.status(400).json({
-        message: "No User With This Id",
+        message: "No User With This Id"
       });
     }
     const secret = process.env.JWT_SECRET + user.password;
     const payload = jwt.verify(token, secret);
-    if (confirmPassword !== password) {
+    if(confirmPassword !== password){
       return res.status(400).json({
-        message: "Passwords Do Not Match",
+        message: "Passwords Do Not Match"
       });
     }
     const newpassword = await bcrypt.hash(password, 10);
-    console.log(newpassword);
+    console.log(newpassword)
     user.password = newpassword;
     await user.save();
     return res.status(200).json({
-      message: "Password Reset Successfully!",
-    });
-  } catch (error) {
-    log.error(error);
+      message: "Password Reset Successfully!"
+    })
+  }catch(error){
+    log.error(error)
     res.status(400).json({
-      message: "Error Reseting Password",
+      message: "Error Reseting Password"
     });
   }
-};
+}
+
+
+/**
+ * @description Buyer Add To Cart
+ * @method POST
+ * @route /api/buyers/addToCart
+ * @access public
+ */
+export const addToCart = async(req: Request, res: Response) => {
+  try{
+    const {prodId} = req.params
+    const { quantity } = <IBuyerAddToCart> req.body;
+    const checkBuyer = await BuyerModel.find({ id: req.user.id }).exec()
+    if(!checkBuyer){
+      return res.status(400).json({
+        message: "No User With This Id!"
+      })
+    }
+    const checkProd: any = await ProductModel.findById( prodId ).exec()
+    if(!checkProd){
+      return res.status(400).json({
+        message: "No Product With This Id!"
+      })
+    }
+    const checkCart: any = await CartModel.findOne({ id: req.user.id })
+    if(checkCart !== null && checkCart.isPaid === false){
+      let cart = {
+        name: checkProd.name,
+        description: checkProd.description, 
+        quantity: quantity,
+        price: checkProd.prize
+      }
+      checkCart.cart.push(cart)
+      const newCart = await checkCart.save()
+      return res.status(200).json({
+        message: "Product Added To Old Cart",
+        result: newCart
+      })
+    }else{
+      let cart = await CartModel.create({
+        buyerId: req.user.id,
+        cart: {
+          name: checkProd.name,
+          description: checkProd.description, 
+          quantity: quantity,
+          price: checkProd.prize
+        }
+      });
+      return res.status(200).json({
+        message: "Product Added To New Cart",
+        result: cart
+      })
+    }
+  }catch(error){
+    console.log(error)
+    res.status(500).json({
+      message: "Error Adding To Cart"
+    })
+  }
+}
+
+/**
+ * @description Buyer Checkout
+ * @method POST
+ * @route /api/buyers/checkout
+ * @access public
+ */
+export const checkout = async(req: Request, res: Response) => {
+  try{
+    const { cartId } = req.params;
+    const checkUser = await BuyerModel.find({ id: req.user.id}).exec()
+    if(!checkUser){
+      return res.status(400).json({
+        message: "No Such User"
+      })
+    }
+    const checkCart: any = await CartModel.findById( cartId ).exec()
+    if(!checkCart){
+      return res.status(400).json({
+        message: "No Such Cart"
+      })
+    }
+    const getBuyer = await CartModel.findOne({id: req.user.id})
+    if(!getBuyer){
+      return res.status(400).json({
+        message: "This cart does'nt Belong To This User, Can't Check It Out"
+      })
+    }
+    if(getBuyer.isPaid === false){
+      let totalPrice = 0
+      for(let i in checkCart.cart){
+        let sumPrice = checkCart.cart[i].price * checkCart.cart[i].quantity;
+        totalPrice += sumPrice
+      }
+      return res.status(200).json({
+        message: "Total Price",
+        result: totalPrice
+      })
+    }else{
+      return res.status(400).json({
+        message: "No Cart To CheckOut!"
+      })
+    }
+  }catch(error){
+    res.status(500).json({
+      message: "Error Checking Out!"
+    })
+  }
+}

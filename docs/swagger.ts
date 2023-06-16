@@ -1,121 +1,186 @@
-import config from '../config/environment';
+import config from "../config/environment";
 import {
   createBuyer,
   createBuyerBody,
   forgotPasswordBuyer,
+  resetpasswordBuyer,
   loginBuyer,
   resendVerifyBuyerMail,
   updateBuyer,
   verifyBuyerMail,
-} from './Buyer.docs';
+  addToCart,
+  checkOut,
+} from "./Buyer.docs";
 import {
   createVendor,
   createVendorBody,
   forgotPasswordVendor,
+  resetpasswordVendor,
   loginVendor,
   resendVerifyVendorMail,
   updateVendor,
   verifyVendorMail,
-} from './Vendor.docs';
-
-import {
-  GetAllVendors,
-  createVendorByAdminBody,
-  createVendorByAdmins,
-} from './Admin.docs';
+} from "./Vendor.docs";
 
 import {
   getAllCategories,
   getAllProductsInCategory,
   createCategoryBody,
-} from './Categories.docs';
+  addCategory,
+  addSubCategory,
+  createProduct,
+  getSingleProduct,
+} from "./Categories.docs";
+import {
+  createProductBody,
+  addOrRemoveWishlist,
+  getProductsByBrand,
+  getVendorProducts,
+  updateVendorProduct,
+  deleteVendorProduct,
+} from "./Product.docs";
+
+import {
+  createFeaturedPost,
+  createFeaturedPostBody,
+  deleteFeaturedPost,
+  getFeaturedPost,
+  getFeaturedPosts,
+  updateFeaturedPost,
+} from "./Featured.docs";
 
 //options object for swaggerjs
 export const options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'Nene',
-      version: '1.0.0',
-      description: 'An api for NeNe',
+      title: "Nene",
+      version: "1.0.0",
+      description: "An api for NeNe",
     },
     paths: {
       // for buyers
-      '/buyers/register': {
+      "/buyers/register": {
         post: createBuyer,
       },
-      '/buyers/confirm/:confirmationCode': {
+      "/buyers/confirm/{confirmationCode}": {
         get: verifyBuyerMail,
       },
-      '/buyers/resend-confirm': {
+      "/buyers/resend-confirm": {
         post: resendVerifyBuyerMail,
       },
-      '/buyers/login': {
+      "/buyers/login": {
         post: loginBuyer,
       },
-      '/buyers/update': {
+      "/buyers/update": {
         put: updateBuyer,
       },
-      '/buyers/forgot-password': {
+      "/buyers/forgot-password": {
         post: forgotPasswordBuyer,
+      },
+      "/buyers/reset-password/{id}/{token}": {
+        post: resetpasswordBuyer,
+      },
+      "/buyers/addToCart/{prodId}": {
+        post: addToCart,
+      },
+      "/buyers/checkout/{cartId}": {
+        post: checkOut,
       },
 
       // for vendors
-      '/vendors/register': {
+      "/vendors/register": {
         post: createVendor,
       },
-      '/vendors/confirm/:confirmationCode': {
+      "/vendors/confirm/{confirmationCode}": {
         get: verifyVendorMail,
       },
-      '/vendors/resend-confirm': {
+      "/vendors/resend-confirm": {
         post: resendVerifyVendorMail,
       },
-      '/vendors/login': {
+      "/vendors/login": {
         post: loginVendor,
       },
-      '/vendors/update': {
+      "/vendors/update": {
         put: updateVendor,
       },
-      '/vendors/forgot-password': {
+      "/vendors/forgot-password": {
         post: forgotPasswordVendor,
+      },
+      "/vendors/reset-password/{id}/{token}": {
+        post: resetpasswordVendor,
       },
 
       // For Categories
-      '/categories': {
+      "/categories/addCategory": {
+        post: addCategory,
+      },
+      "/categories/{categoryId}/addSubCategory": {
+        post: addSubCategory,
+      },
+      "/categories/createProduct": {
+        post: createProduct,
+      },
+      "/categories": {
         get: getAllCategories,
       },
-      '/categories/:categoryName': {
+      "/categories/{categoryName}": {
         get: getAllProductsInCategory,
       },
-
-      // For Admins
-      '/admin/vendor/create': {
-        post: createVendorByAdmins,
+      "/categories/{prodId}/getSingleProd": {
+        get: getSingleProduct,
       },
-      '/admin/vendors': {
-        get: GetAllVendors,
+
+      // For products
+      "/products/brand/{brandName}": {
+        get: getProductsByBrand,
+      },
+      "/products/{productId}/wishlist": {
+        get: addOrRemoveWishlist,
+      },
+      "/products/my-products": {
+        get: getVendorProducts,
+      },
+      "/products/{productId}/update": {
+        put: updateVendorProduct,
+      },
+      "/products/{productId}": {
+        delete: deleteVendorProduct,
+      },
+
+      // For featured
+      "/featured": {
+        post: createFeaturedPost,
+      },
+      "/featured/{slug}": {
+        get: getFeaturedPost,
+      },
+      "/featured/getPosts": {
+        get: getFeaturedPosts,
+      },
+      "/featured/{slug}/update": {
+        put: updateFeaturedPost,
+      },
+      "/featured/{slug}/delete": {
+        delete: deleteFeaturedPost,
       },
     },
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
         },
       },
       schemas: {
         createBuyerBody,
         createVendorBody,
         createCategoryBody,
-        createVendorByAdminBody,
+        createProductBody,
+        createFeaturedPostBody,
       },
     },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
     servers: [
       {
         //update to production url
@@ -124,18 +189,18 @@ export const options = {
     ],
     tags: [
       {
-        name: 'Buyers',
+        name: "Buyers",
       },
       {
-        name: 'Vendors',
+        name: "Vendors",
       },
       {
-        name: 'Categories',
+        name: "Categories",
       },
       {
-        name: 'Admins',
+        name: "Products",
       },
     ],
   },
-  apis: ['../routes/index.ts'],
+  apis: ["../routes/index.ts"],
 };

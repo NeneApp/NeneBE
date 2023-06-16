@@ -14,6 +14,9 @@ export const BuyerRegisterInputSchema = object({
     password: string({
       required_error: 'Password is required',
     }).min(6, 'Password too short - should be 6 chars minimum'),
+    address: string({
+      required_error: 'Address is required'
+    })
   }),
 });
 
@@ -31,6 +34,10 @@ export interface IBuyerResendConfirm{
 export interface IBuyerResetPassword{
   password: string;
   confirmPassword: string;
+}
+
+export interface IBuyerAddToCart{
+  quantity: string;
 }
 
 export const buyerLoginInputSchema = object({

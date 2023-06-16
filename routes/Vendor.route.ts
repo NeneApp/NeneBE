@@ -15,7 +15,7 @@ import { VendorRegisterInputSchema } from '../dto';
 
 const router = express.Router();
 
-router.post('/register', RegisterVendor);
+router.post('/register', validate(VendorRegisterInputSchema), RegisterVendor); 
 router.get('/confirm/:confirmationCode', verifyVendor);
 router.post('/resend-confirm', resendVendorVerificionLink);
 router.put('/profile', Authenticate, UpdateVendorProfile);
