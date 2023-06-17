@@ -48,6 +48,15 @@ import {
   getFeaturedPosts,
   updateFeaturedPost,
 } from "./Featured.docs";
+import {
+  addImagesToScrapbook,
+  createScrapbook,
+  deleteScrapbook,
+  getScrapbook,
+  getScrapbooks,
+  removeImageFromScrapbook,
+  updateScrapbook,
+} from "./Scrapbook.docs";
 
 //options object for swaggerjs
 export const options = {
@@ -163,6 +172,29 @@ export const options = {
       },
       "/featured/{slug}/delete": {
         delete: deleteFeaturedPost,
+      },
+
+      // For scrapbook
+      "/scrapbook": {
+        post: createScrapbook,
+      },
+      "/scrapbook/{scrapbookId}": {
+        get: getScrapbook,
+      },
+      "/scrapbook/getBooks": {
+        get: getScrapbooks,
+      },
+      "/scrapbook/{scrapbookId}/update": {
+        put: updateScrapbook,
+      },
+      "/scrapbook/{scrapbookId}/delete": {
+        delete: deleteScrapbook,
+      },
+      "/scrapbook/{scrapbookId}/addImages": {
+        put: addImagesToScrapbook,
+      },
+      "/scrapbook/{scrapbookId}/removeImage": {
+        delete: removeImageFromScrapbook,
       },
     },
     components: {

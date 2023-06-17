@@ -106,3 +106,13 @@ const extractFileKeyFromUrl = (fileUrl: string): string => {
   const fileKey = urlParts[urlParts.length - 1];
   return fileKey;
 };
+
+export const getContentTypeFromUrl = (url: string): string => {
+  const contentType = mimetypes.lookup(url) || 'application/octet-stream';
+  return contentType;
+};
+
+export const getFilenameFromUrl = (url: string): string => {
+  const filename = url.split('/').pop() || 'file';
+  return filename;
+};

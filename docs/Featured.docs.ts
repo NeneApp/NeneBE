@@ -19,7 +19,7 @@ const createFeaturedPost = {
   },
   responses: {
     "201": {
-      description: "User created successfully!",
+      description: "Featured post created successfully!",
       content: {
         "application/json": {
           schema: {
@@ -28,7 +28,6 @@ const createFeaturedPost = {
               title: {
                 type: "string",
                 example: "Interview with John Doe",
-                required: "true",
               },
               description: {
                 type: "string",
@@ -91,7 +90,7 @@ const createFeaturedPost = {
 
 const getFeaturedPost = {
   tags: ["Featured"],
-  description: `Get a featured post by admi vendor or buyer`,
+  description: `Get a featured post by admin, vendor or buyer`,
   operationId: "getFeaturedPost",
   security: [
     {
@@ -121,7 +120,6 @@ const getFeaturedPost = {
               title: {
                 type: "string",
                 example: "Interview with John Doe",
-                required: "true",
               },
               description: {
                 type: "string",
@@ -149,6 +147,14 @@ const getFeaturedPost = {
               slug: {
                 type: "string",
                 example: "interview-with-john-doe",
+              },
+              createdAt: {
+                type: "string",
+                example: "2023-06-10T01:11:03.123+00:00",
+              },
+              updatedAt: {
+                type: "string",
+                example: "2023-06-10T01:13:36.315+00:00",
               },
             },
           },
@@ -196,7 +202,7 @@ const getFeaturedPosts = {
                   Note: the featured post are sorted from newest to oldest by default
                   An example of a full url path for a page number 2, limit of 6: 
                   baseurl/api/featured?page=2&limit=4`,
-  operationId: "getVendorProducts",
+  operationId: "getFeaturedPosts",
   security: [
     {
       bearerAuth: [],
@@ -226,7 +232,7 @@ const getFeaturedPosts = {
   ],
   responses: {
     "200": {
-      description: "All products displayed successfully",
+      description: "Featured posts displayed successfully",
       content: {
         "application/json": {
           schema: {
@@ -240,7 +246,6 @@ const getFeaturedPosts = {
                     title: {
                       type: "string",
                       example: "Interview with John Doe",
-                      required: "true",
                     },
                     description: {
                       type: "string",
@@ -268,6 +273,14 @@ const getFeaturedPosts = {
                     slug: {
                       type: "string",
                       example: "interview-with-john-doe",
+                    },
+                    createdAt: {
+                      type: "string",
+                      example: "2023-06-10T01:11:03.123+00:00",
+                    },
+                    updatedAt: {
+                      type: "string",
+                      example: "2023-06-10T01:13:36.315+00:00",
                     },
                   },
                 },
@@ -363,7 +376,6 @@ const updateFeaturedPost = {
             title: {
               type: "string",
               example: "Interview with John Doe",
-              required: "true",
             },
             description: {
               type: "string",
@@ -396,7 +408,6 @@ const updateFeaturedPost = {
               title: {
                 type: "string",
                 example: "Interview with John Doe",
-                required: "true",
               },
               description: {
                 type: "string",
@@ -424,6 +435,14 @@ const updateFeaturedPost = {
               slug: {
                 type: "string",
                 example: "interview-with-john-doe",
+              },
+              createdAt: {
+                type: "string",
+                example: "2023-06-10T01:11:03.123+00:00",
+              },
+              updatedAt: {
+                type: "string",
+                example: "2023-06-10T01:13:36.315+00:00",
               },
             },
           },
