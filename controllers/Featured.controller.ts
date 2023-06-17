@@ -6,7 +6,8 @@ import {
   IGetPostQuery,
   IUpdateFeaturedPost,
 } from "../dto/Featured.dto";
-import { deleteFileFromS3, uploadFile } from "../utility/s3";
+import { deleteFileFromS3, uploadFile, getContentTypeFromUrl, getFilenameFromUrl } from "../utility/s3";
+import axios, { AxiosResponse } from "axios";
 
 /**
  * @description Create Featured Post
@@ -82,6 +83,66 @@ export const getFeaturedPost = async (req: Request, res: Response) => {
 
     featuredPost.viewCount += 1;
     await featuredPost.save();
+    // Retrieve the pre-signed URL from the database
+    const fileURLs = [ `${featuredPost.imageURL}`, `${featuredPost.videoURL}`]
+    //const signedImageURL = `${featuredPost.imageURL}`;
+    //const signedVideoURL = `${featuredPost.videoURL}`;
+
+    // // // Define the additional data as an object
+    // // const additionalData = {
+    // //   "X-Title": featuredPost.title,
+    // //   "X-Body": featuredPost.bodyOfPost,
+    // //   "X-Slug": featuredPost.slug,
+    // //   "X-Description": featuredPost.description,
+    // //   "X-ViewCount": featuredPost.viewCount.toString(),
+    // //   "X-DateCreated": featuredPost.createdAt?.toString(),
+    // //   "X-DateUpdated": featuredPost.createdAt?.toString(),
+    // // };
+
+    // // Set the headers using a loop
+    // for (const [headerName, headerValue] of Object.entries(additionalData)) {
+    //   res.set(headerName, headerValue);
+    // }
+
+    // // Make parallel requests to download the image and video files
+    // const fileResponses: AxiosResponse<any>[] = await axios.all([
+    //   axios.get(signedImageURL, { responseType: "stream" }), // Add any additional options you need for the request
+    //   axios.get(signedVideoURL, { responseType: "stream" }),
+    // ]);
+
+    // Create an array of promises for downloading the files
+    const downloadPromises: Promise<AxiosResponse<any>>[] = fileURLs.map(url =>
+      axios.get(url, { responseType: 'stream' })
+    );
+
+    // Wait for all the download promises to complete
+    const fileResponses: AxiosResponse<any>[] = await Promise.all(downloadPromises);
+
+
+    // Check if the responses are successful
+    if (fileResponses.every((response) => response.status === 200)) {
+      // // Set the content type for the response
+      // res.setHeader("Content-Type", fileResponses[0].headers["content-type"]);
+
+      // // Pipe each file directly to the response
+      // fileResponses.forEach((response) => {
+      //   response.data.pipe(res);
+      
+    // Set the headers and stream the files
+    fileResponses.forEach((fileResponse, index) => {
+      const url = fileURLs[index];
+      const contentType = getContentTypeFromUrl(url);
+      const filename = getFilenameFromUrl(url);
+      console.log(url, contentType, filename)
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+      fileResponse.data.pipe(res);
+      });
+    } else {
+      return res.status(400).send({ message: "Failed to download file(s)" });
+    }
+
     return res.status(200).send(featuredPost);
   } catch (error) {
     console.error("Error retrieving featured post:", error);
@@ -95,13 +156,10 @@ export const getFeaturedPost = async (req: Request, res: Response) => {
  * @route /api/featured
  * @access private
  */
-export const getFeaturedPosts = async (
-  req: Request,
-  res: Response
-) => {
+export const getFeaturedPosts = async (req: Request, res: Response) => {
   const page = req.query.page as string;
   const limit = req.query.limit as string;
-  const orderBy = req.query.orderBy as string
+  const orderBy = req.query.orderBy as string;
   const pageNo = parseInt(page) - 1 || 0;
   const limitNo = parseInt(limit) || 8;
   let sortField = {};

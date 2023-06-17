@@ -36,7 +36,7 @@ router.delete(
   deleteScrapbook
 );
 router.put(
-  "/:scrapbookId/addImage",
+  "/:scrapbookId/addImages",
   Authenticate,
   AuthorizeAdmin,
   upload.array("image"),

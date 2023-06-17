@@ -37,15 +37,13 @@ export const createScrapbook = async (req: Request, res: Response) => {
     const postCreated = ScrapbookModel.create(scrapbookPost);
 
     if (!postCreated) {
-      return res
-        .status(400)
-        .send({ message: "Failed to create featured post" });
+      return res.status(400).send({ message: "Failed to create scrapebook" });
     }
 
     // Send the response with the created blog post
     return res.status(201).send(scrapbookPost);
   } catch (error) {
-    console.error("Error creating featured post:", error);
+    console.error("Error creating scrapebook:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -235,7 +233,7 @@ export const addImagesToScrapbook = async (req: Request, res: Response) => {
     }
 
     if (!req.files || req.files.length === 0) {
-      res.status(400).json({ error: "No image files found in the request" });
+      res.status(400).send({ message: "No image files found in the request" });
       return;
     }
 
@@ -252,7 +250,9 @@ export const addImagesToScrapbook = async (req: Request, res: Response) => {
 
     await existingPost.save();
 
-    res.status(200).send({ messages: "Image(s) uploaded successfully" });
+    res
+      .status(200)
+      .send({ message: `Image(s) added to ${existingPost.name} successfully`, existingPost });
   } catch (error) {
     console.error("Error adding images to scrapbook:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -262,14 +262,14 @@ export const addImagesToScrapbook = async (req: Request, res: Response) => {
 /**
  * @description add image to scrapbook
  * @method DELETE
- * @route /api/scrapbook/scrapbookId/removeImage
+ * @route /api/scrapbook/scrapbookId/removeImage?imageLink=https://cjuwufewufuew
  * @access private
  */
 export const removeImageFromScrapbook = async (req: Request, res: Response) => {
   const { scrapbookId } = req.params;
   const { imageLink } = req.query;
 
-  const link = imageLink as string
+  const link = imageLink as string;
 
   try {
     // Retrieve the featured post from the database
@@ -281,8 +281,7 @@ export const removeImageFromScrapbook = async (req: Request, res: Response) => {
     }
 
     if (existingPost.collections.includes(link)) {
-      const imageLinkIndex: number =
-        existingPost!.collections.indexOf(link);
+      const imageLinkIndex: number = existingPost!.collections.indexOf(link);
       existingPost.collections.splice(imageLinkIndex, 1);
       await existingPost!.save();
 
@@ -292,7 +291,7 @@ export const removeImageFromScrapbook = async (req: Request, res: Response) => {
       return res.status(400).send({ message: "Image not in scrapbook" });
     }
 
-    return res.status(200).send({ message: "Image deleted successfully!" });
+    return res.status(200).send({ message: `Image deleted from ${existingPost.name} successfully!` });
   } catch (error) {
     console.error("Error deleting image from scrapbook:", error);
     res.status(500).json({ error: "Internal server error" });
