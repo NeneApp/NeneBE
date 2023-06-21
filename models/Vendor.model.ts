@@ -14,7 +14,7 @@ interface VendorDoc extends Document {
   confirmationCode: string;
   status: string;
   role: string;
-  products: String[]
+  products: string[]
 }
 
 const VendorSchema = new mongoose.Schema(
@@ -38,7 +38,7 @@ const VendorSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, "Please enter a vaild email"],
+      required: [true, "Please enter a valid email"],
       unique: true,
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -79,10 +79,6 @@ const VendorSchema = new mongoose.Schema(
   }
 );
 
-// create slug from business name
-// VendorSchema.pre('save', function (next) {
-//   this.slug = slugify(this.businessName, { lower: true });
-// });
 
 // Encrypt password with bcrypt
 VendorSchema.pre("save", async function (next) {
